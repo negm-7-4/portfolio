@@ -1,0 +1,6 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+
+# TODO: replace with your real deployed URL
+Sitemap: https://mohamednegm.com/sitemap.xml

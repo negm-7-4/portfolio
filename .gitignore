@@ -1,0 +1,31 @@
+# dependencies
+node_modules/
+
+# build output
+dist/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# editor / OS
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# env
+.env
+.env.local
+.env.*.local
+
+# deploy tooling
+.vercel
+.netlify
+
+# misc large local assets (originals — optimized copies live in public/)
+image.png
+Recording*.mp4

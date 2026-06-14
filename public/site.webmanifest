@@ -1,0 +1,19 @@
+{
+  "name": "Mohamed Negm — Front-End Developer",
+  "short_name": "M. Negm",
+  "description": "CS & AI student crafting fast, immersive web experiences with React, Three.js and motion design.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b0d11",
+  "theme_color": "#0b0d11",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any maskable"
+    }
+  ]
+}

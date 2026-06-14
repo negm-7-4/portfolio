@@ -1,0 +1,261 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  --color-ink: #0b0d11;
+  --color-ink-soft: #0f1217;
+  --color-accent: #8a93a6;
+  --color-accent-2: #6f7c8c;
+  --color-accent-3: #9c958c;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  /* `overflow-x: clip` (not hidden) — hidden breaks position: sticky page-wide.
+     clip prevents horizontal scroll without creating a scroll container. */
+  overflow-x: clip;
+  overscroll-behavior-y: none;
+}
+
+body {
+  background: #0b0d11;
+  color: #dfe3ea;
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  /* Premium type rendering — ligatures, contextual alts, tabular nums in tables. */
+  font-feature-settings: "ss01", "ss02", "cv11", "calt", "kern";
+  font-variant-ligatures: common-ligatures;
+}
+
+/* Display headings get tighter tracking + nicer numerals */
+.font-display, h1, h2, h3 {
+  font-feature-settings: "ss01", "kern", "calt";
+  font-variant-ligatures: common-ligatures;
+  letter-spacing: -0.005em;
+}
+
+/* Numbers inside stat/progress UI use tabular alignment */
+.tabular-nums {
+  font-feature-settings: "tnum", "lnum";
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* Hide the native cursor — we use a custom one (only on devices with a fine pointer) */
+@media (pointer: fine) {
+  body {
+    cursor: none;
+  }
+}
+
+/* ==============================================================
+   GLOBAL LAYOUT FIXES (لحل مشكلة التصاق العناصر نهائياً)
+   ============================================================== */
+
+/* 1. Consistent section rhythm. Horizontal gutter comes from the inner
+   `w-[80%] mx-auto` containers, so sections only own the vertical padding. */
+section {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: clip;
+  padding-top: clamp(4.5rem, 9vh, 7rem) !important;
+  padding-bottom: clamp(4.5rem, 9vh, 7rem) !important;
+  padding-left: clamp(1.5rem, 5vw, 4rem) !important;
+  padding-right: clamp(1.5rem, 5vw, 4rem) !important;
+}
+
+/* 2. Keep media inside the screen (but don't force height on svg/canvas). */
+img, video {
+  max-width: 100%;
+  height: auto;
+}
+canvas { max-width: 100%; }
+p, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; }
+
+/* Slim custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0b0d11;
+}
+::-webkit-scrollbar-thumb {
+  background: #2a2a3a;
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent);
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+/* Gradient text helper. Six-stop gradient gives the highlight more
+   "movement"; slower animation (10s) is calmer on the eyes. */
+.text-gradient {
+  background: linear-gradient(
+    110deg,
+    #f5f6f8 0%,
+    #c3cad6 22%,
+    #ffffff 38%,
+    #8a93a6 50%,
+    #ffffff 62%,
+    #c3cad6 78%,
+    #f5f6f8 100%
+  );
+  background-size: 260% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradientShift 10s linear infinite;
+}
+@keyframes gradientShift {
+  to { background-position: 260% center; }
+}
+
+/* Glassy card surface — refined: subtle gradient fill + inner highlight +
+   light blur. Cheaper than full backdrop-filter, reads as frosted glass. */
+.glass {
+  background:
+    linear-gradient(180deg, rgba(28,32,40,0.62) 0%, rgba(15,18,24,0.58) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 10px 28px -10px rgba(0, 0, 0, 0.45);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  transform: translateZ(0);
+}
+
+/* Cheap, transform-only starfield drift */
+@keyframes starDrift {
+  from { transform: translateY(0); }
+  to { transform: translateY(-2000px); }
+}
+.star-drift {
+  animation-name: starDrift;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* ── Shimmer for skill bars ───────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+.bar-shimmer {
+  background-size: 250% 100%;
+  animation: shimmer 2.5s linear infinite;
+}
+
+/* ── 3D float ─────────────────────────────────────────────── */
+@keyframes float3d {
+  0%,100% { transform: translateY(0)   rotateX(0deg)   rotateZ(0deg); }
+  33%     { transform: translateY(-14px) rotateX(3deg)  rotateZ(.8deg); }
+  66%     { transform: translateY(-7px)  rotateX(-2deg) rotateZ(-.6deg); }
+}
+.animate-float3d { animation: float3d 9s ease-in-out infinite; will-change: transform; }
+
+/* ── Enhanced glass on hover ──────────────────────────────── */
+.glass:hover {
+  background:
+    linear-gradient(180deg, rgba(34,38,48,0.74) 0%, rgba(20,23,30,0.66) 100%);
+  border-color: rgba(255,255,255,0.14);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.10),
+    0 18px 36px -8px rgba(0, 0, 0, 0.55);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+/* ── Performance utilities ───────────────────────────────── */
+
+/* Sections below the fold get content-visibility: auto so the browser
+   can skip rendering them entirely until they're scrolled near. The
+   contain-intrinsic-size keeps the scrollbar honest (no layout jump).
+
+   Applied to all <section> elements EXCEPT #hero (above-the-fold) so
+   the page only paints what's actually visible to the user.   */
+main section:not(#hero) {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 800px;
+}
+/* Default touch optimizations — remove 300ms tap delay, no callout */
+a, button, [role="button"], input, textarea, [data-cursor="hover"] {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Subtle dot-grid texture for backgrounds */
+.bg-dots {
+  background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Accessible focus ring — used by interactive elements.
+   Animated subtle pulse keeps focus state visible without being harsh. */
+:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px rgba(11, 13, 17, 1),
+    0 0 0 4px rgba(170, 180, 196, 0.65),
+    0 0 16px rgba(170, 180, 196, 0.25);
+  border-radius: 8px;
+  transition: box-shadow 0.2s ease;
+}
+
+/* Keyboard focus on inputs gets a softer ring without the dark spacer
+   so the label/border underneath stays visible. */
+input:focus-visible, textarea:focus-visible {
+  box-shadow:
+    0 0 0 1px rgba(170, 180, 196, 0.45),
+    0 0 16px rgba(170, 180, 196, 0.18);
+}
+
+/* Selection color matches palette */
+::selection {
+  background: rgba(170, 180, 196, 0.45);
+  color: #ffffff;
+}
+
+/* Smoother native dialog/modal backdrops */
+dialog::backdrop {
+  background: rgba(8, 10, 14, 0.65);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
