@@ -131,7 +131,7 @@ export default function App() {
             <Stats />
             <About />
             <Suspense fallback={<SectionPlaceholder id="services" />}><Services /></Suspense>
-            <VelocityMarquee text="REACT · NEXT.JS · THREE.JS · GSAP · TAILWIND" baseVelocity={2.5} />
+            <VelocityMarquee text="REACT · NEXT.JS · THREE.JS · GSAP · FRAMER MOTION · LOTTIE · WEBGL · D3 · TAILWIND" baseVelocity={2.5} />
             <Suspense fallback={<SectionPlaceholder id="skills" />}><Skills /></Suspense>
             <Suspense fallback={<SectionPlaceholder id="experience" />}><Experience /></Suspense>
             <Suspense fallback={<SectionPlaceholder id="process" />}><Process /></Suspense>

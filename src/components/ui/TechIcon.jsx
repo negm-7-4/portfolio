@@ -4,6 +4,26 @@
  * Add new ones to ICONS map.
  */
 
+/* Small brand-colored text badge — used for libraries without a simple
+   recognisable glyph. Mirrors the JS / TS / GSAP style above. */
+const txt = (label, { size = 7.5, fg = "#000" } = {}) => (
+  <g>
+    <rect x="2" y="2" width="20" height="20" rx="4" fill="currentColor" />
+    <text
+      x="12"
+      y="12"
+      dominantBaseline="central"
+      textAnchor="middle"
+      fontFamily="system-ui"
+      fontSize={size}
+      fontWeight="900"
+      fill={fg}
+    >
+      {label}
+    </text>
+  </g>
+);
+
 const ICONS = {
   react: (
     <g>
@@ -102,6 +122,85 @@ const ICONS = {
     <g>
       <path d="M12 3 L21 8 V16 L12 21 L3 16 V8 Z" fill="none" stroke="currentColor" strokeWidth="1.4" />
       <path d="M12 3 L12 21 M3 8 L12 12 L21 8 M3 16 L12 12 L21 16" stroke="currentColor" strokeWidth="1" fill="none" opacity="0.7" />
+    </g>
+  ),
+
+  /* ── Animation & Motion ─────────────────────────────────────── */
+  anime: txt("ANI", { size: 6 }),
+  lottie: (
+    <g>
+      <circle cx="12" cy="12" r="10" fill="currentColor" />
+      <path d="M9.5 8 L16 12 L9.5 16 Z" fill="#000" />
+    </g>
+  ),
+  spring: txt("RS"),
+  aos: txt("AOS", { size: 6 }),
+  autoanimate: txt("AA"),
+
+  /* ── 3D & WebGL ─────────────────────────────────────────────── */
+  r3f: (
+    <g>
+      <circle cx="12" cy="12" r="1.8" fill="currentColor" />
+      <ellipse cx="12" cy="12" rx="9.5" ry="3.6" fill="none" stroke="currentColor" strokeWidth="1.1" />
+      <ellipse cx="12" cy="12" rx="9.5" ry="3.6" transform="rotate(60 12 12)" fill="none" stroke="currentColor" strokeWidth="1.1" />
+      <ellipse cx="12" cy="12" rx="9.5" ry="3.6" transform="rotate(120 12 12)" fill="none" stroke="currentColor" strokeWidth="1.1" />
+      <path d="M5 18 L9 14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </g>
+  ),
+  drei: txt("drei", { size: 6 }),
+  spline: (
+    <g>
+      <circle cx="7" cy="7" r="3" fill="currentColor" />
+      <circle cx="17" cy="17" r="3" fill="currentColor" />
+      <path d="M9 9 C13 9 11 15 15 15" stroke="currentColor" strokeWidth="1.6" fill="none" strokeLinecap="round" />
+    </g>
+  ),
+  babylon: txt("BJS", { size: 6 }),
+
+  /* ── 2D & Canvas ────────────────────────────────────────────── */
+  pixi: txt("pixi", { size: 6 }),
+  konva: txt("K"),
+  fabric: txt("fab", { size: 6 }),
+  p5: txt("p5"),
+
+  /* ── Scroll & Transitions ───────────────────────────────────── */
+  lenis: txt("lenis", { size: 5 }),
+  locomotive: txt("LOCO", { size: 5 }),
+  scrolltrigger: txt("ST"),
+  barba: txt("B"),
+  swiper: txt("SW", { size: 7 }),
+
+  /* ── Charts & Data Viz ──────────────────────────────────────── */
+  d3: txt("D3"),
+  chartjs: (
+    <g>
+      <path d="M12 3 a9 9 0 1 0 9 9 h-9 Z" fill="currentColor" />
+      <path d="M12 3 v9 h9 a9 9 0 0 0 -9 -9 Z" fill="currentColor" opacity="0.55" />
+    </g>
+  ),
+  recharts: (
+    <g>
+      <path d="M3 17 L9 11 L13 14 L21 5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="3" cy="17" r="1.5" fill="currentColor" />
+      <circle cx="9" cy="11" r="1.5" fill="currentColor" />
+      <circle cx="13" cy="14" r="1.5" fill="currentColor" />
+      <circle cx="21" cy="5" r="1.5" fill="currentColor" />
+    </g>
+  ),
+  echarts: txt("EC"),
+  apex: (
+    <g>
+      <rect x="3" y="12" width="3.5" height="9" rx="1" fill="currentColor" />
+      <rect x="10.25" y="7" width="3.5" height="14" rx="1" fill="currentColor" />
+      <rect x="17.5" y="3" width="3.5" height="18" rx="1" fill="currentColor" />
+    </g>
+  ),
+
+  /* ── Tooling ────────────────────────────────────────────────── */
+  vite: (
+    <g>
+      <path d="M21 5 L12.5 22 L11 13 L3 9 Z" fill="currentColor" />
+      <path d="M13 4 L9 12 L12 12.5 L11 18 L16 9 L13 8.5 Z" fill="#FFD028" />
     </g>
   ),
 };
