@@ -55,6 +55,12 @@ void main(){
   col=mix(col,c2,smoothstep(.44,.70,f));
   col=mix(col,c3,smoothstep(.64,.84,f)*.55);
 
+  /* subtle drifting iridescence — cool blue → violet → teal, kept low so
+     it reads as premium colour grading rather than a rainbow */
+  vec3 tint = .5 + .5*cos(vec3(0.0, 2.1, 4.2) + f*2.6 + T*.05 + uv.x*1.4 + uv.y*.6);
+  tint = mix(vec3(.55,.62,.80), tint, .6);           /* bias toward steel-blue */
+  col = mix(col, col*(.7+.6*tint), .22*smoothstep(.3,.9,f));
+
   /* micro sparkles */
   float sp=vn(uv*42.+T*.3);
   col+=pow(max(sp-.70,0.)/.30,3.)*.035;

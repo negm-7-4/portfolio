@@ -41,19 +41,19 @@ export default function Globe() {
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
-    camera.position.set(0, 0, 7.2);
+    camera.position.set(0, 0, 6.4);
 
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
     // ── Globe group ──────────────────────────────────────────────
     const globe = new THREE.Group();
-    // pushed down so only the top ~half shows above the fold
-    globe.position.y = -1.7;
+    // smaller, fully-visible globe parked on the right side (centred on mobile)
+    globe.position.y = 0;
     globe.rotation.z = 0.35; // tilt like a real axis
     scene.add(globe);
 
-    const R = 2.4;
+    const R = 1.7;
 
     // 1) point-cloud surface
     const ptCount = 2600;
@@ -136,6 +136,9 @@ export default function Globe() {
       renderer.setSize(w, h, false);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
+      // park the globe on the right on wide screens, centred on narrow ones
+      globe.position.x = w > 900 ? 2.1 : 0;
+      globe.position.y = w > 900 ? 0 : -0.4;
     }
     resize();
     const ro = new ResizeObserver(resize);
@@ -199,8 +202,8 @@ export default function Globe() {
         {/* canvas — fills the viewport, globe sits low so ~half shows */}
         <canvas ref={canvasRef} className="pointer-events-none absolute inset-0 h-full w-full" aria-hidden />
 
-        {/* active project info, top-left */}
-        <div className="relative z-10 mx-auto flex w-[90%] max-w-6xl flex-1 items-start pt-10 md:pt-16">
+        {/* active project info, centred on the left */}
+        <div className="relative z-10 mx-auto flex w-[90%] max-w-6xl flex-1 items-center md:w-[88%]">
           <AnimatePresence mode="wait">
             <motion.div
               key={p.title}

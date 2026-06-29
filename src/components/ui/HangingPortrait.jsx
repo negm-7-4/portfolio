@@ -23,11 +23,13 @@ export default function HangingPortrait({ src = "/portrait-najm.jpg", alt = "Moh
 
     if (reduce) { arm.style.transform = "rotate(0rad)"; return; }
 
-    // physics state (angle in radians, 0 = straight down)
-    const s = { angle: 0.14, vel: 0, dragging: false, lastAngle: 0.14, lastT: 0 };
-    const K = 0.015;     // gravity restoring strength → ~0.85s period
-    const DAMP = 0.992;  // air resistance
-    const MAX = 1.15;    // ~66° swing clamp
+    // physics state (angle in radians, 0 = straight down).
+    // Start lifted to one side so that — the first time it scrolls into view —
+    // it "drops" and swings, as if it had been held up and released.
+    const s = { angle: 0.92, vel: 0, dragging: false, lastAngle: 0.92, lastT: 0, dropped: false };
+    const K = 0.013;     // gravity restoring strength → ~0.9s period
+    const DAMP = 0.994;  // air resistance (longer, lazier swing)
+    const MAX = 1.2;     // ~69° swing clamp
 
     const pivot = () => {
       const r = container.getBoundingClientRect();
@@ -95,26 +97,32 @@ export default function HangingPortrait({ src = "/portrait-najm.jpg", alt = "Moh
 
   return (
     <div className="relative mx-auto w-full max-w-[340px] select-none" style={{ touchAction: "none" }}>
+      {/* mounting beam — reads as a bracket fixed to the top of the wall */}
+      <div className="relative mx-auto mb-1 h-[10px] w-[78%] rounded-full bg-gradient-to-b from-[#2a2f3a] to-[#11141b] shadow-[0_4px_10px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.12)]">
+        <span className="absolute left-1/2 top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-br from-white to-[#8a93a6] shadow-[0_2px_6px_rgba(0,0,0,0.6)]" />
+      </div>
+
       {/* swing arena — generous so the frame never clips while swinging */}
-      <div ref={containerRef} className="relative mx-auto h-[440px] w-full" style={{ overflow: "visible" }}>
-        {/* the nail / mount */}
+      <div ref={containerRef} className="relative mx-auto h-[540px] w-full" style={{ overflow: "visible" }}>
+        {/* the nail / mount anchor (pivot point) */}
         <div className="absolute left-1/2 top-0 z-20 -translate-x-1/2">
-          <span className="block h-3 w-3 rounded-full bg-gradient-to-br from-white to-[#8a93a6] shadow-[0_2px_6px_rgba(0,0,0,0.6)]" />
-          <span className="absolute left-1/2 top-1/2 h-1 w-1 -translate-x-1/2 -translate-y-1/2 rounded-full bg-black/40" />
+          <span className="block h-2.5 w-2.5 rounded-full bg-[#c8b48c] shadow-[0_0_8px_rgba(200,180,140,0.5)]" />
         </div>
 
         {/* rotating arm = rope + frame, pivots at the nail (top centre) */}
         <div
           ref={armRef}
-          className="absolute left-1/2 top-[6px] flex -translate-x-1/2 flex-col items-center will-change-transform"
+          className="absolute left-1/2 top-[4px] flex -translate-x-1/2 flex-col items-center will-change-transform"
           style={{ transformOrigin: "50% 0%" }}
         >
-          {/* rope — twin strands meeting at a ring */}
-          <div className="relative h-[78px] w-10">
-            <span className="absolute left-1/2 top-0 h-[58px] w-[3px] origin-top -translate-x-1/2 rotate-[10deg] rounded-full bg-gradient-to-b from-[#b9a07a] to-[#7d6a4a]" />
-            <span className="absolute left-1/2 top-0 h-[58px] w-[3px] origin-top -translate-x-1/2 -rotate-[10deg] rounded-full bg-gradient-to-b from-[#b9a07a] to-[#7d6a4a]" />
+          {/* rope — longer, thicker twin braided strands meeting at a ring */}
+          <div className="relative h-[170px] w-14">
+            <span className="absolute left-1/2 top-0 h-[150px] w-[5px] origin-top -translate-x-1/2 rotate-[7deg] rounded-full bg-gradient-to-b from-[#cdb488] via-[#a98f63] to-[#766343] shadow-[0_0_4px_rgba(0,0,0,0.4)]" />
+            <span className="absolute left-1/2 top-0 h-[150px] w-[5px] origin-top -translate-x-1/2 -rotate-[7deg] rounded-full bg-gradient-to-b from-[#cdb488] via-[#a98f63] to-[#766343] shadow-[0_0_4px_rgba(0,0,0,0.4)]" />
+            {/* braided highlight */}
+            <span className="absolute left-1/2 top-2 h-[140px] w-[1.5px] -translate-x-1/2 rounded-full bg-white/20" />
             {/* hanging ring */}
-            <span className="absolute bottom-[12px] left-1/2 h-4 w-4 -translate-x-1/2 rounded-full border-[2.5px] border-[#c8b48c]" />
+            <span className="absolute bottom-[6px] left-1/2 h-5 w-5 -translate-x-1/2 rounded-full border-[3px] border-[#c8b48c] shadow-[0_2px_5px_rgba(0,0,0,0.5)]" />
           </div>
 
           {/* the framed photo (grab target) */}

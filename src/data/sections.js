@@ -1,16 +1,17 @@
 // Master section index — drives the ChapterRail, ChapterIntro, ChapterBackdrop.
-// Each entry has its own hue (within the cool silver-steel palette) so the
-// background gradient shifts subtly as you scroll between sections.
+// A cinematic colour journey: each chapter owns a distinct jewel hue that the
+// background gradient, chapter rail and cursor tint pick up, so scrolling feels
+// like moving through different lighting states of one connected 3D world.
 
 export const sections = [
-  { id: "hero",         num: "00", label: "Intro",      color: "#8a93a6", accent: "#aab4c4", hue: 218 },
-  { id: "about",        num: "01", label: "About",      color: "#9aa4b6", accent: "#b8c1d0", hue: 216 },
-  { id: "services",     num: "02", label: "Services",   color: "#a8b0c0", accent: "#c2cad7", hue: 212 },
-  { id: "skills",       num: "03", label: "Skills",     color: "#aab8cc", accent: "#c8d2dd", hue: 210 },
-  { id: "experience",   num: "04", label: "Journey",    color: "#a4b6c8", accent: "#c0cbd6", hue: 208 },
-  { id: "process",      num: "05", label: "Process",    color: "#9ab0c4", accent: "#bccad6", hue: 205 },
-  { id: "projects",     num: "06", label: "Projects",   color: "#90a8c0", accent: "#b4c4d6", hue: 205 },
-  { id: "testimonials", num: "07", label: "Reviews",    color: "#9ab0c8", accent: "#bac8da", hue: 212 },
-  { id: "socials",      num: "08", label: "Socials",    color: "#a8b8d0", accent: "#c4d0e0", hue: 220 },
-  { id: "contact",      num: "09", label: "Contact",    color: "#b0c0d8", accent: "#ccd6e4", hue: 225 },
+  { id: "hero",         num: "00", label: "Intro",      color: "#6c7bff", accent: "#9fb0ff", hue: 232 },
+  { id: "about",        num: "01", label: "About",      color: "#8a6cff", accent: "#b39cff", hue: 256 },
+  { id: "services",     num: "02", label: "Services",   color: "#5b8dff", accent: "#9cc0ff", hue: 218 },
+  { id: "skills",       num: "03", label: "Skills",     color: "#33c9d6", accent: "#8ce8f0", hue: 187 },
+  { id: "experience",   num: "04", label: "Journey",    color: "#4fb3e8", accent: "#a0d8f5", hue: 202 },
+  { id: "process",      num: "05", label: "Process",    color: "#9a7bff", accent: "#c3b0ff", hue: 256 },
+  { id: "projects",     num: "06", label: "Projects",   color: "#ff8a5b", accent: "#ffb89a", hue: 18  },
+  { id: "testimonials", num: "07", label: "Reviews",    color: "#ff6f9c", accent: "#ffaac6", hue: 338 },
+  { id: "socials",      num: "08", label: "Socials",    color: "#6db0ff", accent: "#a9d2ff", hue: 210 },
+  { id: "contact",      num: "09", label: "Contact",    color: "#3fd6c2", accent: "#92ecdd", hue: 168 },
 ];
