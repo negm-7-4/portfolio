@@ -63,6 +63,7 @@ function SectionPlaceholder({ id }) {
 // ── Lazy chunks: only load when first needed (deferred / off-fold) ──
 const SpaceBackground   = lazy(() => import("./components/three/SpaceBackground"));
 const ChapterBackdrop   = lazy(() => import("./components/ui/ChapterBackdrop"));
+const AmbientField      = lazy(() => import("./components/ui/AmbientField"));
 const ChapterRail       = lazy(() => import("./components/ui/ChapterRail"));
 const ChapterIntro      = lazy(() => import("./components/ui/ChapterIntro"));
 const CursorParticles   = lazy(() => import("./components/ui/CursorParticles"));
@@ -108,6 +109,7 @@ export default function App() {
             <DeferredMount>
               {!touch && <SpaceBackground />}
               <ChapterBackdrop />
+              {!isLow && <AmbientField />}
               {!isLow && !touch && <CursorSpotlight />}
               {!isLow && <VelocityVignette />}
               {!isLow && <GrainOverlay />}
