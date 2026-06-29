@@ -1,42 +1,58 @@
 ---
 name: data-viz-charts
-description: Reference and code patterns for charts & data visualization libraries — D3.js, Chart.js, Recharts, Apache ECharts, and ApexCharts. Use when building dashboards, analytics, graphs, charts (line/bar/pie/area/scatter/heatmap), data-driven SVG/canvas visualizations, or animated/interactive data displays for products and marketing. Covers install commands, when to pick each, core APIs, and gotchas.
+description: Comprehensive, modern reference for charts, dashboards, graphs & data visualization — D3.js, Observable Plot, Chart.js, Recharts, Apache ECharts, ApexCharts, visx (Airbnb), Nivo, Victory, Tremor (React dashboards), Highcharts, AG Charts, Plotly.js, Unovis, lightweight-charts (financial/TradingView), deck.gl & regl (GPU/large-scale & maps), and graph/network libs Cytoscape.js, sigma.js, vis-network. Use when building dashboards, analytics, KPI cards, graphs, charts (line/bar/pie/area/scatter/heatmap/candlestick), network/force graphs, geospatial/map data, large-scale GPU visualizations, or animated/interactive data displays for products and marketing. Covers install commands, when to pick each, core APIs, and gotchas.
 ---
 
-# Charts & Data Visualization
+# Charts & Data Visualization (modern toolkit)
 
-For dashboards, product analytics, and data-driven visuals.
+For dashboards, product analytics, financial charts, network graphs and maps.
 
-## Picking a library
-- **D3.js** — low-level, maximum control. Build *any* custom/bespoke visualization (force graphs, maps, custom layouts). Steepest curve. Not a chart library — a toolkit.
-- **Chart.js** — simple, canvas-based, great defaults. Fast path for standard line/bar/pie/doughnut/radar charts.
-- **Recharts** — React-native, composable SVG charts built on D3. Default for React dashboards needing standard charts with JSX.
-- **Apache ECharts** — feature-rich canvas/SVG charts; huge chart types (heatmap, sankey, graph, geo, candlestick), handles large datasets well.
-- **ApexCharts** — polished, animated SVG charts with good interactivity; `react-apexcharts` wrapper. Nice for marketing dashboards.
+## Library map
+| Need | Use |
+| --- | --- |
+| Bespoke / fully custom visualization | **D3.js** |
+| Quick exploratory charts from data (D3 team) | **Observable Plot** |
+| Simple standard charts, canvas, great defaults | **Chart.js** |
+| Composable React SVG charts | **Recharts** |
+| Many chart types, big datasets, canvas/SVG | **Apache ECharts** |
+| Polished animated SVG charts | **ApexCharts** |
+| Low-level React + D3 primitives (max control) | **visx** |
+| Beautiful ready-made React charts | **Nivo** |
+| Componentized, animatable React charts | **Victory** |
+| Drop-in React dashboard/KPI components | **Tremor** |
+| Enterprise, huge feature set | **Highcharts** / **AG Charts** |
+| Scientific / 3D / statistical plots | **Plotly.js** |
+| Composable, framework-agnostic | **Unovis** |
+| Financial candlestick/trading charts | **lightweight-charts** |
+| Millions of points, GPU, geospatial/maps | **deck.gl** / regl |
+| Network / force / relationship graphs | **Cytoscape.js** / sigma.js / vis-network |
 
-## D3.js
+## D3.js (and Observable Plot)
 ```bash
-npm i d3
+npm i d3            # low-level toolkit (scales, shapes, selections)
+npm i @observablehq/plot   # high-level grammar-of-graphics on top of D3
 ```
 ```js
 import * as d3 from "d3";
 const x = d3.scaleLinear().domain([0, d3.max(data, d => d.v)]).range([0, 400]);
-const svg = d3.select(el).append("svg").attr("width", 420).attr("height", 200);
-svg.selectAll("rect").data(data).join("rect")
-   .attr("y", (_, i) => i * 24).attr("width", d => x(d.v)).attr("height", 20).attr("fill", "#38bdf8");
+// In React, use D3 for MATH (scales, d3.line()) and let React render the SVG.
 ```
-In React, prefer letting React own the DOM and using D3 only for math (scales, shapes, `d3.line()`), or isolate D3 DOM manipulation inside a `useEffect` with cleanup. Import only submodules you use (`d3-scale`, `d3-shape`) to keep bundles small.
+```js
+import * as Plot from "@observablehq/plot";
+el.append(Plot.plot({ marks: [Plot.barY(data, { x: "name", y: "value" })] }));
+```
+Import D3 submodules (`d3-scale`, `d3-shape`) to keep bundles small.
 
 ## Chart.js
 ```bash
-npm i chart.js
+npm i chart.js          # + react-chartjs-2 for React
 ```
 ```js
 import { Chart, registerables } from "chart.js";
 Chart.register(...registerables);
 new Chart(canvas, { type: "line", data: { labels, datasets: [{ data, tension: 0.4 }] }, options: { responsive: true } });
 ```
-React: use `react-chartjs-2`. Destroy chart instances on unmount to avoid canvas reuse errors.
+Destroy instances on unmount (canvas reuse errors otherwise).
 
 ## Recharts
 ```bash
@@ -45,40 +61,72 @@ npm i recharts
 ```jsx
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 <ResponsiveContainer width="100%" height={300}>
-  <LineChart data={data}>
-    <XAxis dataKey="name" /><YAxis /><Tooltip />
-    <Line type="monotone" dataKey="value" stroke="#38bdf8" strokeWidth={2} dot={false} />
-  </LineChart>
+  <LineChart data={data}><XAxis dataKey="name" /><YAxis /><Tooltip />
+    <Line type="monotone" dataKey="value" stroke="#38bdf8" strokeWidth={2} dot={false} /></LineChart>
 </ResponsiveContainer>
 ```
-Always wrap in `ResponsiveContainer`. Memoize data; Recharts re-renders can be heavy with large datasets.
+Always wrap in `ResponsiveContainer`; memoize data for large sets.
 
-## Apache ECharts
+## Apache ECharts / ApexCharts
 ```bash
-npm i echarts          # + echarts-for-react for React
+npm i echarts            # + echarts-for-react
+npm i apexcharts react-apexcharts
 ```
 ```js
 import * as echarts from "echarts";
 const chart = echarts.init(el);
 chart.setOption({ xAxis: { type: "category", data: labels }, yAxis: {}, series: [{ type: "bar", data }] });
-window.addEventListener("resize", () => chart.resize());
 ```
-Best for very large datasets and exotic chart types. Import only needed modules (tree-shakable `echarts/core`) to cut bundle size. `chart.dispose()` on cleanup.
+ECharts handles very large datasets and exotic types (heatmap, sankey, graph, geo, candlestick); tree-shake via `echarts/core`. `chart.dispose()` on cleanup.
 
-## ApexCharts
+## visx (low-level React + D3)
 ```bash
-npm i apexcharts react-apexcharts
+npm i @visx/scale @visx/shape @visx/axis @visx/group
+```
+Unstyled primitives — you compose the chart and own every pixel. Best when design is fully custom but you want React + D3 math.
+
+## Nivo / Victory / Tremor
+```bash
+npm i @nivo/core @nivo/line          # gorgeous defaults, SVG/Canvas/responsive
+npm i victory                        # componentized, animatable charts
+npm i @tremor/react                  # dashboard blocks: Card, AreaChart, BarList, KPIs
 ```
 ```jsx
-import Chart from "react-apexcharts";
-<Chart type="area" height={300}
-  series={[{ name: "Sales", data: [30, 40, 35, 50, 49, 60] }]}
-  options={{ chart: { toolbar: { show: false } }, stroke: { curve: "smooth" } }} />
+import { Card, AreaChart } from "@tremor/react";
+<Card><AreaChart data={data} index="date" categories={["Sales"]} /></Card>
+```
+Tremor = fastest path to a polished product dashboard.
+
+## Enterprise: Highcharts / AG Charts / Plotly
+```bash
+npm i highcharts highcharts-react-official   # license required for commercial
+npm i ag-charts-community ag-charts-react
+npm i plotly.js-dist-min react-plotly.js     # scientific/statistical/3D plots
+```
+
+## Unovis / lightweight-charts
+```bash
+npm i @unovis/ts @unovis/react   # framework-agnostic, composable
+npm i lightweight-charts          # TradingView financial candlestick/area charts, tiny & fast
+```
+
+## Large-scale & GPU: deck.gl / regl
+```bash
+npm i deck.gl          # millions of points, WebGL2/WebGPU, pairs with MapLibre/Mapbox
+npm i regl             # functional low-level WebGL for custom GPU viz
+```
+
+## Network / graph viz
+```bash
+npm i cytoscape        # graph theory, layouts, large networks
+npm i sigma graphology # WebGL rendering of big graphs
+npm i vis-network      # easy interactive network diagrams
 ```
 
 ## General rules
-- Pick the lightest tool that does the job; reach for D3 only when no chart lib fits.
+- Pick the lightest tool that fits; reach for D3 only when no chart lib does the job.
 - Tree-shake / import submodules (D3, ECharts) — full imports bloat bundles badly.
-- Make charts responsive (ResizeObserver / built-in responsive options) and accessible (labels, `role`, data tables for screen readers).
+- Responsive (ResizeObserver / built-in) and accessible (labels, `role`, data-table fallback for screen readers).
 - Destroy/dispose chart instances on unmount; throttle resize handlers.
-- Animate on first render but disable heavy animation when re-rendering large live datasets.
+- Animate on first render; disable heavy animation when re-rendering large live datasets.
+- For >100k points use canvas/WebGL (ECharts/deck.gl/regl), not SVG.

@@ -1,18 +1,27 @@
 ---
 name: scroll-effects
-description: Reference and code patterns for scroll-driven motion, smooth scrolling, and page transitions — Lenis, Locomotive Scroll, GSAP ScrollTrigger, Barba.js, and Swiper. Use when building scroll-triggered animations, pinned/sticky scenes, parallax, scroll-scrubbed video (video that plays as you scroll), smooth/inertia scrolling, sliders/carousels, or seamless single-page-app route transitions. Common in product-marketing and award-style sites. Covers install commands, core APIs, scroll-video, and gotchas.
+description: Comprehensive, modern reference for scroll-driven motion, smooth scrolling & page transitions — Lenis, Locomotive Scroll, GSAP ScrollTrigger / ScrollSmoother / Observer, Scrollama (scrollytelling), Rellax, react-scroll-parallax, simple-parallax, Atropos, react-intersection-observer, Swiper, Barba.js, Swup, Taxi.js, and the native View Transitions API + CSS scroll-driven animations (animation-timeline: scroll()/view()). Use when building scroll-triggered animations, pinned/sticky scenes, parallax, scroll-scrubbed video (video that plays as you scroll), scrollytelling, smooth/inertia scrolling, sliders/carousels, or seamless route/page transitions. Common in product-marketing and award-style sites. Covers install commands, scroll-video, native APIs, and gotchas.
 ---
 
-# Scroll Effects & Page Transitions
+# Scroll Effects & Page Transitions (modern toolkit)
 
 Scroll-driven motion behind product-marketing and award-style sites.
 
-## Picking a library
-- **Lenis** — modern, lightweight smooth-scroll (inertia). The current default; integrates cleanly with ScrollTrigger.
-- **Locomotive Scroll** — smooth scroll + scroll detection + parallax via data attributes. v5 is built on Lenis.
-- **GSAP ScrollTrigger** — the engine for scroll-triggered timelines, pinning, scrubbing, and scroll-scrubbed video. Pair with Lenis.
-- **Barba.js** — animated transitions between pages in an MPA without full reloads.
-- **Swiper** — touch sliders/carousels with effects (parallax, coverflow, autoplay), used heavily in marketing hero/feature sections.
+## Library map
+| Need | Use |
+| --- | --- |
+| Smooth/inertia scrolling | **Lenis** (modern default) / Locomotive |
+| Scroll-triggered timelines, pinning, scrubbing | **GSAP ScrollTrigger** |
+| Native-feel smoothing + parallax driven by GSAP | **ScrollSmoother** (free in GSAP 3.13) |
+| Unified wheel/touch/pointer gesture handling | **GSAP Observer** |
+| Step-based scrollytelling (data stories) | **Scrollama** |
+| Simple parallax | **Rellax** / simple-parallax / react-scroll-parallax |
+| 3D tilt/parallax on hover | **Atropos** |
+| Fire on enter/leave viewport (React) | **react-intersection-observer** |
+| Sliders / carousels with effects | **Swiper** |
+| Animated page transitions (MPA) | **Barba.js** / Swup / Taxi.js |
+| Animated DOM/route transitions (native) | **View Transitions API** |
+| Pure-CSS scroll reveal / scrubbing | **CSS scroll-driven animations** |
 
 ## Lenis (smooth scroll)
 ```bash
@@ -24,9 +33,9 @@ const lenis = new Lenis({ lerp: 0.1, smoothWheel: true });
 function raf(t) { lenis.raf(t); requestAnimationFrame(raf); }
 requestAnimationFrame(raf);
 ```
-React: run it in a `useEffect` and `lenis.destroy()` on cleanup. To sync with GSAP, drive Lenis from `gsap.ticker` and call `ScrollTrigger.update` on Lenis `scroll`.
+React: run in `useEffect`, `lenis.destroy()` on cleanup. There's also `lenis/react` (`<ReactLenis root>`).
 
-## GSAP ScrollTrigger
+## GSAP ScrollTrigger (the workhorse)
 ```bash
 npm i gsap
 ```
@@ -35,7 +44,6 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
-// scrubbed reveal tied to scroll position
 gsap.to(".panel", {
   xPercent: -100,
   scrollTrigger: { trigger: ".wrap", start: "top top", end: "+=2000", scrub: true, pin: true },
@@ -47,46 +55,58 @@ lenis.on("scroll", ScrollTrigger.update);
 gsap.ticker.add((t) => lenis.raf(t * 1000));
 gsap.ticker.lagSmoothing(0);
 ```
-Call `ScrollTrigger.refresh()` after layout/content changes (fonts, images, route swaps).
+Call `ScrollTrigger.refresh()` after layout/content/route changes.
+
+## ScrollSmoother & Observer (free in GSAP 3.13)
+```js
+import { ScrollSmoother } from "gsap/ScrollSmoother";
+import { Observer } from "gsap/Observer";
+gsap.registerPlugin(ScrollSmoother, Observer);
+ScrollSmoother.create({ smooth: 1.2, effects: true }); // needs #smooth-wrapper > #smooth-content
+Observer.create({ type: "wheel,touch", onUp: () => {}, onDown: () => {} }); // section-snap UIs
+```
+Use ScrollSmoother **or** Lenis — never both.
 
 ## Scroll-scrubbed video (video plays on scroll)
-The classic Apple-style effect: scrub a `<video>`'s `currentTime` from scroll progress.
+Classic Apple-style effect: drive a `<video>`'s `currentTime` from scroll progress.
 ```js
 const video = document.querySelector("video");
-video.pause();
+video.pause(); video.muted = true; // playsInline in markup
 ScrollTrigger.create({
   trigger: ".video-wrap", start: "top top", end: "+=3000", pin: true, scrub: true,
-  onUpdate: (self) => {
-    if (video.duration) video.currentTime = self.progress * video.duration;
-  },
+  onUpdate: (self) => { if (video.duration) video.currentTime = self.progress * video.duration; },
 });
 ```
-Gotchas: provide a fast-seeking encode (frequent keyframes, e.g. `-g 1` short GOP) or use an image-sequence fallback for buttery scrubbing; `video.muted = true; playsInline` for autoplay/seek on mobile; preload metadata so `duration` is known.
+For buttery scrubbing: encode with frequent keyframes (short GOP, e.g. `-g 1`) or use an **image-sequence** (draw frames to canvas) fallback; preload metadata so `duration` is known.
 
-## Locomotive Scroll
+## Scrollama (scrollytelling)
 ```bash
-npm i locomotive-scroll
+npm i scrollama
 ```
 ```js
-import LocomotiveScroll from "locomotive-scroll";
-const scroll = new LocomotiveScroll(); // v5: smooth by default, data-scroll attributes for parallax
+import scrollama from "scrollama";
+const scroller = scrollama();
+scroller.setup({ step: ".step", offset: 0.5 }).onStepEnter(({ element, index }) => { /* swap graphic */ });
 ```
-v4 used `data-scroll-container` + custom scroll proxy for ScrollTrigger; v5 is Lenis-based — prefer Lenis + ScrollTrigger directly for new projects.
+Best for data-story narratives where a sticky graphic updates as text steps scroll past.
 
-## Barba.js (page transitions)
+## Parallax: Rellax / simple-parallax / react-scroll-parallax / Atropos
 ```bash
-npm i @barba/core
+npm i rellax                 # new Rellax(".rellax")  + data-rellax-speed
+npm i simple-parallax-js     # image parallax on scroll
+npm i react-scroll-parallax  # <Parallax speed={-10}> in React
+npm i atropos                 # 3D tilt/parallax card on hover (touch-aware)
 ```
-```js
-import barba from "@barba/core";
-barba.init({
-  transitions: [{
-    leave: (data) => gsap.to(data.current.container, { opacity: 0 }),
-    enter: (data) => gsap.from(data.next.container, { opacity: 0 }),
-  }],
-});
+
+## react-intersection-observer
+```bash
+npm i react-intersection-observer
 ```
-Re-init scroll/animation libs in `enter`/`after` hooks (the DOM is swapped). For React/Next SPAs prefer route-transition tools (Framer Motion `AnimatePresence`, View Transitions API) instead of Barba.
+```jsx
+import { useInView } from "react-intersection-observer";
+const { ref, inView } = useInView({ triggerOnce: true, rootMargin: "-10%" });
+<div ref={ref} className={inView ? "is-visible" : ""} />
+```
 
 ## Swiper
 ```bash
@@ -94,16 +114,38 @@ npm i swiper
 ```
 ```jsx
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, EffectCoverflow } from "swiper/modules";
+import { Autoplay, EffectCoverflow, Parallax } from "swiper/modules";
 import "swiper/css";
-<Swiper modules={[Autoplay, EffectCoverflow]} effect="coverflow" autoplay={{ delay: 3000 }} loop>
-  <SwiperSlide>1</SwiperSlide>
-  <SwiperSlide>2</SwiperSlide>
+<Swiper modules={[Autoplay, EffectCoverflow, Parallax]} effect="coverflow" autoplay={{ delay: 3000 }} loop>
+  <SwiperSlide>1</SwiperSlide><SwiperSlide>2</SwiperSlide>
 </Swiper>
 ```
 
+## Page transitions: Barba / Swup / Taxi (MPA)
+```bash
+npm i @barba/core   # leave/enter hooks, re-init libs in enter/after
+npm i swup          # plugin-based animated page transitions
+npm i @unseenco/taxi # modern Barba-like router with transitions
+```
+For React/Next SPAs prefer Framer Motion `AnimatePresence` or the View Transitions API instead.
+
+## Native modern APIs (prefer when possible)
+```js
+// View Transitions API — animated route/DOM changes, supported in Next.js & SPAs
+document.startViewTransition(() => updateDOM());
+```
+```css
+/* CSS scroll-driven animations — zero JS, runs on the compositor */
+.reveal { animation: fade linear both; animation-timeline: view(); animation-range: entry 0% cover 30%; }
+@keyframes fade { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; } }
+/* progress bar tied to page scroll */
+.bar { animation: grow linear; animation-timeline: scroll(root); }
+@keyframes grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+```
+
 ## General rules
-- Only one smooth-scroll engine at a time (Lenis OR Locomotive) — never stack them.
-- Always `refresh()` ScrollTrigger after async content loads; kill triggers on unmount.
-- Respect `prefers-reduced-motion`: disable pinning/scrubbing and fall back to instant/native scroll.
-- Pin/scrub scenes are expensive — keep pinned content GPU-friendly (transform/opacity only).
+- Only one smooth-scroll engine at a time (Lenis OR Locomotive OR ScrollSmoother).
+- `ScrollTrigger.refresh()` after async content loads; `kill()` triggers on unmount.
+- Respect `prefers-reduced-motion`: disable pinning/scrubbing, fall back to native/instant scroll.
+- Keep pinned/scrubbed content GPU-friendly (transform/opacity only).
+- Prefer native (View Transitions / CSS scroll-driven) before adding JS where browser support allows; progressively enhance.

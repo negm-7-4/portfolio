@@ -1,29 +1,39 @@
 ---
 name: web-animation
-description: Reference and code patterns for web animation & transition libraries — Framer Motion / Motion, GSAP, Anime.js, Lottie, React Spring, AOS, and Auto-Animate. Use when building animated UI, page/route transitions, micro-interactions, entrance/scroll reveals, springy physics motion, or playing After Effects (Lottie) animations on the web. Covers install commands, core APIs, idiomatic snippets, and common gotchas.
+description: Comprehensive, modern reference for web animation & transition libraries — Framer Motion / Motion, Motion One, GSAP (+ free plugins SplitText, Flip, Observer, MorphSVG, DrawSVG, MotionPath), Anime.js v4, Lottie, Rive, React Spring, Popmotion, Theatre.js, AutoAnimate, AOS, ScrollReveal, animate.css / tw-animate-css, SplitType / Splitting.js, Typed.js, NumberFlow, the native Web Animations API (WAAPI) and CSS scroll-driven / View Transitions. Use when building animated UI, page/route transitions, micro-interactions, entrance/scroll reveals, text effects, springy physics motion, animated numbers, or interactive vector (Lottie/Rive) animations. Covers install commands, when to pick each, idiomatic snippets, modern/native APIs, and gotchas.
 ---
 
-# Web Animation & Motion
+# Web Animation & Motion (modern toolkit)
 
-Toolkit behind motion-heavy, award-style landing pages and product-marketing
-sites. Pick the library that fits the job, then use the patterns below.
+Everything behind motion-heavy, award-style landing pages and product-marketing
+sites. Start with the picker, then jump to the library.
 
-## Picking a library
-- **Framer Motion / Motion** — declarative React animation, layout animations, gestures, `AnimatePresence` exit transitions. Default for React.
-- **GSAP** — imperative timelines, the most powerful for sequencing & scroll (see `scroll-effects` skill for ScrollTrigger). Framework-agnostic.
-- **Anime.js** — lightweight, timeline-based, great for SVG/DOM/object tweening without React.
-- **Lottie** — render After Effects/Figma animations exported as JSON. Best for illustrative, designer-made motion.
-- **React Spring** — physics/spring-based animation when you want natural motion driven by spring configs rather than durations.
-- **AOS (Animate On Scroll)** — drop-in scroll-reveal via data attributes. Fastest path for simple "fade up on scroll".
-- **Auto-Animate (FormKit)** — one line to animate add/remove/reorder of list children. Zero config.
+## Library map (pick the right tool)
+| Need | Use |
+| --- | --- |
+| Declarative React animation, gestures, exit, layout | **Framer Motion / Motion** |
+| Tiny vanilla animation on the native WAAPI | **Motion One** |
+| Powerful imperative timelines & sequencing | **GSAP** (+ plugins) |
+| Lightweight timeline tweening (DOM/SVG/JS objects) | **Anime.js v4** |
+| Designer-made After Effects animations (JSON) | **Lottie** |
+| Interactive, state-driven vector animations | **Rive** (modern Lottie alternative) |
+| Natural spring physics | **React Spring** / Popmotion |
+| Visual animation sequencing / design-tool workflow | **Theatre.js** |
+| Animate list add/remove/reorder, zero config | **AutoAnimate** |
+| Drop-in scroll reveal via attributes | **AOS** / ScrollReveal |
+| Utility CSS keyframes | **animate.css** / **tw-animate-css** |
+| Split text into chars/words/lines to animate | **SplitType** / **Splitting.js** / GSAP SplitText |
+| Typewriter effect | **Typed.js** |
+| Smoothly animated/rolling numbers | **NumberFlow** |
+| Zero-dependency native motion | **WAAPI**, CSS scroll-driven, View Transitions |
 
 ## Framer Motion / Motion
-Package: `motion` (v11+ ships React API under `motion/react`; older `framer-motion` still works).
+Package: `motion` (v11+; React API under `motion/react`). Vanilla API under `motion`.
 ```bash
 npm i motion
 ```
 ```jsx
-import { motion, AnimatePresence, useScroll, useTransform } from "motion/react";
+import { motion, AnimatePresence, useScroll, useTransform, useSpring } from "motion/react";
 
 <motion.div
   initial={{ opacity: 0, y: 40 }}
@@ -32,56 +42,93 @@ import { motion, AnimatePresence, useScroll, useTransform } from "motion/react";
   transition={{ type: "spring", stiffness: 120, damping: 18 }}
 />
 
-// Exit animations require AnimatePresence + a stable key
 <AnimatePresence mode="wait">
   {open && <motion.div key="panel" exit={{ opacity: 0 }} />}
 </AnimatePresence>
 
-// Layout animations: add `layout`; shared element transitions: layoutId
+// Shared element / layout transitions
 <motion.div layout layoutId="card" />
-```
-Gotchas: respect reduced motion with `<MotionConfig reducedMotion="user">`; `whileInView` with `once:false` re-triggers; animate transforms/opacity (cheap) over layout-affecting props.
 
-## GSAP
+// Scroll-linked values
+const { scrollYProgress } = useScroll();
+const y = useTransform(scrollYProgress, [0, 1], [0, -200]);
+```
+Honor reduced motion globally: `<MotionConfig reducedMotion="user">`. Animate transforms/opacity, not layout props.
+
+## Motion One (vanilla, WAAPI)
+Tiny (~5kb), hardware-accelerated via Web Animations API.
+```bash
+npm i motion
+```
+```js
+import { animate, scroll, stagger, inView } from "motion";
+animate(".box", { transform: "translateY(0)", opacity: 1 }, { delay: stagger(0.1) });
+inView(".reveal", (el) => animate(el, { opacity: 1, y: 0 }));
+scroll(animate(".bar", { scaleX: [0, 1] }));
+```
+
+## GSAP (+ free plugins)
+As of GSAP 3.13 the formerly-premium plugins are **free**: SplitText, ScrollSmoother, MorphSVG, DrawSVG, MotionPath, Inertia, etc.
 ```bash
 npm i gsap
 ```
 ```js
 import gsap from "gsap";
-const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-tl.from(".title", { y: 60, opacity: 0, duration: 0.8 })
-  .from(".sub", { y: 30, opacity: 0 }, "-=0.4"); // overlap previous by 0.4s
-```
-In React, wrap in `gsap.context()` for automatic cleanup:
-```jsx
-useEffect(() => {
-  const ctx = gsap.context(() => { gsap.from(".box", { x: -100 }); }, rootRef);
-  return () => ctx.revert();
-}, []);
-```
-Register plugins once: `gsap.registerPlugin(ScrollTrigger)`.
+import { SplitText } from "gsap/SplitText";
+import { Flip } from "gsap/Flip";
+gsap.registerPlugin(SplitText, Flip);
 
-## Anime.js
+const split = new SplitText(".headline", { type: "chars,words" });
+gsap.from(split.chars, { yPercent: 120, opacity: 0, stagger: 0.02, ease: "power3.out" });
+
+// FLIP layout animation between two states
+const state = Flip.getState(".item");
+/* ...mutate DOM / reorder... */
+Flip.from(state, { duration: 0.6, ease: "power2.inOut" });
+```
+React cleanup pattern:
+```jsx
+useGSAP(() => { gsap.from(".box", { x: -100 }); }, { scope: rootRef }); // @gsap/react
+```
+Install `@gsap/react` for the `useGSAP` hook. See `scroll-effects` skill for ScrollTrigger/ScrollSmoother.
+
+## Anime.js v4
+v4 has a new modular ESM API.
 ```bash
 npm i animejs
 ```
 ```js
-import anime from "animejs";
-anime({ targets: ".dot", translateX: 250, scale: [1, 1.5], delay: anime.stagger(80), loop: true, direction: "alternate" });
+import { animate, stagger, createTimeline } from "animejs";
+animate(".dot", { x: 250, scale: [1, 1.5], delay: stagger(80), loop: true, alternate: true });
+const tl = createTimeline();
+tl.add(".a", { x: 100 }).add(".b", { y: 100 }, "-=200");
 ```
 
 ## Lottie
 ```bash
-npm i lottie-react   # React wrapper around lottie-web
+npm i lottie-react                 # React wrapper over lottie-web
+# or, smaller .lottie format:
+npm i @lottiefiles/dotlottie-react
 ```
 ```jsx
 import Lottie from "lottie-react";
 import data from "./hero.json";
 <Lottie animationData={data} loop autoplay style={{ width: 240 }} />
 ```
-Use `lottie-web` directly for non-React. For tiny bundles consider `@lottiefiles/dotlottie-react` (.lottie format). Lazy-load JSON — Lottie files can be large.
+Lazy-load JSON; files can be large. Prefer `.lottie` (dotLottie) for smaller payloads.
 
-## React Spring
+## Rive (modern interactive vector)
+State-machine driven, far smaller & more interactive than Lottie. Great for buttons, mascots, onboarding.
+```bash
+npm i @rive-app/react-canvas
+```
+```jsx
+import { useRive } from "@rive-app/react-canvas";
+const { RiveComponent } = useRive({ src: "/hero.riv", stateMachines: "State Machine 1", autoplay: true });
+<RiveComponent style={{ width: 400, height: 400 }} />
+```
+
+## React Spring / Popmotion
 ```bash
 npm i @react-spring/web
 ```
@@ -91,17 +138,14 @@ const styles = useSpring({ from: { opacity: 0 }, to: { opacity: 1 }, config: { t
 <animated.div style={styles} />
 ```
 
-## AOS
+## Theatre.js (animation sequencing studio)
+Design complex sequences in a visual editor, drive any JS/DOM/3D values.
 ```bash
-npm i aos
+npm i @theatre/core @theatre/studio
 ```
-```js
-import AOS from "aos"; import "aos/dist/aos.css";
-AOS.init({ duration: 600, once: true });
-// markup: <div data-aos="fade-up" data-aos-delay="100">
-```
+Pair with `@theatre/r3f` for editing R3F scenes. Strip `@theatre/studio` from production builds.
 
-## Auto-Animate
+## AutoAnimate
 ```bash
 npm i @formkit/auto-animate
 ```
@@ -111,8 +155,55 @@ const [parent] = useAutoAnimate();
 <ul ref={parent}>{items.map(i => <li key={i.id}>{i.text}</li>)}</ul>
 ```
 
+## Scroll reveal: AOS / ScrollReveal
+```bash
+npm i aos          # data-aos="fade-up"
+npm i scrollreveal # ScrollReveal().reveal(".box", { distance: "40px", origin: "bottom" })
+```
+
+## CSS utilities: animate.css / tw-animate-css
+```bash
+npm i animate.css            # class="animate__animated animate__fadeInUp"
+npm i tw-animate-css         # Tailwind v4 successor to tailwindcss-animate
+```
+
+## Text effects: SplitType / Splitting.js / Typed.js
+```bash
+npm i split-type   # const t = new SplitType(".h", { types: "chars" }) -> animate t.chars with GSAP/Motion
+npm i splitting     # Splitting() adds char/word spans + CSS vars
+npm i typed.js      # new Typed("#el", { strings: ["Hi", "Hello"], typeSpeed: 50 })
+```
+
+## NumberFlow (animated numbers)
+Modern, accessible rolling-number component.
+```bash
+npm i @number-flow/react
+```
+```jsx
+import NumberFlow from "@number-flow/react";
+<NumberFlow value={count} />
+```
+
+## Native / zero-dependency modern APIs
+Prefer these when you don't need a library — best performance, no bundle cost.
+```js
+// Web Animations API
+el.animate([{ opacity: 0, transform: "translateY(20px)" }, { opacity: 1, transform: "none" }],
+           { duration: 600, easing: "cubic-bezier(.2,.8,.2,1)", fill: "both" });
+```
+```css
+/* CSS scroll-driven animations (Chromium; progressive enhancement) */
+@keyframes reveal { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; } }
+.card { animation: reveal linear both; animation-timeline: view(); animation-range: entry 0% cover 30%; }
+```
+```js
+// View Transitions API — animated DOM/route changes
+document.startViewTransition(() => updateDOM());
+```
+
 ## General rules
-- Animate `transform`/`opacity`; avoid animating `width/height/top/left` (layout thrash).
-- Always honor `prefers-reduced-motion`.
-- Clean up timelines/instances on unmount to avoid leaks.
-- Code-split heavy animation chunks (Lottie JSON, GSAP plugins) so they don't block first paint.
+- Animate `transform`/`opacity`; avoid `width/height/top/left` (layout thrash).
+- Always honor `prefers-reduced-motion` (`@media`, `MotionConfig`, or guard JS).
+- Clean up timelines/instances/observers on unmount.
+- Code-split heavy assets (Lottie/Rive files, GSAP plugins) so they don't block first paint.
+- Reach for native (WAAPI / CSS scroll-driven / View Transitions) before adding a dependency.
