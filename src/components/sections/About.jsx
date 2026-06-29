@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
 import SectionHeading from "../ui/SectionHeading";
 import TiltCard from "../ui/TiltCard";
-import Portrait from "../ui/Portrait";
+import HangingPortrait from "../ui/HangingPortrait";
 import { profile, aboutCards } from "../../data/content";
 
 /* ─── Subtle SVG glyphs for the trait cards ─── */
@@ -158,8 +158,8 @@ export default function About() {
             transition={{ delay: 0.15, duration: 0.7 }}
             className="flex flex-col gap-8 md:col-span-5"
           >
-            {/* Animated profile photo */}
-            <Portrait />
+            {/* Interactive hanging portrait — drag it, watch it swing */}
+            <HangingPortrait />
 
             <TiltCard
               max={6}
