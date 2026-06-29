@@ -196,6 +196,27 @@ const ICONS = {
     </g>
   ),
 
+  /* ── Extra animation / 3D / viz / UI / XR libraries ─────────── */
+  motionone:   txt("M1"),
+  rive:        txt("rive", { size: 6 }),
+  theatre:     txt("TH"),
+  webgpu:      txt("GPU", { size: 6 }),
+  twojs:       txt("2.js", { size: 6 }),
+  matter:      txt("MJS", { size: 6 }),
+  tsparticles: txt("tsP", { size: 6 }),
+  scrollama:   txt("SC"),
+  visx:        txt("visx", { size: 6 }),
+  nivo:        txt("nivo", { size: 6 }),
+  tremor:      txt("TR"),
+  deckgl:      txt("deck", { size: 6 }),
+  shadcn:      txt("sh"),
+  aceternity:  txt("AC"),
+  magicui:     txt("MUI", { size: 6 }),
+  vanta:       txt("V"),
+  aframe:      txt("A·F", { size: 6 }),
+  webxr:       txt("XR"),
+  modelviewer: txt("MV"),
+
   /* ── Tooling ────────────────────────────────────────────────── */
   vite: (
     <g>

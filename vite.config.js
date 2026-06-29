@@ -5,7 +5,7 @@ import tailwindcss from "@tailwindcss/vite";
 // Chunks that should NOT be modulepreloaded — they're huge and only
 // needed lazily / on interaction. Preloading them would defeat the
 // whole point of code-splitting.
-const LAZY_CHUNKS = new Set(["spline", "gsap"]);
+const LAZY_CHUNKS = new Set(["spline", "gsap", "three"]);
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
@@ -26,6 +26,9 @@ export default defineConfig({
 
           // Spline — biggest contributor by far.
           if (id.includes("@splinetool"))               return "spline";
+
+          // Three.js — only needed for the lazy Globe project view.
+          if (id.includes("/three/") || id.includes("three/build")) return "three";
 
           // Animation libs
           if (id.includes("framer-motion") || id.includes("motion"))

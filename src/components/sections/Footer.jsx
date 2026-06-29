@@ -3,6 +3,7 @@ import { motion, useScroll, useTransform } from "motion/react";
 import { celebrate } from "../../lib/confetti";
 import { profile } from "../../data/content";
 import Signature from "../ui/Signature";
+import StarSignature from "../ui/StarSignature";
 
 export default function Footer() {
   const ref = useRef(null);
@@ -222,11 +223,15 @@ export default function Footer() {
         </div>
 
         {/* ── Signature row ───────────────────────────────────── */}
-        <div className="flex flex-col items-center gap-3 border-t border-white/[0.07] pt-10 pb-4">
-          <p className="text-[10px] uppercase tracking-[0.35em] text-white/30">
-            With my own hand
-          </p>
-          <Signature />
+        <div className="flex flex-col items-center gap-8 border-t border-white/[0.07] pt-12 pb-4">
+          <div className="flex flex-col items-center gap-3">
+            <p className="text-[10px] uppercase tracking-[0.35em] text-white/30">
+              With my own hand
+            </p>
+            <Signature />
+          </div>
+          {/* creative bilingual star signature — نجم / Najm */}
+          <StarSignature />
         </div>
 
         {/* ── Bottom signature row ────────────────────────────── */}
