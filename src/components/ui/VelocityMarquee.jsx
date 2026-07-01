@@ -44,7 +44,7 @@ export default function VelocityMarquee({
   const items = Array.from({ length: 6 });
 
   return (
-    <div className="relative overflow-hidden border-y border-white/[0.06] py-7">
+    <div className="sd-fade relative overflow-hidden border-y border-white/[0.06] py-7">
       {/* edge fades — wider for a more cinematic vignette */}
       <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-40 bg-gradient-to-r from-[#0b0d11] via-[#0b0d11]/80 to-transparent" />
       <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-40 bg-gradient-to-l from-[#0b0d11] via-[#0b0d11]/80 to-transparent" />

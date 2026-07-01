@@ -52,9 +52,8 @@ function TechTile({ item, i }) {
       className="group relative inline-flex flex-shrink-0"
     >
       <motion.div
-        animate={{ y: [0, -amp, 0] }}
-        transition={{ duration: dur, repeat: Infinity, ease: "easeInOut", delay }}
-        className="relative"
+        className="float-tile relative"
+        style={{ "--amp": `-${amp}px`, "--dur": `${dur}s`, "--delay": `${delay}s` }}
       >
         {/* outer brand-color glow halo */}
         <span
@@ -62,17 +61,15 @@ function TechTile({ item, i }) {
           style={{ background: `radial-gradient(circle, ${item.color}99 0%, transparent 60%)` }}
         />
 
-        {/* rotating dashed ring */}
-        <motion.span
-          className="pointer-events-none absolute inset-0 rounded-3xl opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+        {/* rotating dashed ring — CSS compositor (was a framer loop per tile) */}
+        <span
+          className="spin-slow pointer-events-none absolute inset-0 rounded-3xl opacity-0 transition-opacity duration-500 group-hover:opacity-100"
           style={{ border: `1px dashed ${item.color}65` }}
-          animate={{ rotate: 360 }}
-          transition={{ duration: 14, repeat: Infinity, ease: "linear" }}
         />
 
         {/* tile body */}
         <motion.div
-          className={`relative z-10 flex flex-col items-center justify-center rounded-3xl ${size}`}
+          className={`relative z-10 flex flex-col items-center justify-center rounded-3xl ${size} ${isBig ? "gradient-border" : ""}`}
           style={{
             background: "rgba(255,255,255,0.04)",
             border: "1px solid rgba(255,255,255,0.1)",
@@ -190,7 +187,7 @@ export default function Skills() {
               initial={{ opacity: 0, scale: 0.3 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: false, margin: "-10%" }}
-              transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
               className="inline-block text-[#aab4c4]"
               style={{ fontSize: "clamp(3rem, 9vw, 8rem)" }}
             >
@@ -207,7 +204,7 @@ export default function Skills() {
               initial={{ opacity: 0, y: 100, rotate: 6 }}
               whileInView={{ opacity: 1, y: 0, rotate: 0 }}
               viewport={{ once: false, margin: "-10%" }}
-              transition={{ delay: 0.15, duration: 1, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ delay: 0.15, duration: 1, ease: [0.16, 1, 0.3, 1] }}
               className="inline-block text-white"
               style={{ fontSize: "clamp(3.5rem, 11vw, 11rem)" }}
             >
@@ -218,7 +215,7 @@ export default function Skills() {
               initial={{ opacity: 0, y: 100, rotate: -6 }}
               whileInView={{ opacity: 1, y: 0, rotate: 0 }}
               viewport={{ once: false, margin: "-10%" }}
-              transition={{ delay: 0.3, duration: 1, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ delay: 0.3, duration: 1, ease: [0.16, 1, 0.3, 1] }}
               className="inline-block italic font-light bar-shimmer"
               style={{
                 fontSize: "clamp(3.5rem, 11vw, 11rem)",

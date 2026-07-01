@@ -142,7 +142,7 @@ export default function CustomCursor() {
           <motion.span
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
             className="text-[10px] font-semibold uppercase tracking-widest text-white"
           >
             {text}

@@ -32,7 +32,7 @@ function FeaturedQuote({ t }) {
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -30 }}
-        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         className="relative"
       >
         {/* giant decorative quote mark */}
@@ -148,7 +148,7 @@ export default function Testimonials() {
                   viewport={{ once: false, margin: "-10%" }}
                   transition={{ delay: 0.1 + i * 0.07, duration: 0.5 }}
                   whileHover={{ x: 6 }}
-                  className={`group relative flex items-center gap-4 overflow-hidden rounded-2xl border px-5 py-4 text-left transition-colors duration-300 ${
+                  className={`gradient-border group relative flex items-center gap-4 overflow-hidden rounded-2xl border px-5 py-4 text-left transition-colors duration-300 ${
                     isActive
                       ? "border-white/30 bg-white/[0.04]"
                       : "border-white/[0.06] bg-transparent hover:border-white/15 hover:bg-white/[0.02]"
@@ -161,7 +161,7 @@ export default function Testimonials() {
                       scaleY: isActive ? 1 : 0,
                       opacity: isActive ? 1 : 0,
                     }}
-                    transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                    transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                     className="absolute left-0 top-1/2 h-8 w-[2px] -translate-y-1/2 origin-center rounded-r bg-[#aab4c4]"
                   />
 

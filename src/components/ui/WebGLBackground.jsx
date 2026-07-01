@@ -32,7 +32,9 @@ float fbm(vec2 p, int n){
 
 void main(){
   vec2 uv=gl_FragCoord.xy/R;
-  float t=T*.042, sc=S*.00014;
+  /* faster living flow + stronger scroll coupling so scrolling literally
+     pushes the aurora — the "ambient video" feel */
+  float t=T*.055, sc=S*.00026;
 
   /* mouse aura */
   vec2 mp=M/R; mp.y=1.-mp.y;
@@ -54,6 +56,14 @@ void main(){
   vec3 col=mix(c0,c1,smoothstep(.22,.48,f));
   col=mix(col,c2,smoothstep(.44,.70,f));
   col=mix(col,c3,smoothstep(.64,.84,f)*.55);
+
+  /* drifting volumetric light blooms — cheap 2-octave field that slides
+     across the frame, giving the aurora a continuous cinematic motion */
+  float lb=fbm(uv*0.9+vec2(t*0.8,-t*0.5)+q*0.3,2);
+  col+=vec3(.10,.123,.162)*pow(max(lb-.55,0.)/.45,2.)*0.6;
+
+  /* slow global breathing so the whole field gently pulses with light */
+  col*=1.0+0.035*sin(T*0.18);
 
   /* micro sparkles */
   float sp=vn(uv*42.+T*.3);
@@ -119,8 +129,10 @@ export default function WebGLBackground() {
     let running = true;
     let lastActivity = performance.now();
     const t0 = performance.now();
-    // Cap device pixel ratio so HiDPI screens don't double our fragment work
-    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    // Cap device pixel ratio aggressively — fragment work scales with pixel
+    // count, so 1.25 keeps HiDPI screens fast with no perceptible loss on a
+    // soft, blurry aurora.
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
 
     const onResize = () => {
       W = window.innerWidth; H = window.innerHeight;
@@ -154,8 +166,8 @@ export default function WebGLBackground() {
     let lastDraw = 0;
     const tick = () => {
       const now = performance.now();
-      const idle = now - lastActivity > 2500;
-      const minFrameMs = idle ? 32 : 0;  // ~30fps idle, otherwise full speed
+      const idle = now - lastActivity > 1500;
+      const minFrameMs = idle ? 40 : 0;  // ~24fps idle, otherwise full speed
       if (now - lastDraw >= minFrameMs) {
         lastDraw = now;
         gl.useProgram(prog);

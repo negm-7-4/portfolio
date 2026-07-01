@@ -72,14 +72,14 @@ export default function About() {
         aria-hidden
         className="pointer-events-none absolute -right-24 top-1/4 h-[500px] w-[500px] rounded-full opacity-[0.05]"
       >
-        <div className="h-full w-full rounded-full bg-[radial-gradient(circle,#aab4c4_0%,transparent_70%)]" />
+        <div className="animate-aurora h-full w-full rounded-full bg-[radial-gradient(circle,#aab4c4_0%,transparent_70%)]" />
       </motion.div>
       <motion.div
         style={{ y: useTransform(scrollYProgress, [0, 1], [-60, 60]) }}
         aria-hidden
         className="pointer-events-none absolute left-1/4 bottom-1/4 h-[380px] w-[380px] rounded-full opacity-[0.04]"
       >
-        <div className="h-full w-full rounded-full bg-[radial-gradient(circle,#8a93a6_0%,transparent_70%)]" />
+        <div className="animate-aurora h-full w-full rounded-full bg-[radial-gradient(circle,#8a93a6_0%,transparent_70%)]" style={{ animationDelay: "-7s" }} />
       </motion.div>
 
       <div className="relative mx-auto w-[90%] max-w-7xl">
@@ -96,7 +96,7 @@ export default function About() {
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: false, margin: "-10%" }}
-              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
               className="font-display font-light leading-[1.18] tracking-tight text-white/90"
               style={{ fontSize: "clamp(1.4rem, 2.6vw, 2.4rem)" }}
               dir="auto"
@@ -140,7 +140,7 @@ export default function About() {
               initial={{ opacity: 0, scaleX: 0 }}
               whileInView={{ opacity: 1, scaleX: 1 }}
               viewport={{ once: false, margin: "-10%" }}
-              transition={{ delay: 0.45, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ delay: 0.45, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
               className="mt-8 flex items-center gap-4"
             >
               <span className="h-px w-16 origin-left bg-white/30" />
@@ -164,7 +164,7 @@ export default function About() {
             <TiltCard
               max={6}
               spotColor="170,180,196"
-              className="relative overflow-hidden rounded-3xl glass p-8"
+              className="gradient-border relative overflow-hidden rounded-3xl glass p-8"
             >
               {/* tiny header */}
               <div className="mb-5 flex items-center justify-between">
@@ -223,14 +223,14 @@ export default function About() {
               initial={{ opacity: 0, y: 60, scale: 0.94, rotateX: 8 }}
               whileInView={{ opacity: 1, y: 0, scale: 1, rotateX: 0 }}
               viewport={{ once: false, margin: "-10%" }}
-              transition={{ duration: 0.7, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.7, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
               style={{ transformPerspective: 1200 }}
               className={i % 2 === 1 ? "lg:translate-y-6" : ""}
             >
               <TiltCard
                 data-cursor="hover"
                 spotColor={TRAIT_COLORS[i]}
-                className="group/card relative flex h-full flex-col overflow-hidden rounded-3xl glass p-7"
+                className="gradient-border group/card relative flex h-full flex-col overflow-hidden rounded-3xl glass p-7"
               >
                 {/* inner border glow on hover */}
                 <div

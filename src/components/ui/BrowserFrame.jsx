@@ -61,7 +61,7 @@ export default function BrowserFrame({
 
         {/* Frame */}
         <div
-          className="relative overflow-hidden rounded-2xl border border-white/10 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.7)] transition-colors duration-300 group-hover/frame:border-white/20"
+          className="gradient-border relative overflow-hidden rounded-2xl border border-white/10 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.7)] transition-colors duration-300 group-hover/frame:border-white/20"
           style={{
             background: "linear-gradient(180deg,rgba(28,32,40,0.92) 0%,rgba(15,18,24,0.95) 100%)",
             backdropFilter: "blur(18px)",
@@ -107,7 +107,7 @@ export default function BrowserFrame({
           </div>
 
           {/* Screenshot body */}
-          <div className="relative aspect-[16/9.4] w-full bg-black/40">
+          <div className="relative aspect-[16/9.4] w-full overflow-hidden bg-black/40">
             {children}
             {/* subtle scanline overlay */}
             <div
@@ -117,6 +117,12 @@ export default function BrowserFrame({
                   "linear-gradient(transparent 50%, rgba(255,255,255,1) 50%)",
                 backgroundSize: "100% 4px",
               }}
+              aria-hidden
+            />
+            {/* live scan beam — a soft bright line sweeps down like a monitor refresh */}
+            <div
+              className="scan-beam pointer-events-none absolute inset-x-0 top-0 h-14 opacity-[0.06]"
+              style={{ background: "linear-gradient(180deg, transparent, rgba(255,255,255,0.9), transparent)" }}
               aria-hidden
             />
           </div>

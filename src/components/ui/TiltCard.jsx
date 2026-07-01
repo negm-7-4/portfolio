@@ -1,5 +1,8 @@
 import { useRef } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "motion/react";
+import { SPRING_SNAP } from "../../lib/motion";
+
+const TILT_SPRING = { stiffness: 280, damping: 22, mass: 0.7 };
 
 /**
  * 3D tilt card — rotates toward the cursor with spring physics, an
@@ -24,20 +27,20 @@ export default function TiltCard({
   const gx = useMotionValue(50);
   const gy = useMotionValue(50);
 
-  /* snappier springs — stiffness↑ damping↓ = more physical "snap" */
-  const srx = useSpring(rx, { stiffness: 300, damping: 20, mass: 0.6 });
-  const sry = useSpring(ry, { stiffness: 300, damping: 20, mass: 0.6 });
+  /* physical spring — smooth follow with a clean settle */
+  const srx = useSpring(rx, TILT_SPRING);
+  const sry = useSpring(ry, TILT_SPRING);
 
   const rotateX = useTransform(srx, (v) => `${v}deg`);
   const rotateY = useTransform(sry, (v) => `${v}deg`);
 
-  /* Z-depth moves the card slightly toward the viewer on hover */
-  const tz = useSpring(0, { stiffness: 300, damping: 22 });
+  /* Z-depth moves the card toward the viewer on hover */
+  const tz = useSpring(0, TILT_SPRING);
   const translateZ = useTransform(tz, (v) => `${v}px`);
 
   const onEnter = () => {
     rectRef.current = ref.current?.getBoundingClientRect();
-    tz.set(12);
+    tz.set(18);
   };
   const onMove = (e) => {
     const rect = rectRef.current ?? ref.current?.getBoundingClientRect();
@@ -80,8 +83,8 @@ export default function TiltCard({
         transformPerspective: 750,
         willChange: "transform",
       }}
-      whileHover={{ scale: 1.025 }}
-      transition={{ type: "spring", stiffness: 300, damping: 22 }}
+      whileHover={{ scale: 1.03 }}
+      transition={SPRING_SNAP}
       className={`group/tilt relative [transform-style:preserve-3d] ${className}`}
       {...rest}
     >

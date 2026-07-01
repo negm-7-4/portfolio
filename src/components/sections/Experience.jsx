@@ -13,7 +13,7 @@ function ExperienceRow({ e, i, total }) {
       initial={{ opacity: 0, y: 60 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: false, margin: "-10%" }}
-      transition={{ duration: 0.75, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.75, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
       className="relative grid grid-cols-1 gap-6 pb-16 md:grid-cols-[180px_24px_1fr] md:gap-10 md:pb-24"
     >
       {/* period column */}
@@ -58,7 +58,7 @@ function ExperienceRow({ e, i, total }) {
             initial={{ scaleY: 0 }}
             whileInView={{ scaleY: 1 }}
             viewport={{ once: false, margin: "-10%" }}
-            transition={{ duration: 0.9, delay: 0.3 + i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.9, delay: 0.3 + i * 0.08, ease: [0.16, 1, 0.3, 1] }}
             className="absolute left-1/2 top-8 -translate-x-1/2 w-px origin-top bg-gradient-to-b from-[#aab4c4]/50 via-white/15 to-transparent"
             style={{ height: "calc(100% + 4rem)" }}
           />
@@ -90,7 +90,7 @@ function ExperienceRow({ e, i, total }) {
           initial={{ scaleX: 0 }}
           whileInView={{ scaleX: 1 }}
           viewport={{ once: false, margin: "-10%" }}
-          transition={{ delay: 0.45 + i * 0.08, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ delay: 0.45 + i * 0.08, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           className="mt-6 block h-px w-32 origin-left bg-gradient-to-r from-white/40 to-transparent"
         />
       </motion.div>

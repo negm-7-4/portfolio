@@ -1,10 +1,11 @@
 import { useRef } from "react";
 import { motion, useMotionValue, useSpring } from "motion/react";
+import { SPRING_MAGNET, SPRING_SNAP } from "../../lib/motion";
 
 /**
- * Button that is magnetically pulled toward the cursor while hovered,
- * then springs back on leave. Tightened springs + smoother whileTap scale.
- * Pass `strength` to tune the pull.
+ * Button that is magnetically pulled toward the cursor while hovered, lifts a
+ * touch on hover, and springs back cleanly on leave. Pass `strength` to tune
+ * the pull. All transform — no layout — so it stays at 60fps.
  */
 export default function MagneticButton({
   children,
@@ -18,8 +19,8 @@ export default function MagneticButton({
 
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  const sx = useSpring(x, { stiffness: 220, damping: 16, mass: 0.4 });
-  const sy = useSpring(y, { stiffness: 220, damping: 16, mass: 0.4 });
+  const sx = useSpring(x, SPRING_MAGNET);
+  const sy = useSpring(y, SPRING_MAGNET);
 
   const handleMouseEnter = () => {
     rectRef.current = ref.current?.getBoundingClientRect();
@@ -50,8 +51,9 @@ export default function MagneticButton({
       onMouseMove={handleMove}
       onMouseLeave={reset}
       style={{ x: sx, y: sy }}
-      whileTap={{ scale: 0.96 }}
-      transition={{ type: "spring", stiffness: 360, damping: 20 }}
+      whileHover={{ scale: 1.035 }}
+      whileTap={{ scale: 0.95 }}
+      transition={SPRING_SNAP}
       className={className}
       {...rest}
     >

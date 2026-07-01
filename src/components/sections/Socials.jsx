@@ -151,7 +151,7 @@ function SocialOrb({ s, i }) {
               style={{ border: `2px solid ${color}` }}
               initial={{ scale: 1, opacity: 0.85 }}
               animate={{ scale: 2.6, opacity: 0 }}
-              transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
             />
           ))}
           {/* Second wave burst */}

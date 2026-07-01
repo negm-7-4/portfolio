@@ -13,6 +13,7 @@ import CustomCursor from "./components/CustomCursor";
 import KeyboardNavBridge from "./components/AppInner";
 import ScrollProgress from "./components/ScrollProgress";
 import WebGLBackground from "./components/ui/WebGLBackground";
+import ExperienceBridge from "./components/ExperienceBridge";
 import VelocityMarquee from "./components/ui/VelocityMarquee";
 import PageTransition from "./components/PageTransition";
 import Navbar from "./components/Navbar";
@@ -32,6 +33,7 @@ const Skills        = lazy(() => import("./components/sections/Skills"));
 const Experience    = lazy(() => import("./components/sections/Experience"));
 const Process       = lazy(() => import("./components/sections/Process"));
 const Projects      = lazy(() => import("./components/sections/Projects"));
+const CapabilitiesGallery = lazy(() => import("./components/sections/CapabilitiesGallery"));
 const Testimonials  = lazy(() => import("./components/sections/Testimonials"));
 const Socials       = lazy(() => import("./components/sections/Socials"));
 const Contact       = lazy(() => import("./components/sections/Contact"));
@@ -61,6 +63,10 @@ function SectionPlaceholder({ id }) {
 }
 
 // ── Lazy chunks: only load when first needed (deferred / off-fold) ──
+// The cinematic R3F world is the heaviest chunk on the site (three + drei +
+// postprocessing), so it's code-split and only ever requested on capable
+// (mid/high) devices — low-tier hardware never downloads it.
+const CinematicWorld    = lazy(() => import("./components/three/CinematicWorld"));
 const SpaceBackground   = lazy(() => import("./components/three/SpaceBackground"));
 const ChapterBackdrop   = lazy(() => import("./components/ui/ChapterBackdrop"));
 const ChapterRail       = lazy(() => import("./components/ui/ChapterRail"));
@@ -76,6 +82,7 @@ const KeyboardHint      = lazy(() => import("./components/ui/KeyboardHint"));
 const ReadingIndicator  = lazy(() => import("./components/ui/ReadingIndicator"));
 const BackToTop         = lazy(() => import("./components/ui/BackToTop"));
 const WhatsAppButton    = lazy(() => import("./components/ui/WhatsAppButton"));
+const SoundToggle       = lazy(() => import("./components/ui/SoundToggle"));
 
 export default function App() {
   const [loaded, setLoaded] = useState(false);
@@ -99,14 +106,24 @@ export default function App() {
             Skip to content
           </a>
 
-          {/* ── Background layers (z-0) — critical first ────────── */}
-          {!isLow && <WebGLBackground />}
+          {/* ── Background layers ───────────────────────────────────
+              Mid/high devices travel through the persistent cinematic R3F
+              world (its own fog/stars own the backdrop). Low-tier / reduced-
+              motion stays on the cheap GLSL aurora + CSS starfield.        */}
+          {isLow ? (
+            <WebGLBackground />
+          ) : (
+            <Suspense fallback={null}>
+              <CinematicWorld quality={tier} />
+              <ExperienceBridge />
+            </Suspense>
+          )}
 
           {/* These are visual but not critical for first paint.
               Touched-down tiers skip the heaviest extras to stay smooth. */}
           <Suspense fallback={null}>
             <DeferredMount>
-              {!touch && <SpaceBackground />}
+              {isLow && <SpaceBackground />}
               <ChapterBackdrop />
               {!isLow && !touch && <CursorSpotlight />}
               {!isLow && <VelocityVignette />}
@@ -137,6 +154,7 @@ export default function App() {
             <Suspense fallback={<SectionPlaceholder id="process" />}><Process /></Suspense>
             <VelocityMarquee text="LET'S BUILD SOMETHING GREAT" baseVelocity={3} />
             <Suspense fallback={<SectionPlaceholder id="projects" />}><Projects /></Suspense>
+            <Suspense fallback={null}><CapabilitiesGallery /></Suspense>
             <Suspense fallback={<SectionPlaceholder id="testimonials" />}><Testimonials /></Suspense>
             <Suspense fallback={<SectionPlaceholder id="socials" />}><Socials /></Suspense>
             <Suspense fallback={<SectionPlaceholder id="contact" />}><Contact /></Suspense>
@@ -164,6 +182,7 @@ export default function App() {
               <ReadingIndicator />
               <BackToTop />
               <WhatsAppButton />
+              {!isLow && <SoundToggle />}
             </DeferredMount>
           </Suspense>
 

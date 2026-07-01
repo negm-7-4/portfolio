@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence, useMotionValue, useSpring } from "motion/react";
 import MagneticButton from "./ui/MagneticButton";
+import ScrambleText from "./ui/ScrambleText";
 import { useActiveSection } from "../hooks/useActiveSection";
 import { profile } from "../data/content";
 
@@ -45,10 +46,22 @@ function NavLink({ link, isActive, onClick }) {
           isActive ? "text-white" : "text-white/55 hover:text-white"
         }`}
       >
-        {link.label}
+        {/* sliding shared-layout highlight — glides between links as the
+            active section changes while you scroll */}
+        {isActive && (
+          <motion.span
+            layoutId="nav-active-pill"
+            className="absolute inset-0 rounded-lg bg-white/[0.06]"
+            style={{ boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.07)" }}
+            transition={{ type: "spring", stiffness: 400, damping: 34 }}
+          />
+        )}
+        <span className="relative z-10">
+          <ScrambleText text={link.label} />
+        </span>
         {/* underline */}
         <span
-          className={`absolute bottom-1 left-3.5 h-px bg-gradient-to-r from-[#aab4c4] to-white/40 transition-all duration-300 ${
+          className={`absolute bottom-1 left-3.5 z-10 h-px bg-gradient-to-r from-[#aab4c4] to-white/40 transition-all duration-300 ${
             isActive ? "w-[calc(100%-1.75rem)]" : "w-0 group-hover:w-[calc(100%-1.75rem)]"
           }`}
         />
@@ -56,7 +69,7 @@ function NavLink({ link, isActive, onClick }) {
         {isActive && (
           <motion.span
             layoutId="nav-active-dot"
-            className="absolute -top-0.5 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-[#aab4c4]"
+            className="absolute -top-0.5 left-1/2 z-10 h-1 w-1 -translate-x-1/2 rounded-full bg-[#aab4c4]"
             transition={{ type: "spring", stiffness: 380, damping: 30 }}
           />
         )}
@@ -92,7 +105,7 @@ export default function Navbar() {
     <motion.header
       initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.7, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
       className="fixed left-0 top-0 z-[9000] flex w-full justify-center px-4 py-4"
     >
       <nav
@@ -112,19 +125,14 @@ export default function Navbar() {
         >
           {/* Two-layer asterisk — outer slow, inner fast, with a pulsing glow */}
           <span className="relative inline-flex h-5 w-5 items-center justify-center">
-            <motion.span
+            {/* CSS-driven (compositor) so the fixed navbar costs nothing idle */}
+            <span
               aria-hidden
-              animate={{ scale: [1, 1.25, 1], opacity: [0.4, 0.85, 0.4] }}
-              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute inset-0 rounded-full bg-[#aab4c4]/20 blur-md"
+              className="glow-pulse absolute inset-0 rounded-full bg-[#aab4c4]/20 blur-md"
             />
-            <motion.span
-              animate={{ rotate: 360 }}
-              transition={{ duration: 16, repeat: Infinity, ease: "linear" }}
-              className="relative inline-block text-[#aab4c4] transition-colors duration-300 group-hover:text-white"
-            >
+            <span className="spin-slow relative inline-block text-[#aab4c4] transition-colors duration-300 group-hover:text-white">
               ✦
-            </motion.span>
+            </span>
           </span>
 
           <span className="transition-colors duration-300">
@@ -162,7 +170,7 @@ export default function Navbar() {
             onClick={() => window.dispatchEvent(new KeyboardEvent("keydown", { key: "k", metaKey: !isMac ? false : true, ctrlKey: !isMac }))}
             data-cursor="hover"
             data-cursor-text="Search"
-            className="hidden items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-white/55 transition-colors hover:bg-white/[0.06] hover:text-white sm:flex"
+            className="gradient-border hidden items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-white/55 transition-colors hover:bg-white/[0.06] hover:text-white sm:flex"
             aria-label="Open command palette"
           >
             <span>Search</span>
@@ -228,7 +236,7 @@ export default function Navbar() {
             initial={{ opacity: 0, y: -16, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -16, scale: 0.96 }}
-            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
             className="absolute top-20 w-[92%] max-w-5xl overflow-hidden rounded-2xl glass p-4 md:hidden"
           >
             {/* corner brackets */}
@@ -248,7 +256,7 @@ export default function Navbar() {
                   key={l.id}
                   initial={{ opacity: 0, x: -16 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.1 + i * 0.05, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                  transition={{ delay: 0.1 + i * 0.05, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                 >
                   <button
                     onClick={() => go(l.id)}

@@ -85,7 +85,7 @@ export default function KonamiEasterEgg() {
           initial={{ opacity: 0, scale: 0.85 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.94 }}
-          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
           className="pointer-events-none fixed inset-0 z-[10001] flex items-center justify-center"
         >
           <div
@@ -117,7 +117,7 @@ export default function KonamiEasterEgg() {
             <motion.div
               initial={{ y: -10 }}
               animate={{ y: 0 }}
-              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
               className="relative"
             >
               <p className="mb-2 flex items-center justify-center gap-2 text-[10px] font-semibold uppercase tracking-[0.4em] text-white/45">

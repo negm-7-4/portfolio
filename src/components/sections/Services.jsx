@@ -50,7 +50,7 @@ function ServiceRow({ s, i, isOpen, onHover }) {
       initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: false, margin: "-10%" }}
-      transition={{ duration: 0.6, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.6, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
       onMouseEnter={() => onHover(i)}
       onFocus={() => onHover(i)}
       onClick={() => onHover(isOpen ? -1 : i)}
@@ -62,7 +62,7 @@ function ServiceRow({ s, i, isOpen, onHover }) {
         className="pointer-events-none absolute inset-x-0 top-0 h-px origin-left bg-gradient-to-r from-transparent via-white/70 to-transparent"
         initial={false}
         animate={{ scaleX: isOpen ? 1 : 0 }}
-        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
       />
 
       {/* soft gradient background when active */}
@@ -70,7 +70,7 @@ function ServiceRow({ s, i, isOpen, onHover }) {
         className="pointer-events-none absolute inset-x-0 inset-y-0 origin-top"
         initial={false}
         animate={{ opacity: isOpen ? 1 : 0 }}
-        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
         style={{
           background:
             "linear-gradient(180deg, rgba(170,180,196,0.04) 0%, transparent 100%)",
@@ -94,7 +94,7 @@ function ServiceRow({ s, i, isOpen, onHover }) {
         <motion.h3
           initial={false}
           animate={{ x: isOpen ? 12 : 0 }}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
           className="font-display text-3xl font-bold leading-none tracking-tight text-white md:text-5xl lg:text-6xl"
         >
           {s.title}
@@ -108,7 +108,7 @@ function ServiceRow({ s, i, isOpen, onHover }) {
             scale: isOpen ? 1.15 : 1,
             opacity: isOpen ? 1 : 0.55,
           }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           className="block"
         >
           {SHAPES[i % SHAPES.length]}
@@ -123,7 +123,7 @@ function ServiceRow({ s, i, isOpen, onHover }) {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             className="overflow-hidden"
           >
             <div className="grid gap-8 pb-10 pl-2 pr-2 md:grid-cols-[28%_1fr] md:pl-14">

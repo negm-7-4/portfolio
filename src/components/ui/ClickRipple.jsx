@@ -42,7 +42,7 @@ export default function ClickRipple() {
             key={r.id}
             initial={{ scale: 0, opacity: 0.85, x: r.x, y: r.y }}
             animate={{ scale: 14, opacity: 0, x: r.x, y: r.y }}
-            transition={{ duration: 0.95, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.95, ease: [0.16, 1, 0.3, 1] }}
             className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full"
             style={{
               left: 0, top: 0,
@@ -58,7 +58,7 @@ export default function ClickRipple() {
             key={`${r.id}-mid`}
             initial={{ scale: 0, opacity: 0.7, x: r.x, y: r.y }}
             animate={{ scale: 9, opacity: 0, x: r.x, y: r.y }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.04 }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.04 }}
             className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full"
             style={{
               left: 0, top: 0,
@@ -73,7 +73,7 @@ export default function ClickRipple() {
             key={`${r.id}-glow`}
             initial={{ scale: 0, opacity: 0.7, x: r.x, y: r.y }}
             animate={{ scale: 6, opacity: 0, x: r.x, y: r.y }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.08 }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.08 }}
             className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full"
             style={{
               left: 0, top: 0,

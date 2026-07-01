@@ -60,7 +60,7 @@ export default function ReadingIndicator() {
                   initial={{ y: 14, opacity: 0 }}
                   animate={{ y: 0,  opacity: 1 }}
                   exit={{    y: -14, opacity: 0 }}
-                  transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                  transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                   className="absolute left-0 top-0 whitespace-nowrap text-[12px] font-medium tracking-wide text-white/85"
                 >
                   {active.label}
@@ -86,7 +86,7 @@ export default function ReadingIndicator() {
                           ? "rgba(255,255,255,0.45)"
                           : "rgba(255,255,255,0.12)",
                     }}
-                    transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                    transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                     className="block h-[3px] rounded-full"
                   />
                 );

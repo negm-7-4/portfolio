@@ -51,7 +51,7 @@ export default function Signature({ className = "" }) {
           animate={{ pathLength: inView ? 1 : 0 }}
           transition={{
             duration: 2.4,
-            ease: [0.22, 1, 0.36, 1],
+            ease: [0.16, 1, 0.3, 1],
           }}
         />
 
@@ -66,7 +66,7 @@ export default function Signature({ className = "" }) {
           transition={{
             duration: 1.4,
             delay: 1.6,
-            ease: [0.22, 1, 0.36, 1],
+            ease: [0.16, 1, 0.3, 1],
           }}
         />
 

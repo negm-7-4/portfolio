@@ -1,53 +1,87 @@
 import { motion } from "motion/react";
-
-const directions = {
-  up:    { y:  60, x: 0 },
-  down:  { y: -60, x: 0 },
-  left:  { x:  60, y: 0 },
-  right: { x: -60, y: 0 },
-};
+import { revealVariants, staggerContainer, EASE_OUT, DUR_REVEAL, VIEWPORT } from "../../lib/motion";
 
 /**
- * Generic scroll-reveal wrapper. Fades + slides in (optionally with a
- * subtle blur defocus) when the element enters the viewport.
+ * Generic scroll-reveal wrapper. Slides + fades in with a touch of 3D
+ * perspective and micro-scale so content feels like it rises off the page
+ * rather than just sliding. Transform + opacity only (plus a brief one-shot
+ * blur on text), so it stays GPU-composited and holds 60fps.
  *
- * Supports `dir` and `blur` flag for an extra layer of cinematic feel.
+ * API is unchanged from before — `dir`, `delay`, `duration`, `blur`, `once` —
+ * with two additions:
+ *   `depth`   — adds the perspective lift (default on; auto-off for big blocks)
+ *   `stagger` — if set, reveals direct <Reveal.Item> / motion children in cascade
  */
 export default function Reveal({
   children,
   className = "",
   dir = "up",
   delay = 0,
-  duration = 0.6,                    // snappier default (was 0.75)
+  duration = DUR_REVEAL,
   blur = true,
   once = false,
+  depth = true,
+  style,
 }) {
-  const offset = directions[dir] || directions.up;
+  const variants = revealVariants({ dir, blur, depth });
 
   return (
     <motion.div
       className={className}
-      initial={{
-        opacity: 0,
-        ...offset,
-        filter: blur ? "blur(6px)" : undefined,
-      }}
-      whileInView={{
-        opacity: 1,
-        x: 0,
-        y: 0,
-        filter: blur ? "blur(0px)" : undefined,
-      }}
-      viewport={{ once, margin: "-12%" }}
+      style={{ transformPerspective: depth ? 1100 : undefined, willChange: "transform, opacity", ...style }}
+      variants={variants}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once, margin: VIEWPORT.margin }}
       transition={{
         duration,
         delay,
-        ease: [0.22, 1, 0.36, 1],
-        // blur fades faster than the slide so it doesn't linger
-        filter: { duration: Math.min(duration * 0.6, 0.5), delay },
+        ease: EASE_OUT,
+        // blur resolves faster than the slide so it never lingers or smears
+        filter: { duration: Math.min(duration * 0.55, 0.45), delay },
+        scale: { duration: duration * 1.05, delay, ease: EASE_OUT },
       }}
     >
       {children}
     </motion.div>
   );
 }
+
+/**
+ * Cascade variant — wrap a list so children stagger in. Children should be
+ * <Reveal.Item> (or any motion element using the "item" variants).
+ */
+export function RevealGroup({ children, className = "", stagger = 0.08, delay = 0, once = false }) {
+  return (
+    <motion.div
+      className={className}
+      variants={staggerContainer(stagger, delay)}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once, margin: VIEWPORT.margin }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+export function RevealItem({ children, className = "", dir = "up", blur = true, depth = true, style }) {
+  return (
+    <motion.div
+      className={className}
+      style={{ transformPerspective: depth ? 1100 : undefined, willChange: "transform, opacity", ...style }}
+      variants={{
+        ...revealVariants({ dir, blur, depth }),
+        show: {
+          ...revealVariants({ dir, blur, depth }).show,
+          transition: { duration: DUR_REVEAL, ease: EASE_OUT },
+        },
+      }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+Reveal.Group = RevealGroup;
+Reveal.Item = RevealItem;

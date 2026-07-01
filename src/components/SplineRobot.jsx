@@ -1,6 +1,7 @@
 import { Suspense, lazy, useState } from "react";
 import { motion } from "motion/react";
 import ErrorBoundary from "./ErrorBoundary";
+import useDeviceProfile from "../hooks/useDeviceProfile";
 
 const Spline = lazy(() => import("@splinetool/react-spline"));
 
@@ -92,6 +93,20 @@ function RobotFallback() {
  */
 export default function SplineRobot() {
   const [ready, setReady] = useState(false);
+  const { tier, touch } = useDeviceProfile();
+
+  // The Spline runtime + scene weigh ~1.5 MB gzipped — by far the heaviest
+  // asset on the site. On touch / low-tier devices we skip it entirely and
+  // render the lightweight branded fallback instead. Saves the whole download
+  // and the constant WebGL cost on the devices that can least afford it.
+  const lite = touch || tier === "low";
+  if (lite) {
+    return (
+      <div className="relative h-full w-full" style={{ overflow: "visible" }}>
+        <RobotFallback />
+      </div>
+    );
+  }
 
   return (
     <div
@@ -106,7 +121,7 @@ export default function SplineRobot() {
             style={{ overflow: "visible" }}
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: ready ? 1 : 0, scale: ready ? 1 : 0.9 }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           >
             <Spline
               scene={SCENE}

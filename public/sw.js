@@ -1,7 +1,7 @@
 /* Tiny service worker — cache-first for static assets, network-first for HTML.
    Makes repeat visits instant. */
 
-const VERSION = "v1";
+const VERSION = "v2";
 const STATIC_CACHE = `static-${VERSION}`;
 const RUNTIME_CACHE = `runtime-${VERSION}`;
 

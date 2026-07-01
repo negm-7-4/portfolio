@@ -105,27 +105,28 @@ p, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; }
   font-family: var(--font-display);
 }
 
-/* Gradient text helper. Six-stop gradient gives the highlight more
-   "movement"; slower animation (10s) is calmer on the eyes. */
+/* Gradient text helper. Seven-stop gradient gives the highlight more
+   "movement"; the slow loop reads as a living sheen rather than a strobe. */
 .text-gradient {
   background: linear-gradient(
     110deg,
     #f5f6f8 0%,
-    #c3cad6 22%,
-    #ffffff 38%,
+    #c3cad6 20%,
+    #ffffff 36%,
     #8a93a6 50%,
-    #ffffff 62%,
-    #c3cad6 78%,
+    #ffffff 64%,
+    #c3cad6 80%,
     #f5f6f8 100%
   );
-  background-size: 260% auto;
+  background-size: 240% auto;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: gradientShift 10s linear infinite;
+  animation: gradientShift 11s linear infinite;
+  will-change: background-position;
 }
 @keyframes gradientShift {
-  to { background-position: 260% center; }
+  to { background-position: 240% center; }
 }
 
 /* Glassy card surface — refined: subtle gradient fill + inner highlight +
@@ -179,6 +180,158 @@ p, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; }
   66%     { transform: translateY(-7px)  rotateX(-2deg) rotateZ(-.6deg); }
 }
 .animate-float3d { animation: float3d 9s ease-in-out infinite; will-change: transform; }
+
+/* ── Aurora drift — transform-only ambient blob (GPU/60fps) ─── */
+@keyframes auroraDrift {
+  0%   { transform: translate3d(0, 0, 0) scale(1)    rotate(0deg); }
+  33%  { transform: translate3d(4%, -3%, 0) scale(1.12) rotate(8deg); }
+  66%  { transform: translate3d(-3%, 2%, 0) scale(0.94) rotate(-6deg); }
+  100% { transform: translate3d(0, 0, 0) scale(1)    rotate(0deg); }
+}
+.animate-aurora {
+  animation: auroraDrift 18s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* ── Sheen — a one-pass light sweep on hover (transform-only) ── */
+.sheen { position: relative; overflow: hidden; }
+.sheen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.14) 50%, transparent 70%);
+  transform: translateX(-120%);
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+.sheen:hover::after { transform: translateX(120%); }
+
+/* ════════════════════════════════════════════════════════════
+   ADVANCED ANIMATION LIBRARY — all GPU-friendly (transform/opacity),
+   custom-property-driven borders use Houdini @property so they
+   interpolate smoothly instead of snapping. Most heavy effects are
+   hover-gated so idle cost stays at zero.
+   ════════════════════════════════════════════════════════════ */
+
+/* Houdini-registered angle so conic gradients can actually animate */
+@property --bd-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+/* Animated conic gradient border — paused until hover, so only the
+   card you're pointing at ever repaints. */
+.gradient-border { position: relative; }
+.gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(
+    from var(--bd-angle),
+    transparent 0%,
+    rgba(170, 180, 196, 0.7) 12%,
+    rgba(184, 196, 214, 0.9) 20%,
+    transparent 38%,
+    transparent 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  animation: bdSpin 4s linear infinite;
+  animation-play-state: paused;
+  pointer-events: none;
+}
+.gradient-border:hover::before {
+  opacity: 1;
+  animation-play-state: running;
+}
+@keyframes bdSpin { to { --bd-angle: 360deg; } }
+
+/* Soft glow that breathes — for halos behind icons / featured chips */
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.35; transform: scale(1); }
+  50%      { opacity: 0.7;  transform: scale(1.08); }
+}
+.glow-pulse { animation: glowPulse 4.5s ease-in-out infinite; will-change: transform, opacity; }
+
+/* Spin utilities (rotate = compositor) */
+@keyframes spin360 { to { transform: rotate(360deg); } }
+.spin-slow   { animation: spin360 14s linear infinite; will-change: transform; }
+.spin-slower { animation: spin360 26s linear infinite; will-change: transform; }
+.spin-rev    { animation: spin360 20s linear infinite reverse; will-change: transform; }
+
+/* Float variants */
+@keyframes floatX { 0%,100% { transform: translateX(0); } 50% { transform: translateX(10px); } }
+.float-x    { animation: floatX 7s ease-in-out infinite; will-change: transform; }
+.float-soft { animation: float 8s ease-in-out infinite; will-change: transform; }
+
+/* Per-element float with variable amplitude/duration via CSS vars — lets a
+   whole grid of tiles bob with individual rhythm on the compositor instead of
+   one framer rAF loop per tile. */
+@keyframes floatTile {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(var(--amp, -12px)); }
+}
+.float-tile {
+  animation: floatTile var(--dur, 6s) ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+  will-change: transform;
+}
+
+/* Text shine sweep — a bright band passes across the letters on hover */
+.text-sheen {
+  background: linear-gradient(110deg, currentColor 40%, #ffffff 50%, currentColor 60%);
+  background-size: 220% 100%;
+  background-position: 120% center;
+  -webkit-background-clip: text;
+          background-clip: text;
+  transition: background-position 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.text-sheen:hover { background-position: -20% center; -webkit-text-fill-color: transparent; }
+
+/* Animated divider line — a light pulse travels along it */
+@keyframes lineSweep { 0% { transform: translateX(-100%); } 100% { transform: translateX(300%); } }
+.shimmer-line { position: relative; overflow: hidden; }
+.shimmer-line::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+  animation: lineSweep 3.5s ease-in-out infinite;
+}
+
+/* Live CRT scan beam — a thin bright line sweeps down a screen/frame */
+@keyframes scanBeam { 0% { transform: translateY(-140%); } 100% { transform: translateY(900%); } }
+.scan-beam { animation: scanBeam 4.5s linear infinite; will-change: transform; }
+
+/* ── Native scroll-driven reveals (off-main-thread, where supported) ──
+   These run on the compositor via the browser's own scroll timeline, so
+   they're effectively free. Elements just settle as they enter the view. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    @keyframes sdRise {
+      from { opacity: 0; transform: translateY(34px) scale(0.985); }
+      to   { opacity: 1; transform: translateY(0)    scale(1); }
+    }
+    @keyframes sdFade { from { opacity: 0; } to { opacity: 1; } }
+    .sd-rise {
+      animation: sdRise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 32%;
+    }
+    .sd-fade {
+      animation: sdFade linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 26%;
+    }
+  }
+}
 
 /* ── Enhanced glass on hover ──────────────────────────────── */
 .glass:hover {

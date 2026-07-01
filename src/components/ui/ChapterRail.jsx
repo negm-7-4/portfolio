@@ -20,7 +20,7 @@ export default function ChapterRail() {
     <motion.aside
       initial={{ opacity: 0, x: 24 }}
       animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: 1.6, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ delay: 1.6, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
       className="pointer-events-none fixed right-3 top-1/2 z-[40] hidden -translate-y-1/2 md:block"
       aria-hidden
     >
@@ -94,8 +94,8 @@ export default function ChapterRail() {
                   }}
                   transition={{
                     width:           { type: "spring", stiffness: 380, damping: 28, mass: 0.55 },
-                    height:          { duration: 0.3, ease: [0.22, 1, 0.36, 1] },
-                    backgroundColor: { duration: 0.4, ease: [0.22, 1, 0.36, 1] },
+                    height:          { duration: 0.3, ease: [0.16, 1, 0.3, 1] },
+                    backgroundColor: { duration: 0.4, ease: [0.16, 1, 0.3, 1] },
                   }}
                   className="relative block rounded-full"
                   style={{

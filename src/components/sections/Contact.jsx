@@ -115,7 +115,7 @@ function InfoRow({ icon: Icon, label, value, href, copyable, i }) {
       initial={{ opacity: 0, x: -24 }}
       whileInView={{ opacity: 1, x: 0 }}
       viewport={{ once: false, margin: "-10%" }}
-      transition={{ delay: 0.15 + i * 0.08, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ delay: 0.15 + i * 0.08, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
       className="group relative border-b border-white/[0.07] py-6"
     >
       <span className="absolute inset-x-0 bottom-0 h-px origin-left scale-x-0 bg-white/40 transition-transform duration-500 group-hover:scale-x-100" />
@@ -333,7 +333,7 @@ export default function Contact() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: false, margin: "-10%" }}
             transition={{ delay: 0.2, duration: 0.7 }}
-            className="relative rounded-3xl glass p-7 md:p-10"
+            className="gradient-border relative rounded-3xl glass p-7 md:p-10"
           >
             {/* corner brackets */}
             <span className="pointer-events-none absolute left-4 top-4 h-3 w-3 border-l border-t border-white/25" />

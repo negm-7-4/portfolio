@@ -1,10 +1,15 @@
 import { motion, useScroll, useSpring, useTransform, useReducedMotion } from "motion/react";
 import { useRef, useState, useEffect } from "react";
-import SplineRobot from "../SplineRobot";
+import useDeviceProfile from "../../hooks/useDeviceProfile";
+import { experience } from "../../store/experience";
 import MagneticButton from "../ui/MagneticButton";
 import MagneticText from "../ui/MagneticText";
 import { celebrate } from "../../lib/confetti";
 import { profile, heroTags } from "../../data/content";
+import { EASE_OUT, EASE_BACK } from "../../lib/motion";
+
+// A spring with a hint of life used for the hero tag pills.
+const TAG_SPRING = { type: "spring", stiffness: 200, damping: 15, mass: 0.7 };
 
 const ROLES = [
   "Front-End Developer",
@@ -58,8 +63,84 @@ function TypewriterRole() {
   );
 }
 
+/* ─── Hero focal frame ───
+   On capable devices the persistent 3D world renders the hero sculpture
+   behind this column; we draw a transparent "lens" (rings + focal glow +
+   crosshair) so it reads as a deliberately-lit subject. On touch / low-tier
+   the world is off, so we fall back to a branded floating mark. */
+function HeroFocus({ lite }) {
+  if (lite) {
+    return (
+      <div
+        className="relative flex h-full w-full items-center justify-center"
+        style={{ overflow: "visible" }}
+      >
+        <div
+          className="animate-float3d h-48 w-48 rounded-[2rem] border border-white/10 md:h-72 md:w-72"
+          style={{
+            background:
+              "radial-gradient(circle at 50% 35%, rgba(170,180,196,0.18), transparent 70%)",
+            boxShadow: "0 0 80px rgba(170,180,196,0.12)",
+          }}
+        >
+          <span className="flex h-full w-full items-center justify-center text-6xl text-[#aab4c4]/40 md:text-7xl">
+            ✦
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="pointer-events-none relative h-full w-full" style={{ overflow: "visible" }} aria-hidden>
+      {/* focal glow — makes the sculpture behind read as a lit subject */}
+      <div
+        className="glow-pulse absolute left-1/2 top-1/2 h-[62%] w-[62%] -translate-x-1/2 -translate-y-1/2 rounded-full"
+        style={{ background: "radial-gradient(circle, rgba(170,180,196,0.12), transparent 70%)" }}
+      />
+      {/* outer framing ring with an orbiting node */}
+      <div className="spin-slower absolute left-1/2 top-1/2 h-[80%] w-[80%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/[0.06]">
+        <span
+          className="absolute left-1/2 top-0 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#aab4c4]/70"
+          style={{ boxShadow: "0 0 8px rgba(170,180,196,0.6)" }}
+        />
+      </div>
+      {/* inner dashed ring, counter-rotating */}
+      <div className="spin-rev absolute left-1/2 top-1/2 h-[56%] w-[56%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-white/[0.05]" />
+      {/* corner crosshair ticks */}
+      {[
+        "left-[8%] top-[12%] border-l border-t",
+        "right-[8%] top-[12%] border-r border-t",
+        "left-[8%] bottom-[14%] border-l border-b",
+        "right-[8%] bottom-[14%] border-r border-b",
+      ].map((c, i) => (
+        <span key={i} className={`absolute ${c} h-5 w-5 border-white/15`} />
+      ))}
+      {/* live-render caption */}
+      <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-2 text-[9px] uppercase tracking-[0.3em] text-white/35">
+        <span className="h-1 w-1 animate-pulse rounded-full bg-[#aab4c4]" style={{ boxShadow: "0 0 6px rgba(170,180,196,0.7)" }} />
+        Real-time · WebGL
+      </div>
+
+      {/* Interactive hotspot — hovering the orb energises it (store hover
+          state → shell glow + spin) and morphs the custom cursor. This is the
+          only place the otherwise pointer-events-none world accepts input. */}
+      <div
+        className="absolute left-1/2 top-1/2 h-[62%] w-[62%] -translate-x-1/2 -translate-y-1/2 rounded-full"
+        style={{ pointerEvents: "auto" }}
+        data-cursor="hover"
+        data-cursor-text="Explore"
+        onPointerEnter={() => experience.getState().setHovered(true)}
+        onPointerLeave={() => experience.getState().setHovered(false)}
+      />
+    </div>
+  );
+}
+
 export default function Hero() {
   const ref = useRef(null);
+  const { tier, touch } = useDeviceProfile();
+  const lite = touch || tier === "low";
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
@@ -94,35 +175,26 @@ export default function Hero() {
         className="pointer-events-none absolute inset-0 overflow-hidden"
         aria-hidden
       >
-        <motion.div
-          className="absolute -right-24 -top-24 h-[520px] w-[520px] rounded-full opacity-[0.08]"
+        {/* Ambient orbs + glyphs — driven by pure-CSS compositor animations
+            (not framer) so they cost nothing on the main thread even though
+            the hero is above the fold and always rendering. */}
+        <div
+          className="animate-aurora absolute -right-24 -top-24 h-[520px] w-[520px] rounded-full opacity-[0.08]"
           style={{ background: "radial-gradient(circle, #aab4c4 0%, transparent 70%)" }}
-          animate={{ scale: [1, 1.16, 1], rotate: [0, 12, 0] }}
-          transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
         />
-        <motion.div
-          className="absolute -left-16 bottom-[18%] h-72 w-72 rounded-full opacity-[0.07]"
-          style={{ background: "radial-gradient(circle, #6f7c8c 0%, transparent 70%)" }}
-          animate={{ scale: [1, 1.2, 1], y: [0, -20, 0] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+        <div
+          className="animate-aurora absolute -left-16 bottom-[18%] h-72 w-72 rounded-full opacity-[0.07]"
+          style={{ background: "radial-gradient(circle, #6f7c8c 0%, transparent 70%)", animationDelay: "-9s" }}
         />
         {/* spinning ring top-left */}
-        <motion.div
-          className="absolute left-[6%] top-[26%] h-24 w-24 rounded-full border border-white/[0.08]"
-          animate={{ rotate: 360 }}
-          transition={{ duration: 22, repeat: Infinity, ease: "linear" }}
-        >
+        <div className="spin-slower absolute left-[6%] top-[26%] h-24 w-24 rounded-full border border-white/[0.08]">
           <span className="absolute top-0 left-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#aab4c4]/70" style={{ boxShadow: "0 0 8px rgba(170,180,196,0.6)" }} />
-        </motion.div>
+        </div>
         {/* small cross */}
-        <motion.div
-          className="absolute right-[20%] bottom-[28%] opacity-20"
-          animate={{ rotate: 360 }}
-          transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-        >
+        <div className="spin-slower absolute right-[20%] bottom-[28%] opacity-20">
           <div className="h-px w-12 bg-white/50" />
           <div className="absolute left-1/2 top-1/2 h-12 w-px -translate-x-1/2 -translate-y-1/2 bg-white/50" />
-        </motion.div>
+        </div>
       </motion.div>
 
       {/* ── Main content grid ───────────────────────────────────── */}
@@ -132,10 +204,10 @@ export default function Hero() {
         <motion.div style={{ y: yText, opacity, scale }} className="z-10">
           {/* Available status pill */}
           <motion.div
-            initial={{ opacity: 0, y: -10, scale: 0.92 }}
+            initial={{ opacity: 0, y: -10, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ delay: 0.4, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="group/pill mb-6 inline-flex items-center gap-2 rounded-full glass px-3.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.28em] text-white/70 transition-all duration-300 hover:bg-white/[0.08] hover:tracking-[0.32em]"
+            transition={{ delay: 0.4, duration: 0.6, ease: EASE_BACK }}
+            className="gradient-border group/pill mb-6 inline-flex items-center gap-2 rounded-full glass px-3.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.28em] text-white/70 transition-all duration-300 hover:bg-white/[0.08] hover:tracking-[0.32em]"
             style={{
               boxShadow: "inset 0 1px 0 rgba(255,255,255,0.06), 0 0 32px rgba(74,222,128,0.06)",
             }}
@@ -156,13 +228,13 @@ export default function Hero() {
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.5, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ delay: 0.5, duration: 0.55, ease: EASE_OUT }}
             className="mb-4 flex items-center gap-3"
           >
             <motion.span
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
-              transition={{ delay: 0.55, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ delay: 0.55, duration: 0.6, ease: EASE_OUT }}
               className="h-px w-10 origin-left bg-gradient-to-r from-white/40 to-transparent"
             />
             <span className="text-[11px] font-semibold uppercase tracking-[0.32em] text-white/55">
@@ -178,22 +250,24 @@ export default function Hero() {
               textShadow: "0 0 40px rgba(170,180,196,0.10)",
             }}
           >
-            <span className="block overflow-hidden whitespace-nowrap">
+            <span className="block overflow-hidden whitespace-nowrap" style={{ perspective: 900 }}>
               <motion.span
                 className="block whitespace-nowrap"
-                initial={{ y: "110%", rotate: 4, filter: "blur(8px)" }}
-                animate={{ y: 0, rotate: 0, filter: "blur(0px)" }}
-                transition={{ duration: 1, delay: 0.55, ease: [0.22, 1, 0.36, 1] }}
+                style={{ transformOrigin: "0% 100%" }}
+                initial={{ y: "118%", rotateX: 48, filter: "blur(10px)" }}
+                animate={{ y: 0, rotateX: 0, filter: "blur(0px)" }}
+                transition={{ duration: 1.1, delay: 0.55, ease: EASE_OUT, filter: { duration: 0.7, delay: 0.55 } }}
               >
                 <MagneticText text={profile.firstName} radius={180} strength={24} />
               </motion.span>
             </span>
-            <span className="block overflow-hidden whitespace-nowrap">
+            <span className="block overflow-hidden whitespace-nowrap" style={{ perspective: 900 }}>
               <motion.span
                 className="block whitespace-nowrap italic font-light text-gradient"
-                initial={{ y: "110%", rotate: -3, filter: "blur(8px)" }}
-                animate={{ y: 0, rotate: 0, filter: "blur(0px)" }}
-                transition={{ duration: 1, delay: 0.72, ease: [0.22, 1, 0.36, 1] }}
+                style={{ transformOrigin: "0% 100%" }}
+                initial={{ y: "118%", rotateX: 48, filter: "blur(10px)" }}
+                animate={{ y: 0, rotateX: 0, filter: "blur(0px)" }}
+                transition={{ duration: 1.1, delay: 0.72, ease: EASE_OUT, filter: { duration: 0.7, delay: 0.72 } }}
               >
                 <MagneticText text={profile.lastName} radius={180} strength={24} />
               </motion.span>
@@ -204,7 +278,7 @@ export default function Hero() {
           <motion.div
             initial={{ opacity: 0, y: 22 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.95, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ delay: 0.95, duration: 0.6, ease: EASE_OUT }}
             className="mt-6 text-2xl md:text-3xl"
           >
             <TypewriterRole />
@@ -214,7 +288,7 @@ export default function Hero() {
           <motion.p
             initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={{ delay: 1.08, duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ delay: 1.08, duration: 0.65, ease: EASE_OUT }}
             className="mt-6 max-w-md text-base leading-relaxed text-white/55 md:text-lg"
           >
             {profile.tagline}
@@ -280,12 +354,12 @@ export default function Hero() {
               {heroTags.map((t, i) => (
                 <motion.li
                   key={t}
-                  initial={{ opacity: 0, scale: 0.75, y: 16 }}
+                  initial={{ opacity: 0, scale: 0.7, y: 18 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
-                  transition={{ delay: 1.4 + i * 0.06, type: "spring", stiffness: 180, damping: 14 }}
-                  whileHover={{ y: -2, scale: 1.05 }}
+                  transition={{ delay: 1.4 + i * 0.06, ...TAG_SPRING }}
+                  whileHover={{ y: -3, scale: 1.06 }}
                   data-cursor="hover"
-                  className="group/tag relative inline-flex items-center gap-1.5 rounded-lg glass px-3 py-1.5 text-xs text-white/65 transition-colors hover:text-white"
+                  className="gradient-border group/tag relative inline-flex items-center gap-1.5 rounded-lg glass px-3 py-1.5 text-xs text-white/65 transition-colors hover:text-white"
                 >
                   <span className="text-[#aab4c4] transition-transform duration-300 group-hover/tag:rotate-90">◇</span>
                   {t}
@@ -295,22 +369,14 @@ export default function Hero() {
           </motion.div>
         </motion.div>
 
-        {/* RIGHT: robot — Spline's vertical FOV is fixed, so we widen the
-            canvas (aspect ratio > 1) so the camera renders extra horizontal
-            space for the arm-swing animation. Outer wrapper handles the
-            scroll layer; inner div extends well past its parent's bounds on
-            BOTH sides. overflow:visible at every level lets the limbs render
-            freely. */}
+        {/* RIGHT: focal frame for the persistent 3D world's hero sculpture
+            (the camera biases the sculpture into this column at the top of
+            the page). Parallax layer is preserved so it drifts on scroll. */}
         <motion.div
           style={{ y: yRobot, rotate: robotRotate, scale: robotScale, overflow: "visible" }}
-          className="relative h-[560px] w-full md:h-[820px] md:-mt-10"
+          className="relative h-[420px] w-full md:h-[640px] md:-mt-10"
         >
-          <div
-            className="absolute inset-y-0 -left-24 -right-24 md:-left-40 md:-right-40 lg:-left-56 lg:-right-56"
-            style={{ overflow: "visible" }}
-          >
-            <SplineRobot />
-          </div>
+          <HeroFocus lite={lite} />
         </motion.div>
       </div>
 

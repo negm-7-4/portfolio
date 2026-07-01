@@ -14,7 +14,7 @@ function StepRow({ step, i, total }) {
       initial={{ opacity: 0, y: 70 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: false, margin: "-10%" }}
-      transition={{ duration: 0.8, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.8, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
       className="relative grid grid-cols-1 items-center gap-8 py-16 md:grid-cols-2 md:gap-16 md:py-24"
     >
       {/* ── Step number side ── */}
@@ -35,7 +35,7 @@ function StepRow({ step, i, total }) {
           initial={{ opacity: 0, x: -60, scale: 0.7 }}
           whileInView={{ opacity: 1, x: 0, scale: 1 }}
           viewport={{ once: false, margin: "-10%" }}
-          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
           className="block select-none font-display leading-[0.8] tracking-tighter tabular-nums"
           style={{
             fontSize: "clamp(8rem, 18vw, 16rem)",
@@ -76,7 +76,7 @@ function StepRow({ step, i, total }) {
           initial={{ opacity: 0, y: 26 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false, margin: "-10%" }}
-          transition={{ delay: 0.22, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ delay: 0.22, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           className="mt-3 font-display font-bold leading-[0.95] tracking-tight text-white"
           style={{ fontSize: "clamp(2.5rem, 5vw, 4.5rem)" }}
         >
@@ -98,7 +98,7 @@ function StepRow({ step, i, total }) {
           initial={{ scaleX: 0 }}
           whileInView={{ scaleX: 1 }}
           viewport={{ once: false, margin: "-10%" }}
-          transition={{ delay: 0.4, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ delay: 0.4, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           className="mt-8 block h-px w-32 origin-left"
           style={{ background: `linear-gradient(90deg, ${step.accent}, transparent)` }}
         />
@@ -110,7 +110,7 @@ function StepRow({ step, i, total }) {
           initial={{ scaleY: 0 }}
           whileInView={{ scaleY: 1 }}
           viewport={{ once: false, margin: "-10%" }}
-          transition={{ delay: 0.5, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ delay: 0.5, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           className="pointer-events-none absolute left-1/2 -bottom-8 h-16 w-px -translate-x-1/2 origin-top bg-gradient-to-b from-white/30 to-transparent"
         />
       )}

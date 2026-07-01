@@ -30,7 +30,7 @@ export default function Portrait({ className = "" }) {
       initial={{ opacity: 0, y: 44, scale: 0.95 }}
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: false, margin: "-12%" }}
-      transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
       style={reduce ? undefined : { y }}
       className={`relative mx-auto w-full max-w-[360px] ${className}`}
     >

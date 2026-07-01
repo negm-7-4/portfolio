@@ -86,7 +86,7 @@ export default function Footer() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: false, margin: "-10%" }}
-            transition={{ delay: 0.25, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ delay: 0.25, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             className="mt-10 flex flex-wrap items-baseline gap-4"
           >
             <span className="flex items-center gap-2 text-[11px] uppercase tracking-[0.32em] text-white/40">
@@ -107,7 +107,7 @@ export default function Footer() {
               data-cursor="hover"
               data-cursor-text="Mail"
               onClick={(e) => celebrate(e.clientX, e.clientY, "#aab4c4")}
-              className="group relative font-display text-2xl font-semibold text-white transition-colors md:text-4xl"
+              className="text-sheen group relative font-display text-2xl font-semibold text-white transition-colors md:text-4xl"
             >
               {profile.email}
               <span
@@ -128,7 +128,7 @@ export default function Footer() {
           <span className="text-[10px] uppercase tracking-[0.3em] text-white/30">
             Index
           </span>
-          <span className="h-px flex-1 bg-white/5" />
+          <span className="shimmer-line h-px flex-1 bg-white/5" />
           <button
             onClick={goTop}
             data-cursor="hover"
@@ -245,7 +245,7 @@ export default function Footer() {
           initial={{ opacity: 0, y: 80 }}
           whileInView={{ opacity: 0.04, y: 0 }}
           viewport={{ once: false, margin: "-20%" }}
-          transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
           aria-hidden
           className="select-none pb-2 text-center font-display font-bold leading-none tracking-[-0.04em] text-white"
           style={{ fontSize: "clamp(5rem, 22vw, 22rem)" }}

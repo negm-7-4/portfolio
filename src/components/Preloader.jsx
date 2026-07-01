@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence, useMotionValue, useSpring } from "motion/react";
 import { profile } from "../data/content";
+import { experience } from "../store/experience";
+import PreloaderAtmosphere from "./ui/PreloaderAtmosphere";
 
 const greetings = ["Hello", "مرحبا", "Bonjour", "こんにちは", "Hola", "Ciao", "Hallo"];
 const PANELS    = 8;
@@ -71,12 +73,25 @@ export default function Preloader({ onDone }) {
   /* progress as 0-1 for the ring */
   const rawProgress = useMotionValue(0);
 
-  /* ── Spline ready listener ─────────────────────────────── */
+  /* ── Readiness ─────────────────────────────────────────────
+     Synced to the cinematic world's first painted frame, so the curtain
+     lifts exactly as the 3D scene is alive. A 1.5s baseline guarantees
+     devices that never mount the world (low-tier / reduced-motion) still
+     reveal promptly. (`robotReady` kept as the internal flag name.) */
   useEffect(() => {
-    if (window.__splineReady) setRobotReady(true);
-    const h = () => setRobotReady(true);
-    window.addEventListener("spline-ready", h);
-    return () => window.removeEventListener("spline-ready", h);
+    if (experience.getState().ready) {
+      setRobotReady(true);
+      return;
+    }
+    const unsub = experience.subscribe(
+      (s) => s.ready,
+      (ready) => ready && setRobotReady(true)
+    );
+    const baseline = setTimeout(() => setRobotReady(true), 1500);
+    return () => {
+      unsub();
+      clearTimeout(baseline);
+    };
   }, []);
 
   /* ── Counter / progress ───────────────────────────────── */
@@ -161,6 +176,8 @@ export default function Preloader({ onDone }) {
         animate={{ opacity: phase === "done" ? 0 : 1 }}
         transition={{ duration: 0.35 }}
       >
+        {/* ── Cinematic atmosphere — drifting luminous dust behind it all ── */}
+        <PreloaderAtmosphere />
 
         {/* ── Top bar ── */}
         <motion.div
@@ -280,7 +297,7 @@ export default function Preloader({ onDone }) {
                   className={`${cls} h-8 w-8 border-white/20`}
                   initial={{ opacity: 0, scale: 0.6 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: i * 0.06, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                  transition={{ delay: i * 0.06, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                 />
               ))}
 
@@ -308,7 +325,7 @@ export default function Preloader({ onDone }) {
                         transition={{
                           duration: 0.9,
                           delay: i * 0.055,
-                          ease: [0.22, 1, 0.36, 1],
+                          ease: [0.16, 1, 0.3, 1],
                           filter: { duration: 0.5 },
                         }}
                       >

@@ -1,0 +1,179 @@
+@import "tailwindcss";
+
+/* ============================================================
+   CINEMATIC DESIGN SYSTEM — Mohamed Negm / Studio
+   A cold, filmic, silver-steel-on-ink palette. Everything dark,
+   high-contrast typographic, with a single warm accent reserved
+   for moments of emphasis.
+   ============================================================ */
+
+:root {
+  /* Core surfaces */
+  --ink:        #05060a;
+  --ink-2:      #080a11;
+  --bg:         #06070b;
+  --fg:         #e9edf6;
+  --muted:      #8b94a8;
+  --faint:      #555d70;
+
+  /* Cool steel accents */
+  --steel:      #aab4c4;
+  --steel-2:    #6f7c8c;
+  --ice:        #c8d2dd;
+
+  /* Warm emphasis (used *sparingly*) */
+  --ember:      #ff7a45;
+  --ember-soft: #ffb38a;
+
+  /* Motion */
+  --ease-out:   cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-inout: cubic-bezier(0.83, 0, 0.17, 1);
+  --ease-back:  cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@theme inline {
+  --color-bg:    var(--bg);
+  --color-ink:   var(--ink);
+  --color-fg:    var(--fg);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-steel: var(--steel);
+  --color-ice:   var(--ice);
+  --color-ember: var(--ember);
+
+  --font-sans:    var(--font-geist-sans);
+  --font-display: var(--font-display);
+  --font-mono:    var(--font-geist-mono);
+}
+
+/* ── Reset / base ─────────────────────────────────────────── */
+* { -webkit-tap-highlight-color: transparent; }
+
+html {
+  background: var(--ink);
+  color: var(--fg);
+  scroll-behavior: auto; /* Lenis owns scrolling */
+}
+
+body {
+  background: var(--ink);
+  color: var(--fg);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-feature-settings: "ss01", "cv01";
+  overflow-x: hidden;
+  /* The 3D canvas paints the real background; keep DOM transparent above it */
+}
+
+::selection { background: rgba(170, 180, 196, 0.22); color: #fff; }
+
+/* ── Lenis smooth-scroll wiring ───────────────────────────── */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+/* ── Scrollbar (thin, ghostly) ────────────────────────────── */
+::-webkit-scrollbar { width: 0; height: 0; }
+
+/* ============================================================
+   UTILITIES
+   ============================================================ */
+
+.font-display { font-family: var(--font-display), var(--font-geist-sans), sans-serif; }
+.font-mono    { font-family: var(--font-geist-mono), ui-monospace, monospace; }
+
+/* Frosted glass panel */
+.glass {
+  background: rgba(255, 255, 255, 0.035);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  backdrop-filter: blur(14px) saturate(1.2);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Hairline gradient border via mask */
+.gradient-border {
+  position: relative;
+}
+.gradient-border::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.25), rgba(255,255,255,0.02) 40%, transparent 70%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.text-gradient {
+  background: linear-gradient(180deg, #ffffff 0%, #aab4c4 60%, #6f7c8c 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.text-ember-gradient {
+  background: linear-gradient(180deg, #ffd9c4 0%, #ff7a45 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Eyebrow / kicker label */
+.kicker {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Film grain overlay (applied to a fixed element) */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain-shift 0.5s steps(2) infinite;
+}
+@keyframes grain-shift {
+  0%   { transform: translate(0, 0); }
+  50%  { transform: translate(-3%, 2%); }
+  100% { transform: translate(2%, -2%); }
+}
+
+/* Cinematic edge vignette */
+.vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  pointer-events: none;
+  background: radial-gradient(125% 125% at 50% 45%, transparent 55%, rgba(0,0,0,0.55) 100%);
+}
+
+/* Letterbox bars feel — subtle top/bottom darken */
+.cine-bars::before,
+.cine-bars::after {
+  content: "";
+  position: fixed;
+  left: 0; right: 0;
+  height: 7vh;
+  z-index: 54;
+  pointer-events: none;
+}
+.cine-bars::before { top: 0;    background: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent); }
+.cine-bars::after  { bottom: 0; background: linear-gradient(to top,    rgba(0,0,0,0.5), transparent); }
+
+/* Reveal helpers (used by motion in JS but kept as fallbacks) */
+.will-reveal { will-change: transform, opacity; }
+
+@media (prefers-reduced-motion: reduce) {
+  .grain { animation: none; }
+  * { scroll-behavior: auto !important; }
+}

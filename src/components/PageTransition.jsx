@@ -24,13 +24,13 @@ export default function PageTransition() {
       const section = sections.find((s) => s.id === id);
       targetRef.current = section || { id, num: "", label: id, color: "#aab4c4" };
       setStage("in");
-      // Trim total transition by ~150ms — feels noticeably snappier.
+      // Tightened cover/reveal window so navigation feels instant-but-cinematic.
       window.setTimeout(() => {
         if (window.__lenis) window.__lenis.scrollTo(el, { immediate: true, offset: -40 });
         else el.scrollIntoView();
         setStage("out");
-      }, 500);
-      window.setTimeout(() => setStage("idle"), 1100);
+      }, 430);
+      window.setTimeout(() => setStage("idle"), 960);
     };
     return () => {
       window.__goto = null;
@@ -57,9 +57,9 @@ export default function PageTransition() {
             stage === "idle"
               ? { duration: 0 }
               : {
-                  duration: 0.55,                              // 0.65 → 0.55
+                  duration: 0.48,
                   ease: [0.76, 0, 0.24, 1],
-                  delay: (stage === "in" ? i : PANELS - 1 - i) * 0.038, // 0.045 → 0.038
+                  delay: (stage === "in" ? i : PANELS - 1 - i) * 0.032,
                 }
           }
         />
@@ -90,7 +90,7 @@ export default function PageTransition() {
                 opacity: stage === "in" ? 1 : 0,
                 y: stage === "in" ? 0 : 12,
               }}
-              transition={{ duration: 0.48, delay: stage === "in" ? 0.4 : 0, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.48, delay: stage === "in" ? 0.4 : 0, ease: [0.16, 1, 0.3, 1] }}
               className="font-display text-base font-medium tracking-[0.18em]"
               style={{ color: target?.color || "#aab4c4" }}
             >
@@ -108,7 +108,7 @@ export default function PageTransition() {
               y: stage === "in" ? 0 : 18,
               filter: stage === "in" ? "blur(0px)" : "blur(8px)",
             }}
-            transition={{ duration: 0.52, delay: stage === "in" ? 0.44 : 0, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.52, delay: stage === "in" ? 0.44 : 0, ease: [0.16, 1, 0.3, 1] }}
             className="font-display text-5xl font-bold tracking-tight text-white md:text-7xl"
           >
             {target?.label || ""}
@@ -118,7 +118,7 @@ export default function PageTransition() {
           <motion.span
             initial={{ scaleX: 0 }}
             animate={{ scaleX: stage === "in" ? 1 : 0 }}
-            transition={{ duration: 0.55, delay: stage === "in" ? 0.56 : 0, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.55, delay: stage === "in" ? 0.56 : 0, ease: [0.16, 1, 0.3, 1] }}
             className="mt-3 block h-px w-16 origin-left bg-gradient-to-r from-transparent via-white/60 to-transparent"
           />
         </div>

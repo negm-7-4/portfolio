@@ -8,12 +8,15 @@ import Lenis from "lenis";
 export default function useLenis() {
   useEffect(() => {
     const lenis = new Lenis({
-      lerp: 0.14, // higher = snappier / more responsive scroll
+      lerp: 0.13, // higher = snappier / more responsive scroll
       orientation: "vertical",
       gestureOrientation: "vertical",
       smoothWheel: true,
-      wheelMultiplier: 1.25,
-      smoothTouch: false,
+      // Cover more ground per wheel tick so the site feels fast to traverse.
+      wheelMultiplier: 1.45,
+      // Lenis 1.x renamed `smoothTouch` → `syncTouch`. `false` keeps native
+      // touch scrolling on mobile (best feel + perf). The old key was a no-op.
+      syncTouch: false,
       touchMultiplier: 2,
     });
 

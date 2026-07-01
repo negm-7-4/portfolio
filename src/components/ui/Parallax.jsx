@@ -1,12 +1,15 @@
 import { useRef } from "react";
 import { motion, useScroll, useSpring, useTransform } from "motion/react";
+import useScrollVelocity from "../../hooks/useScrollVelocity";
+import { SPRING_SCROLL } from "../../lib/motion";
 
 /**
  * Continuous scroll parallax — translates (and optionally fades) its children
- * as they pass through the viewport, so motion happens scrolling BOTH up and
- * down. Transform/opacity only, so it stays cheap.
+ * as they pass through the viewport, so motion happens scrolling BOTH ways.
  *
- * Spring-smoothed for buttery motion that pairs well with Lenis.
+ * Adds a whisper of velocity-driven skew: scroll fast and the block leans into
+ * the motion, then springs flat when you stop — the "kinetic drag" of
+ * Locomotive/Awwwards sites. Transform + opacity only → stays at 60fps.
  */
 export default function Parallax({
   children,
@@ -14,6 +17,7 @@ export default function Parallax({
   distance = 60,
   fade = false,
   smooth = true,
+  kinetic = true,
   style = {},
 }) {
   const ref = useRef(null);
@@ -22,18 +26,24 @@ export default function Parallax({
     offset: ["start end", "end start"],
   });
 
-  // Optionally spring-smooth the progress for silkier motion
-  const progress = smooth
-    ? useSpring(scrollYProgress, { stiffness: 90, damping: 24, mass: 0.6 })
-    : scrollYProgress;
+  // Always create the spring (rules-of-hooks safe) then pick the source.
+  const springy = useSpring(scrollYProgress, SPRING_SCROLL);
+  const progress = smooth ? springy : scrollYProgress;
 
   const y       = useTransform(progress, [0, 1], [distance, -distance]);
   const opacity = useTransform(progress, [0, 0.18, 0.82, 1], [0.2, 1, 1, 0.2]);
+  const skewY   = useScrollVelocity({ max: 2, clampAt: 1800 });
 
   return (
     <motion.div
       ref={ref}
-      style={{ ...style, y, opacity: fade ? opacity : undefined, willChange: "transform" }}
+      style={{
+        ...style,
+        y,
+        skewY: kinetic ? skewY : undefined,
+        opacity: fade ? opacity : undefined,
+        willChange: "transform",
+      }}
       className={className}
     >
       {children}

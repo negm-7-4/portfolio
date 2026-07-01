@@ -92,7 +92,7 @@ export default function Stats() {
               initial={{ opacity: 0, y: 60 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: false, margin: "-10%" }}
-              transition={{ duration: 0.7, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.7, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
               className="group flex flex-col items-start px-4 md:px-8"
             >
               {/* tiny stat marker — index */}

@@ -2,25 +2,26 @@ import { motion } from "motion/react";
 import SplitText from "./SplitText";
 import Reveal from "./Reveal";
 import Parallax from "./Parallax";
+import { EASE_OUT, VIEWPORT } from "../../lib/motion";
 
 /**
- * Section header in Ahmed Ragab signature style: "( NN )" parenthesized
- * number to the left, label to the right, separated by a thin draw-in line.
- * Sits above a giant 2-line title with split-letter reveal.
+ * Section header: "( NN )" parenthesized number + label, split by thin
+ * draw-in lines, sitting above a giant two-tone title with a headline-grade
+ * per-character fold-up reveal and a mask underline that sweeps in beneath.
  *
  * Pass `num` like "01", "02" — gets wrapped in `( … )` automatically.
  */
 export default function SectionHeading({ eyebrow, title, accent, num }) {
   return (
     <Parallax distance={70} className="mb-14 flex flex-col items-center text-center">
-      <Reveal>
+      <Reveal depth={false}>
         <div className="mb-7 flex items-center gap-4">
           {/* small leading dash */}
           <motion.span
             initial={{ scaleX: 0 }}
             whileInView={{ scaleX: 1 }}
-            viewport={{ once: false, margin: "-10%" }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            viewport={VIEWPORT}
+            transition={{ duration: 0.5, ease: EASE_OUT }}
             className="h-px w-10 origin-right bg-gradient-to-l from-white/40 to-white/0"
           />
 
@@ -29,8 +30,8 @@ export default function SectionHeading({ eyebrow, title, accent, num }) {
             <motion.span
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: false, margin: "-10%" }}
-              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1], delay: 0.05 }}
+              viewport={VIEWPORT}
+              transition={{ duration: 0.45, ease: EASE_OUT, delay: 0.05 }}
               className="flex items-baseline font-display text-[15px] font-medium tracking-[0.18em] tabular-nums text-white/55"
             >
               <motion.span
@@ -55,8 +56,8 @@ export default function SectionHeading({ eyebrow, title, accent, num }) {
           <motion.span
             initial={{ opacity: 0, rotate: -45 }}
             whileInView={{ opacity: 1, rotate: 0 }}
-            viewport={{ once: false, margin: "-10%" }}
-            transition={{ duration: 0.5, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
+            viewport={VIEWPORT}
+            transition={{ duration: 0.5, delay: 0.12, ease: EASE_OUT }}
             className="font-display text-[8px] text-[#aab4c4]"
           >
             <motion.span
@@ -72,7 +73,7 @@ export default function SectionHeading({ eyebrow, title, accent, num }) {
           <motion.span
             initial={{ opacity: 0, x: -8 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: false, margin: "-10%" }}
+            viewport={VIEWPORT}
             transition={{ duration: 0.4, delay: 0.18 }}
             className="text-[11px] font-semibold uppercase tracking-[0.32em] text-white/65"
           >
@@ -83,8 +84,8 @@ export default function SectionHeading({ eyebrow, title, accent, num }) {
           <motion.span
             initial={{ scaleX: 0 }}
             whileInView={{ scaleX: 1 }}
-            viewport={{ once: false, margin: "-10%" }}
-            transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1], delay: 0.18 }}
+            viewport={VIEWPORT}
+            transition={{ duration: 0.55, ease: EASE_OUT, delay: 0.18 }}
             className="h-px w-14 origin-left bg-gradient-to-r from-white/40 to-white/0"
           />
         </div>
@@ -94,13 +95,23 @@ export default function SectionHeading({ eyebrow, title, accent, num }) {
         className="font-display text-4xl sm:text-5xl font-bold leading-[0.95] tracking-tight md:text-[5.5rem] break-words"
         style={{ textShadow: "0 0 32px rgba(170,180,196,0.08)" }}
       >
-        <SplitText text={title} />{" "}
+        <SplitText text={title} perChar />{" "}
         {accent && (
           <span className="text-gradient italic font-light">
-            <SplitText text={accent} delay={0.12} />
+            <SplitText text={accent} perChar delay={0.12} />
           </span>
         )}
       </h2>
+
+      {/* mask underline — sweeps in beneath the title */}
+      <motion.span
+        aria-hidden
+        initial={{ scaleX: 0, opacity: 0 }}
+        whileInView={{ scaleX: 1, opacity: 1 }}
+        viewport={VIEWPORT}
+        transition={{ duration: 0.8, ease: EASE_OUT, delay: 0.35 }}
+        className="mt-6 block h-px w-28 origin-center bg-gradient-to-r from-transparent via-white/45 to-transparent"
+      />
     </Parallax>
   );
 }

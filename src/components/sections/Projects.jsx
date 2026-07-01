@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useScroll, useTransform } from "motion/react";
 import SectionHeading from "../ui/SectionHeading";
 import BrowserFrame from "../ui/BrowserFrame";
+import ScrubReveal from "../ui/ScrubReveal";
+import WebGLImage from "../ui/WebGLImage";
 import { celebrate } from "../../lib/confetti";
 import { projects } from "../../data/content";
 
@@ -16,7 +18,7 @@ function StickyInfo({ p, idx, total }) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -20 }}
-        transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
       >
         {/* mega ghost number */}
         <span
@@ -45,7 +47,7 @@ function StickyInfo({ p, idx, total }) {
           <motion.h3
             initial={{ opacity: 0, y: 16, filter: "blur(6px)" }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={{ delay: 0.15, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ delay: 0.15, duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
             className="mt-3 font-display text-4xl font-bold leading-[0.95] tracking-tight text-white md:text-5xl"
           >
             {p.title}
@@ -183,7 +185,7 @@ export default function Projects() {
                   width: active === i ? 28 : 8,
                   backgroundColor: active === i ? p.color : "rgba(255,255,255,0.2)",
                 }}
-                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                 className="block h-[2px] rounded-full"
               />
             </button>
@@ -212,37 +214,30 @@ export default function Projects() {
                   data-idx={i}
                   className="relative"
                 >
-                  <BrowserFrame url={url} accent={p.color}>
-                    {p.image ? (
-                      <img
-                        src={p.image}
-                        alt={p.title}
-                        loading="lazy"
-                        decoding="async"
-                        fetchpriority="low"
-                        width="1200"
-                        height="705"
-                        className="absolute inset-0 h-full w-full object-cover object-top"
-                      />
-                    ) : (
-                      <div
-                        className="absolute inset-0 flex items-center justify-center"
-                        style={{ background: `linear-gradient(135deg, ${p.color}22 0%, transparent 100%)` }}
-                      >
-                        <div className="text-center">
-                          <p
-                            className="font-display text-7xl font-bold tracking-tight"
-                            style={{ color: `${p.color}55` }}
-                          >
-                            {p.title.split(" ").map((w) => w[0]).join("")}
-                          </p>
-                          <p className="mt-3 text-[10px] uppercase tracking-[0.3em] text-white/30">
-                            preview · soon
-                          </p>
+                  <ScrubReveal tilt={i % 2 === 0 ? 6 : -6}>
+                    <BrowserFrame url={url} accent={p.color}>
+                      {p.image ? (
+                        <WebGLImage src={p.image} alt={p.title} />
+                      ) : (
+                        <div
+                          className="absolute inset-0 flex items-center justify-center"
+                          style={{ background: `linear-gradient(135deg, ${p.color}22 0%, transparent 100%)` }}
+                        >
+                          <div className="text-center">
+                            <p
+                              className="font-display text-7xl font-bold tracking-tight"
+                              style={{ color: `${p.color}55` }}
+                            >
+                              {p.title.split(" ").map((w) => w[0]).join("")}
+                            </p>
+                            <p className="mt-3 text-[10px] uppercase tracking-[0.3em] text-white/30">
+                              preview · soon
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    )}
-                  </BrowserFrame>
+                      )}
+                    </BrowserFrame>
+                  </ScrubReveal>
 
                   {/* mobile-only inline label */}
                   <p className="mt-4 text-center text-[11px] uppercase tracking-[0.3em] text-white/40 md:hidden">
