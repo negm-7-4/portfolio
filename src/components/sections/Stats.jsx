@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
+import { loadScrollSync } from "../../lib/scrollSync";
 
 const stats = [
   { value: 15,  suffix: "+", label: "Projects shipped",   note: "From dashboards to 3D web." },
@@ -23,12 +24,8 @@ export default function Stats() {
     let ctx;
     let canceled = false;
     (async () => {
-      const [{ default: gsap }, { ScrollTrigger }] = await Promise.all([
-        import("gsap"),
-        import("gsap/ScrollTrigger"),
-      ]);
+      const { gsap } = await loadScrollSync();
       if (canceled) return;
-      gsap.registerPlugin(ScrollTrigger);
 
       ctx = gsap.context(() => {
         const nums = gsap.utils.toArray(".stat-num");

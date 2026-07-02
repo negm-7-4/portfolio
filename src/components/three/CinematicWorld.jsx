@@ -7,6 +7,7 @@ import {
   Sparkles,
   Stars,
   AdaptiveDpr,
+  useProgress,
 } from "@react-three/drei";
 import {
   EffectComposer,
@@ -24,6 +25,7 @@ import { sections } from "../../data/sections";
 import { FresnelMaterial } from "./materials/FresnelMaterial"; // registers <fresnelMaterial>
 import MorphField from "./MorphField";
 import HeroModel from "./HeroModel";
+import Architecture from "./Architecture";
 
 /* eslint-disable react/no-unknown-property */
 
@@ -69,7 +71,7 @@ function CameraRig() {
   const firstFrame = useRef(true);
 
   useFrame((state, dt) => {
-    const { scroll, pointer, velocity } = experience.getState();
+    const { scroll, pointer, velocity, gallery } = experience.getState();
 
     // Global scroll → which two shots we're between, and how far.
     const K = CAM_KEYS.length;
@@ -85,16 +87,28 @@ function CameraRig() {
     const px = pointer.x * 0.8;
     const py = pointer.y * 0.5;
 
+    // Inside the projects gallery the active project steps the camera
+    // laterally (-1 → 1), like walking along a gallery wall. The damp below
+    // turns each step into a smooth tracking move; zero everywhere else.
     tmpPos.current.set(
-      lerp(a.pos[0], b.pos[0], e) + px,
+      lerp(a.pos[0], b.pos[0], e) + px + gallery * 1.3,
       lerp(a.pos[1], b.pos[1], e) + py,
       lerp(a.pos[2], b.pos[2], e) + speed * 0.6
     );
     tmpLook.current.set(
-      lerp(a.look[0], b.look[0], e) + px * 0.4,
+      lerp(a.look[0], b.look[0], e) + px * 0.4 + gallery * 0.45,
       lerp(a.look[1], b.look[1], e) + py * 0.3,
       0
     );
+
+    // Handheld micro-drift — strongest when the scroll is at rest, so a held
+    // shot still breathes like a camera on a shoulder rig instead of a tripod.
+    const idle = 1 - speed;
+    const t = state.clock.elapsedTime;
+    tmpPos.current.x += Math.sin(t * 0.26) * 0.07 * idle;
+    tmpPos.current.y += Math.sin(t * 0.19 + 1.7) * 0.05 * idle;
+    tmpLook.current.x += Math.sin(t * 0.16 + 0.6) * 0.035 * idle;
+    tmpLook.current.y += Math.cos(t * 0.22 + 2.1) * 0.025 * idle;
 
     // Always glide, never snap — robust to scroll jumps (anchor nav). The
     // Canvas mounts the camera far up/back, so this settles it into the hero
@@ -239,12 +253,17 @@ function SectionAccent() {
   const target = useMemo(() => new THREE.Color(colors[0]), [colors]);
 
   useFrame((_, dt) => {
-    const { sectionIndex, scroll } = experience.getState();
-    target.copy(colors[Math.min(sectionIndex, colors.length - 1)] || colors[0]);
+    const { sectionIndex, scroll, accentOverride } = experience.getState();
+    // Inside the projects gallery the active project's brand colour takes
+    // over the world's accent light — each project dyes the whole scene.
+    if (accentOverride) target.set(accentOverride);
+    else target.copy(colors[Math.min(sectionIndex, colors.length - 1)] || colors[0]);
     if (light.current) {
       dampC(light.current.color, target, 0.7, dt);
-      // Brightest for the hero / contact beats, dimmer through the middle.
-      damp(light.current, "intensity", 11 - Math.sin(scroll * Math.PI) * 5.5, 0.4, dt);
+      // Brightest for the hero / contact beats, dimmer through the middle;
+      // the gallery dye gets an extra push so the tint clearly reads.
+      const boost = accentOverride ? 4 : 0;
+      damp(light.current, "intensity", 11 - Math.sin(scroll * Math.PI) * 5.5 + boost, 0.4, dt);
     }
   });
 
@@ -303,6 +322,7 @@ function Scene({ quality }) {
       {heroModel && <HeroModel />}
       <MorphField quality={quality} />
       <BackdropKnot />
+      <Architecture quality={quality} />
 
       <Sparkles
         count={quality === "high" ? 45 : 22}
@@ -326,6 +346,17 @@ function Scene({ quality }) {
       <AdaptiveDpr pixelated />
     </>
   );
+}
+
+/* Pumps drei's real asset-loading progress (GLB, textures — anything on the
+   default loading manager) into the store so the preloader counter reflects
+   what is actually happening instead of a synthetic ramp. */
+function ProgressBridge() {
+  const progress = useProgress((s) => s.progress);
+  useEffect(() => {
+    experience.getState().setLoadProgress(progress);
+  }, [progress]);
+  return null;
 }
 
 /* ──────────────────────────────────────────────────────────────────────
@@ -352,6 +383,7 @@ export default function CinematicWorld({ quality = "high" }) {
       aria-hidden="true"
       style={{ pointerEvents: "none" }}
     >
+      <ProgressBridge />
       <Canvas
         frameloop={frameloop}
         dpr={[1, dprMax]}

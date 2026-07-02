@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence, useMotionValue, useSpring } from "motion/react";
 import { profile } from "../data/content";
 import { experience } from "../store/experience";
+import useDeviceProfile from "../hooks/useDeviceProfile";
 import PreloaderAtmosphere from "./ui/PreloaderAtmosphere";
 
 const greetings = ["Hello", "مرحبا", "Bonjour", "こんにちは", "Hola", "Ciao", "Hallo"];
@@ -68,16 +69,19 @@ export default function Preloader({ onDone }) {
   const [phase,      setPhase]      = useState("loading");
   const [robotReady, setRobotReady] = useState(false);
   const [scanDone,   setScanDone]   = useState(false);
-  const startRef = useRef(Date.now());
+  const [showSkip,   setShowSkip]   = useState(false);
+  const finishedRef = useRef(false);
+  const { tier } = useDeviceProfile();
 
   /* progress as 0-1 for the ring */
   const rawProgress = useMotionValue(0);
 
   /* ── Readiness ─────────────────────────────────────────────
      Synced to the cinematic world's first painted frame, so the curtain
-     lifts exactly as the 3D scene is alive. A 1.5s baseline guarantees
-     devices that never mount the world (low-tier / reduced-motion) still
-     reveal promptly. (`robotReady` kept as the internal flag name.) */
+     lifts exactly as the 3D scene is alive. Low tier never mounts the world,
+     so a short 1.5s baseline reveals promptly there; capable tiers wait for
+     the real first frame, with a long safety net so a stalled chunk can
+     never trap the user. (`robotReady` kept as the internal flag name.) */
   useEffect(() => {
     if (experience.getState().ready) {
       setRobotReady(true);
@@ -87,29 +91,59 @@ export default function Preloader({ onDone }) {
       (s) => s.ready,
       (ready) => ready && setRobotReady(true)
     );
-    const baseline = setTimeout(() => setRobotReady(true), 1500);
+    const baseline = setTimeout(() => setRobotReady(true), tier === "low" ? 1500 : 9000);
     return () => {
       unsub();
       clearTimeout(baseline);
     };
+  }, [tier]);
+
+  /* ── Skip affordance — never trap anyone in an intro ── */
+  useEffect(() => {
+    const id = setTimeout(() => setShowSkip(true), 3500);
+    return () => clearTimeout(id);
   }, []);
 
-  /* ── Counter / progress ───────────────────────────────── */
+  const skip = () => {
+    if (finishedRef.current) return;
+    finishedRef.current = true;
+    setPhase("done");
+    setTimeout(onDone, 1100);
+  };
+
+  /* ── Counter / progress ───────────────────────────────────────────
+     Honest progress. Three signals race each other:
+       • a time ramp (guarantees motion, but CAPS at 88 — the last stretch
+         is never faked),
+       • the store's real asset progress (drei useProgress → GLB/textures),
+       • `robotReady` — the world's first painted frame (or the low-tier
+         baseline), which alone unlocks 100.
+     So the counter only completes when the experience is genuinely ready,
+     and on slow GPUs it visibly holds just under 90 instead of lying.   */
   useEffect(() => {
     if (phase !== "loading") return;
-    let n = 0;
+    let ramp = 0;
+    let done = false;
     const id = setInterval(() => {
-      n += Math.random() * 4 + 2.2;
-      if (n >= 100) {
-        n = 100;
-        clearInterval(id);
-        setTimeout(() => setPhase("name"), 450);
-      }
-      setCount(Math.floor(n));
-      rawProgress.set(n / 100);
-    }, 120);
+      ramp = Math.min(ramp + Math.random() * 2.6 + 1.3, 88);
+      const real = experience.getState().loadProgress * 0.92;
+      const target = robotReady ? 100 : Math.min(97, Math.max(ramp, real));
+      setCount((c) => {
+        // Ease toward the target, clamped so a sudden asset finish reads as a
+        // confident acceleration rather than a teleport.
+        const step = Math.min(9, Math.max(target >= 100 ? 2.5 : 1, (target - c) * 0.22));
+        const n = Math.min(c + step, target, 100);
+        rawProgress.set(n / 100);
+        if (n >= 100 && !done) {
+          done = true;
+          clearInterval(id);
+          setTimeout(() => setPhase("name"), 450);
+        }
+        return Math.floor(n);
+      });
+    }, 110);
     return () => clearInterval(id);
-  }, [phase, rawProgress]);
+  }, [phase, robotReady, rawProgress]);
 
   /* ── Greeting cycle ───────────────────────────────────── */
   useEffect(() => {
@@ -122,10 +156,9 @@ export default function Preloader({ onDone }) {
   useEffect(() => {
     if (phase !== "name") return;
     const nameStart = Date.now();
-    let finished = false;
     const finish = () => {
-      if (finished) return;
-      finished = true;
+      if (finishedRef.current) return;
+      finishedRef.current = true;
       setPhase("done");
       setTimeout(onDone, 1100);
     };
@@ -392,6 +425,25 @@ export default function Preloader({ onDone }) {
             </span>
           </div>
         </motion.div>
+
+        {/* ── Skip intro — appears after a beat, never traps the user ── */}
+        <AnimatePresence>
+          {showSkip && covering && (
+            <motion.button
+              key="skip"
+              onClick={skip}
+              data-cursor="hover"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5 }}
+              className="group absolute bottom-24 left-1/2 z-10 -translate-x-1/2 text-[10px] uppercase tracking-[0.35em] text-white/35 transition-colors hover:text-white/80"
+            >
+              Skip intro
+              <span className="mx-auto mt-1.5 block h-px w-0 bg-white/50 transition-all duration-400 group-hover:w-full" />
+            </motion.button>
+          )}
+        </AnimatePresence>
 
         {/* ── Full-width progress line ── */}
         <motion.div

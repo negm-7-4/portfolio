@@ -6,6 +6,7 @@ import ScrubReveal from "../ui/ScrubReveal";
 import WebGLImage from "../ui/WebGLImage";
 import { celebrate } from "../../lib/confetti";
 import { projects } from "../../data/content";
+import { experience } from "../../store/experience";
 
 /* ─── Sticky left column — number + info that changes with active project ─── */
 function StickyInfo({ p, idx, total }) {
@@ -119,7 +120,40 @@ function StickyInfo({ p, idx, total }) {
 export default function Projects() {
   const ref = useRef(null);
   const [active, setActive] = useState(0);
+  const [inView, setInView] = useState(false);
   const slotRefs = useRef([]);
+
+  // While the gallery is on screen, the active project takes over the world:
+  // its brand colour dyes the section light + morph field, and the camera
+  // dollies laterally across the scene as you move from project to project —
+  // each project reads as its own room in the same building.
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([e]) => setInView(e.isIntersecting),
+      { rootMargin: "-15% 0px -15% 0px" }
+    );
+    io.observe(el);
+    return () => {
+      io.disconnect();
+      const s = experience.getState();
+      s.setAccentOverride(null);
+      s.setGallery(0);
+    };
+  }, []);
+
+  useEffect(() => {
+    const s = experience.getState();
+    if (!inView) {
+      s.setAccentOverride(null);
+      s.setGallery(0);
+      return;
+    }
+    const n = projects.length;
+    s.setAccentOverride(projects[active]?.color || null);
+    s.setGallery(n > 1 ? (active / (n - 1)) * 2 - 1 : 0);
+  }, [active, inView]);
 
   // Track which project slot is most visible on the right
   useEffect(() => {

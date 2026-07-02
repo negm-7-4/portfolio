@@ -24,6 +24,10 @@ import { ToastProvider } from "./components/ui/Toast";
 import Hero from "./components/sections/Hero";
 import Stats from "./components/sections/Stats";
 import About from "./components/sections/About";
+// Manifesto is a few KB of markup (GSAP arrives lazily inside it) — eager
+// import keeps its 260vh pin corridor in the layout from first paint, so
+// lazy-chunk arrival never shifts the scroll geometry mid-journey.
+import Manifesto from "./components/sections/Manifesto";
 
 // Below-the-fold sections are code-split. Each one is wrapped in a
 // placeholder section element so the chapter-rail observer can keep
@@ -152,6 +156,7 @@ export default function App() {
             <Suspense fallback={<SectionPlaceholder id="skills" />}><Skills /></Suspense>
             <Suspense fallback={<SectionPlaceholder id="experience" />}><Experience /></Suspense>
             <Suspense fallback={<SectionPlaceholder id="process" />}><Process /></Suspense>
+            <Manifesto />
             <VelocityMarquee text="LET'S BUILD SOMETHING GREAT" baseVelocity={3} />
             <Suspense fallback={<SectionPlaceholder id="projects" />}><Projects /></Suspense>
             <Suspense fallback={null}><CapabilitiesGallery /></Suspense>

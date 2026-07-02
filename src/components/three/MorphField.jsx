@@ -256,6 +256,8 @@ export default function MorphField({ quality = "high" }) {
 
   // Chapter accents, precomputed as THREE colours for cheap damping.
   const accents = useMemo(() => sections.map((s) => new THREE.Color(s.accent)), []);
+  // Scratch colour for the projects-gallery dye (no per-frame allocation).
+  const overrideColor = useMemo(() => new THREE.Color(), []);
 
   useEffect(() => {
     return () => {
@@ -301,8 +303,14 @@ export default function MorphField({ quality = "high" }) {
     damp(u.uReveal, "value", ready ? 1 : 0, 0.9, dt);
 
     // Colour drifts toward the active chapter's accent — the field is dyed
-    // by wherever you are in the story.
-    dampC(u.uColorB.value, accents[Math.min(sectionIndex, accents.length - 1)], 0.6, dt);
+    // by wherever you are in the story. Inside the projects gallery the
+    // active project's brand colour takes over, so each project re-dyes
+    // the constellation around its own identity.
+    const { accentOverride } = experience.getState();
+    const dye = accentOverride
+      ? overrideColor.set(accentOverride)
+      : accents[Math.min(sectionIndex, accents.length - 1)];
+    dampC(u.uColorB.value, dye, 0.6, dt);
 
     // Slow signature rotation + a scroll-linked yaw so traversal feels like
     // orbiting a living object.

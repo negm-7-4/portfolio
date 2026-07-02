@@ -19,6 +19,8 @@ export const useExperience = create(
     pointer: { x: 0, y: 0 }, // normalised cursor, -1 → 1 on each axis
     sectionIndex: 0, // current chapter (0 → sectionCount-1)
     hovered: false, // cursor is over an interactive 3D object (the hero orb)
+    accentOverride: null, // hex string while the projects gallery is on screen — dyes the world
+    gallery: 0, // -1 → 1 across the projects gallery; lateral camera dolly
 
     // ── Configuration (written once on mount) ──
     sectionCount: 10,
@@ -28,6 +30,7 @@ export const useExperience = create(
     // ── Lifecycle ──
     ready: false, // the world has painted its first frame
     paused: false, // tab hidden → freeze the render loop
+    loadProgress: 0, // real asset progress 0 → 100 (drei useProgress, world chunk)
 
     // ── Writers ──
     setScroll: (scroll, velocity = 0) => set({ scroll, velocity }),
@@ -43,10 +46,15 @@ export const useExperience = create(
       set((s) => (s.sectionIndex === sectionIndex ? {} : { sectionIndex })),
     setHovered: (hovered) =>
       set((s) => (s.hovered === hovered ? {} : { hovered })),
+    setAccentOverride: (accentOverride) =>
+      set((s) => (s.accentOverride === accentOverride ? {} : { accentOverride })),
+    setGallery: (gallery) =>
+      set((s) => (s.gallery === gallery ? {} : { gallery })),
     setQuality: (quality) => set({ quality }),
     setReducedMotion: (reducedMotion) => set({ reducedMotion }),
     setReady: (ready) => set({ ready }),
     setPaused: (paused) => set({ paused }),
+    setLoadProgress: (loadProgress) => set({ loadProgress }),
   }))
 );
 
