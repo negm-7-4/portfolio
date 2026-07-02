@@ -2,7 +2,8 @@ import { useRef } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
 import SectionHeading from "../ui/SectionHeading";
 import TiltCard from "../ui/TiltCard";
-import Portrait from "../ui/Portrait";
+import HangingPortrait from "../ui/HangingPortrait";
+import { Gyro, Diamond } from "../ui/Shapes3D";
 import { profile, aboutCards } from "../../data/content";
 
 /* ─── Subtle SVG glyphs for the trait cards ─── */
@@ -82,6 +83,10 @@ export default function About() {
         <div className="h-full w-full rounded-full bg-[radial-gradient(circle,#8a93a6_0%,transparent_70%)]" />
       </motion.div>
 
+      {/* floating 3D wireframe sculptures — ambient depth */}
+      <Gyro size={150} className="absolute right-[6%] top-[14%] hidden opacity-50 md:block" />
+      <Diamond size={90} className="absolute left-[4%] bottom-[20%] hidden opacity-40 lg:block" />
+
       <div className="relative mx-auto w-[90%] max-w-7xl">
         <SectionHeading num="01" eyebrow="About Me" title="Who" accent="I Am" />
 
@@ -158,8 +163,8 @@ export default function About() {
             transition={{ delay: 0.15, duration: 0.7 }}
             className="flex flex-col gap-8 md:col-span-5"
           >
-            {/* Animated profile photo */}
-            <Portrait />
+            {/* Interactive hanging portrait — drag it, watch it swing */}
+            <HangingPortrait />
 
             <TiltCard
               max={6}
