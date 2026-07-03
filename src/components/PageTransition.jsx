@@ -49,8 +49,30 @@ export default function PageTransition() {
   const yFor = (s) => (s === "in" ? "0%" : s === "out" ? "-100%" : "100%");
   const target = targetRef.current;
 
+  // Cinemascope letterbox — thin bars ride in as the cover lands and hold
+  // through the reveal, so the new section literally opens inside a widescreen
+  // film frame, then retract at idle. Driven by stage, so it works on every
+  // tier (no dependency on the WebGL world) and MotionConfig's reduced-motion
+  // handling collapses it for users who ask for calm.
+  const barH = stage === "idle" ? "0vh" : "7vh";
+
   return (
     <div className="pointer-events-none fixed inset-0 z-[9500] flex">
+      {/* letterbox bars — above the panels so they frame the revealed scene */}
+      <motion.div
+        className="pointer-events-none fixed inset-x-0 top-0 z-[9600] bg-black"
+        initial={false}
+        animate={{ height: barH }}
+        transition={{ duration: 0.5, ease: [0.76, 0, 0.24, 1] }}
+        style={{ boxShadow: "0 8px 24px rgba(0,0,0,0.5)" }}
+      />
+      <motion.div
+        className="pointer-events-none fixed inset-x-0 bottom-0 z-[9600] bg-black"
+        initial={false}
+        animate={{ height: barH }}
+        transition={{ duration: 0.5, ease: [0.76, 0, 0.24, 1] }}
+        style={{ boxShadow: "0 -8px 24px rgba(0,0,0,0.5)" }}
+      />
       {Array.from({ length: PANELS }).map((_, i) => (
         <motion.div
           key={i}
