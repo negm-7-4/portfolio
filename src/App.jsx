@@ -87,6 +87,7 @@ const ReadingIndicator  = lazy(() => import("./components/ui/ReadingIndicator"))
 const BackToTop         = lazy(() => import("./components/ui/BackToTop"));
 const WhatsAppButton    = lazy(() => import("./components/ui/WhatsAppButton"));
 const SoundToggle       = lazy(() => import("./components/ui/SoundToggle"));
+const CvModal           = lazy(() => import("./components/ui/CvModal"));
 
 export default function App() {
   const [loaded, setLoaded] = useState(false);
@@ -192,6 +193,12 @@ export default function App() {
           </Suspense>
 
           <PrefetchSections />
+
+          {/* CV modal — mounted early (no delay) so the "My CV" button always
+              has a live listener; renders nothing until the open-cv event. */}
+          <Suspense fallback={null}>
+            <CvModal />
+          </Suspense>
 
           <AnimatePresence>
             {!loaded && <Preloader key="preloader" onDone={() => setLoaded(true)} />}

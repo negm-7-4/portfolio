@@ -3,7 +3,6 @@ import { motion, AnimatePresence, useMotionValue, useSpring } from "motion/react
 import MagneticButton from "./ui/MagneticButton";
 import ScrambleText from "./ui/ScrambleText";
 import { useActiveSection } from "../hooks/useActiveSection";
-import { profile } from "../data/content";
 
 const links = [
   { label: "About",    id: "about"    },
@@ -183,10 +182,11 @@ export default function Navbar() {
           </button>
 
           <MagneticButton
-            as="a"
-            href={profile.resumeUrl}
-            target="_blank"
-            rel="noopener noreferrer"
+            as="button"
+            onClick={() => window.dispatchEvent(new Event("open-cv"))}
+            data-cursor="hover"
+            data-cursor-text="View CV"
+            aria-label="View my CV"
             className="group/cv relative hidden items-center gap-2 overflow-hidden rounded-xl bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-black transition-all duration-300 hover:bg-white/95 sm:flex"
             style={{ boxShadow: "0 4px 12px -2px rgba(255,255,255,0.2)" }}
           >
@@ -195,13 +195,15 @@ export default function Navbar() {
               aria-hidden
               className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-black/8 to-transparent transition-transform duration-500 ease-out group-hover/cv:translate-x-full"
             />
-            <span className="relative">Resume</span>
+            {/* little document glyph so it reads unmistakably as a CV */}
+            <span aria-hidden className="relative text-[13px] leading-none">▤</span>
+            <span className="relative">My CV</span>
             <motion.span
-              className="relative inline-block"
-              animate={{ x: [0, 2, 0], y: [0, -2, 0] }}
-              transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+              className="relative inline-block text-[10px]"
+              animate={{ y: [0, 2, 0] }}
+              transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
               aria-hidden
-            >↗</motion.span>
+            >↓</motion.span>
           </MagneticButton>
 
           {/* mobile toggle */}
@@ -286,6 +288,19 @@ export default function Navbar() {
                 </motion.li>
               ))}
             </ul>
+
+            {/* mobile CV button */}
+            <motion.button
+              onClick={() => { setOpen(false); window.dispatchEvent(new Event("open-cv")); }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 + links.length * 0.05, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+              className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg bg-white px-4 py-3 text-xs font-semibold uppercase tracking-widest text-black"
+            >
+              <span aria-hidden>▤</span>
+              View / Download CV
+              <span aria-hidden className="text-[10px]">↓</span>
+            </motion.button>
           </motion.div>
         )}
       </AnimatePresence>

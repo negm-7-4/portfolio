@@ -324,6 +324,52 @@ export default function Contact() {
             >
               Avg response · within 24h
             </motion.p>
+
+            {/* ── CV card — view the résumé or grab the PDF ── */}
+            <motion.div
+              initial={{ opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false, margin: "-10%" }}
+              transition={{ delay: 0.55, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              className="group/cv relative mt-10 flex items-center justify-between gap-4 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-5 transition-colors hover:border-white/25"
+            >
+              {/* sweep on hover */}
+              <span
+                aria-hidden
+                className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/[0.06] to-transparent transition-transform duration-700 ease-out group-hover/cv:translate-x-full"
+              />
+              <div className="relative flex items-center gap-4">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] text-lg text-[#aab4c4]">
+                  ▤
+                </span>
+                <div>
+                  <p className="font-display text-sm font-semibold text-white">My Résumé</p>
+                  <p className="text-[11px] text-white/45">PDF · one page · updated {new Date().getFullYear()}</p>
+                </div>
+              </div>
+              <div className="relative flex shrink-0 items-center gap-2">
+                <button
+                  onClick={() => window.dispatchEvent(new Event("open-cv"))}
+                  data-cursor="hover"
+                  data-cursor-text="View"
+                  className="rounded-lg border border-white/12 bg-white/[0.04] px-3 py-2 text-[10px] font-semibold uppercase tracking-widest text-white/70 transition-colors hover:bg-white/[0.09] hover:text-white"
+                >
+                  View
+                </button>
+                <a
+                  href={profile.resumeUrl}
+                  download={profile.resumeFile}
+                  data-cursor="hover"
+                  data-cursor-text="Save"
+                  onClick={(e) => celebrate(e.clientX, e.clientY, "#aab4c4")}
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-white px-3 py-2 text-[10px] font-semibold uppercase tracking-widest text-black"
+                  aria-label="Download CV as PDF"
+                >
+                  CV
+                  <span aria-hidden>↓</span>
+                </a>
+              </div>
+            </motion.div>
           </div>
 
           {/* RIGHT — Form */}

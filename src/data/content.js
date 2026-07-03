@@ -14,7 +14,8 @@ export const profile = {
   year:       "2nd Year",
   university: "Al-Ryada University (RST)",
   status:     "Open to opportunities",
-  resumeUrl:  "/resume.pdf",
+  resumeUrl:  "/Mohamed_Negm_CV.pdf",
+  resumeFile: "Mohamed_Negm_CV.pdf",
   socials: [
     { label: "GitHub",    url: "https://github.com/negm-7-4" },
     {
@@ -27,6 +28,57 @@ export const profile = {
 };
 
 export const heroTags = ["React", "Next.js", "Framer Motion", "Three.js", "Tailwind CSS"];
+
+/* ── Résumé — mirrors the downloadable PDF, rendered live in the CV modal ── */
+export const resume = {
+  headline: "Junior Front-End Developer",
+  subhead:  "React • JavaScript • TypeScript",
+  summary:
+    "Motivated junior front-end developer with a solid foundation in modern web technologies — HTML, CSS, JavaScript and TypeScript — alongside hands-on experience building real applications with React and Node.js. A fast, self-driven learner seeking a front-end role to contribute to real products while continuing to grow technically.",
+  contact: [
+    { label: "Email",    value: "mohammednegm11234@gmail.com", href: "mailto:mohammednegm11234@gmail.com" },
+    { label: "Phone",    value: "+20 10 1227 9297",           href: "tel:+201012279297" },
+    { label: "Location", value: "Sadat City, Menoufia, Egypt", href: null },
+    { label: "GitHub",   value: "github.com/negm-7-4",         href: "https://github.com/negm-7-4" },
+  ],
+  skillGroups: [
+    { label: "Front-End",  items: ["HTML5", "CSS3", "JavaScript (ES6+)", "Responsive Web Design"] },
+    { label: "Frameworks", items: ["React", "TypeScript"] },
+    { label: "Back-End",   items: ["Node.js", "REST APIs"] },
+    { label: "Other",      items: ["Networking Fundamentals", "AI Integration", "Git & GitHub"] },
+  ],
+  projects: [
+    {
+      name:  "Nexora ERP",
+      kind:  "Accounting & Business Management Application",
+      desc:  "Designed and built a complete ERP / accounting application covering core bookkeeping and business-management workflows, with a clean, user-friendly interface.",
+      stack: "JavaScript · HTML · CSS · React",
+    },
+    {
+      name:  "AI-Powered To-Do List",
+      kind:  "Smart Task Manager",
+      desc:  "An advanced task-management app enhanced with AI to help users organise and prioritise their work — responsive, intuitive and modern.",
+      stack: "JavaScript · React · AI Integration",
+    },
+    {
+      name:  "Weighbridge System",
+      kind:  "Vehicle Weighing & Records Management",
+      desc:  "A weighbridge (truck-scale) application to weigh vehicles and maintain an organised log of weighing entries for daily operations.",
+      stack: "JavaScript · HTML · CSS",
+    },
+  ],
+  education: {
+    degree:      "B.Sc. in Computers & Information — Software Engineering",
+    school:      "Al-Ryada University for Science and Technology (RST)",
+    location:    "Sadat City, Menoufia, Egypt",
+    detail:      "Third Year (in progress) · CGPA 3.39 / 4.0",
+  },
+  languages: [
+    { name: "Arabic",  level: "Native" },
+    { name: "English", level: "B1 (Intermediate)" },
+  ],
+  softSkills: ["Communication", "Teamwork", "Problem-solving", "Fast self-learning", "Adaptability"],
+};
 
 export const aboutCards = [
   {
