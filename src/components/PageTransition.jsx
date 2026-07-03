@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import { sections } from "../data/sections";
+import { experience } from "../store/experience";
 
 const PANELS = 8;
 
@@ -29,8 +30,13 @@ export default function PageTransition() {
         if (window.__lenis) window.__lenis.scrollTo(el, { immediate: true, offset: -40 });
         else el.scrollIntoView();
         setStage("out");
+        // Arrival shockwave — as the panels lift, the world lands the new
+        // shot with an fov punch, CA spike and a nebula flash (decays there).
+        experience.getState().setWarp(1);
       }, 430);
-      window.setTimeout(() => setStage("idle"), 960);
+      // 1200ms lets the last staggered panel finish its lift (430 + 224 +
+      // 480) before the instant reset — no mid-flight snap.
+      window.setTimeout(() => setStage("idle"), 1200);
     };
     return () => {
       window.__goto = null;
@@ -64,6 +70,22 @@ export default function PageTransition() {
           }
         />
       ))}
+
+      {/* Arrival light sweep — a diagonal sheen crosses the page as the
+          panels lift, syncing the DOM to the world's warp shockwave. */}
+      {stage === "out" && (
+        <motion.div
+          key={`sweep-${target?.id || "x"}`}
+          className="absolute inset-0"
+          initial={{ x: "-130%" }}
+          animate={{ x: "130%" }}
+          transition={{ duration: 0.7, ease: [0.55, 0, 0.2, 1] }}
+          style={{
+            background:
+              "linear-gradient(100deg, transparent 32%, rgba(255,255,255,0.04) 44%, rgba(190,200,220,0.13) 50%, rgba(255,255,255,0.04) 56%, transparent 68%)",
+          }}
+        />
+      )}
 
       {/* Centered destination card while covered */}
       <motion.div

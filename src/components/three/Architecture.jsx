@@ -192,10 +192,11 @@ function LightShafts({ quality }) {
   }, [materials]);
 
   useFrame((_, dt) => {
-    const { scroll } = experience.getState();
+    const { scroll, warp } = experience.getState();
     // Full presence on the hero / contact beats, dimmed through the middle
-    // so the shafts never fight the copy.
-    const presence = 1 - Math.sin(scroll * Math.PI) * 0.65;
+    // so the shafts never fight the copy. A warp arrival flares them for a
+    // beat — the light itself acknowledges the landing.
+    const presence = (1 - Math.sin(scroll * Math.PI) * 0.65) * (1 + warp * 2.2);
     for (let i = 0; i < materials.length; i++) {
       damp(materials[i].uniforms.uOpacity, "value", shafts[i].base * presence, 0.5, dt);
     }

@@ -57,6 +57,27 @@ export default function ExperienceBridge() {
     };
     window.addEventListener("pointermove", onPointer, { passive: true });
 
+    // Gyroscope parallax on touch devices — tilting the phone drifts the
+    // camera the way the mouse does on desktop. Android fires these freely;
+    // iOS 13+ gates them behind a permission gesture we never ask for, so
+    // there this is simply a silent no-op.
+    const coarse = window.matchMedia?.("(pointer: coarse)").matches ?? false;
+    let onOrient = null;
+    if (coarse) {
+      let sx = 0;
+      let sy = 0;
+      onOrient = (e) => {
+        if (e.gamma == null || e.beta == null) return;
+        // gamma: left/right tilt; beta: front/back (≈45° is a natural hold).
+        const x = Math.max(-1, Math.min(1, e.gamma / 28));
+        const y = Math.max(-1, Math.min(1, (e.beta - 45) / 32));
+        sx += (x - sx) * 0.12;
+        sy += (y - sy) * 0.12;
+        experience.getState().setPointer(sx, -sy);
+      };
+      window.addEventListener("deviceorientation", onOrient, { passive: true });
+    }
+
     // Don't burn a rAF loop on a hidden tab.
     const onVis = () => {
       if (document.hidden) {
@@ -75,6 +96,7 @@ export default function ExperienceBridge() {
       running = false;
       cancelAnimationFrame(raf);
       window.removeEventListener("pointermove", onPointer);
+      if (onOrient) window.removeEventListener("deviceorientation", onOrient);
       document.removeEventListener("visibilitychange", onVis);
     };
   }, []);

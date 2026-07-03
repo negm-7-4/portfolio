@@ -21,6 +21,7 @@ export const useExperience = create(
     hovered: false, // cursor is over an interactive 3D object (the hero orb)
     accentOverride: null, // hex string while the projects gallery is on screen — dyes the world
     gallery: 0, // -1 → 1 across the projects gallery; lateral camera dolly
+    warp: 0, // arrival shockwave — set to 1 on anchor nav, decays inside the world
 
     // ── Configuration (written once on mount) ──
     sectionCount: 10,
@@ -50,6 +51,7 @@ export const useExperience = create(
       set((s) => (s.accentOverride === accentOverride ? {} : { accentOverride })),
     setGallery: (gallery) =>
       set((s) => (s.gallery === gallery ? {} : { gallery })),
+    setWarp: (warp) => set({ warp }),
     setQuality: (quality) => set({ quality }),
     setReducedMotion: (reducedMotion) => set({ reducedMotion }),
     setReady: (ready) => set({ ready }),

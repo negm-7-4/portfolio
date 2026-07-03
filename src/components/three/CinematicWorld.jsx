@@ -7,6 +7,7 @@ import {
   Sparkles,
   Stars,
   AdaptiveDpr,
+  PerformanceMonitor,
   useProgress,
 } from "@react-three/drei";
 import {
@@ -26,6 +27,8 @@ import { FresnelMaterial } from "./materials/FresnelMaterial"; // registers <fre
 import MorphField from "./MorphField";
 import HeroModel from "./HeroModel";
 import Architecture from "./Architecture";
+import Nebula from "./Nebula";
+import Comets from "./Comets";
 
 /* eslint-disable react/no-unknown-property */
 
@@ -71,7 +74,13 @@ function CameraRig() {
   const firstFrame = useRef(true);
 
   useFrame((state, dt) => {
-    const { scroll, pointer, velocity, gallery } = experience.getState();
+    const { scroll, pointer, velocity, gallery, warp } = experience.getState();
+
+    // Arrival shockwave decay — CameraRig is the single owner of the warp
+    // lifecycle; every other consumer (post FX, morph field, nebula) just
+    // reads the current value.
+    if (warp > 0.001) experience.getState().setWarp(warp * Math.exp(-2.4 * dt));
+    else if (warp !== 0) experience.getState().setWarp(0);
 
     // Global scroll → which two shots we're between, and how far.
     const K = CAM_KEYS.length;
@@ -105,6 +114,12 @@ function CameraRig() {
     // shot still breathes like a camera on a shoulder rig instead of a tripod.
     const idle = 1 - speed;
     const t = state.clock.elapsedTime;
+
+    // Warp arrival: a short handheld impact shake that dies with the wave.
+    if (warp > 0.001) {
+      tmpPos.current.x += Math.sin(t * 57.0) * 0.09 * warp;
+      tmpPos.current.y += Math.cos(t * 63.0) * 0.07 * warp;
+    }
     tmpPos.current.x += Math.sin(t * 0.26) * 0.07 * idle;
     tmpPos.current.y += Math.sin(t * 0.19 + 1.7) * 0.05 * idle;
     tmpLook.current.x += Math.sin(t * 0.16 + 0.6) * 0.035 * idle;
@@ -117,9 +132,10 @@ function CameraRig() {
     damp3(lookAt.current, tmpLook.current, 0.5, dt);
     camera.lookAt(lookAt.current);
 
-    // fov breathes between shots + widens with speed; a faint roll banks the
+    // fov breathes between shots + widens with speed; a warp arrival lands
+    // with a wide-lens punch that settles back; a faint roll banks the
     // camera into fast travel (applied after lookAt, so it never accumulates).
-    damp(camera, "fov", lerp(a.fov, b.fov, e) + speed * 3.0, 0.3, dt);
+    damp(camera, "fov", lerp(a.fov, b.fov, e) + speed * 3.0 + warp * 9, 0.3, dt);
     camera.updateProjectionMatrix();
     camera.rotation.z += velocity * 0.06;
 
@@ -148,13 +164,21 @@ function Core({ quality, heroFade }) {
     // Hover energises the orb — faster spin + brighter, rippling shell.
     const spinTarget = hovered ? 0.24 : 0.08;
     spinRef.current += (spinTarget - spinRef.current) * Math.min(1, dt * 4);
+
+    // Contact finale — the re-gathered core beats like a heart while the
+    // camera closes in for the outro: slow scale pulse + shell surges.
+    const finale = smoothstep(0.94, 1, scroll);
+    const beat = finale * (0.5 + 0.5 * Math.sin(state.clock.elapsedTime * 2.6));
+
     if (group.current) {
       group.current.rotation.y += dt * spinRef.current;
       group.current.rotation.x += dt * 0.02;
       // On high-tier the GLB hero model owns the top of the page, so the
       // procedural core shrinks away at the hero beat and swells back for the
       // body + contact outro. On mid-tier (no model) it stays full size.
-      const target = heroFade ? 0.24 + 0.76 * smoothstep(0.08, 0.28, scroll) : 1;
+      const target =
+        (heroFade ? 0.24 + 0.76 * smoothstep(0.08, 0.28, scroll) : 1) *
+        (1 + beat * 0.06);
       const cur = group.current.scale.x;
       group.current.scale.setScalar(cur + (target - cur) * Math.min(1, dt * 3));
     }
@@ -164,10 +188,11 @@ function Core({ quality, heroFade }) {
       const pulse = Math.min(Math.abs(velocity) * 12, 1);
       damp(shell.current, "uScrollPulse", Math.max(pulse, hovered ? 0.6 : 0), 0.25, dt);
       // Calm the glow through the text-heavy middle so copy stays readable;
-      // hover lifts it back up as a reward for interacting.
+      // hover lifts it back up as a reward for interacting, and the finale
+      // heartbeat surges it into the bloom.
       const base = 1 - Math.sin(scroll * Math.PI) * 0.5;
-      damp(shell.current, "uOpacity", base + (hovered ? 0.4 : 0), 0.3, dt);
-      damp(shell.current, "uDisplace", hovered ? 0.2 : 0.14, 0.35, dt);
+      damp(shell.current, "uOpacity", base + (hovered ? 0.4 : 0) + beat * 0.45, 0.3, dt);
+      damp(shell.current, "uDisplace", (hovered ? 0.2 : 0.14) + beat * 0.07, 0.35, dt);
     }
   });
 
@@ -207,7 +232,9 @@ function BackdropKnot() {
   const ref = useRef(null);
   useFrame((_, dt) => {
     if (ref.current) {
-      ref.current.rotation.z += dt * 0.03;
+      // A warp arrival kicks the horizon into a brief faster turn.
+      const { warp } = experience.getState();
+      ref.current.rotation.z += dt * (0.03 + warp * 0.22);
       ref.current.rotation.x += dt * 0.012;
     }
   });
@@ -273,6 +300,18 @@ function SectionAccent() {
 /* ── Post stack. Bloom + vignette everywhere; chromatic aberration on high. ── */
 function Post({ quality }) {
   const caOffset = useMemo(() => new THREE.Vector2(0.0006, 0.0006), []);
+
+  // The CA offset vector is shared with the effect by reference, so nudging
+  // it here fringes the whole frame live: a strong spike on warp arrival,
+  // a subtle one with scroll speed. Reads transiently — no re-renders.
+  useFrame(() => {
+    if (quality !== "high") return;
+    const { warp, velocity } = experience.getState();
+    const k =
+      0.0006 + warp * 0.0042 + Math.min(Math.abs(velocity) * 2, 1) * 0.001;
+    caOffset.set(k, k);
+  });
+
   return (
     <EffectComposer multisampling={quality === "high" ? 4 : 0} enableNormalPass={false}>
       {/* Cinematic depth — focus sits ~where the hero orb lives, so it stays
@@ -320,9 +359,12 @@ function Scene({ quality }) {
 
       <Core quality={quality} heroFade={heroModel} />
       {heroModel && <HeroModel />}
-      <MorphField quality={quality} />
+      {/* Pointer interaction is a mouse gesture — high tier only (touch is mid). */}
+      <MorphField quality={quality} interactive={quality === "high"} />
       <BackdropKnot />
       <Architecture quality={quality} />
+      <Nebula quality={quality} />
+      <Comets quality={quality} />
 
       <Sparkles
         count={quality === "high" ? 45 : 22}
@@ -366,16 +408,22 @@ function ProgressBridge() {
    ─────────────────────────────────────────────────────────────────────── */
 export default function CinematicWorld({ quality = "high" }) {
   const [frameloop, setFrameloop] = useState("always");
+  // Live quality — starts at the device-profile tier, but a sustained frame
+  // rate drop demotes high → mid at runtime (DOF/CA off, fewer particles,
+  // lower DPR), so the 60fps promise holds on hardware the profile misjudged.
+  const [live, setLive] = useState(quality);
+
+  useEffect(() => setLive(quality), [quality]);
 
   // Publish quality into the store + freeze the render loop on a hidden tab.
   useEffect(() => {
-    experience.getState().setQuality(quality);
+    experience.getState().setQuality(live);
     const onVis = () => setFrameloop(document.hidden ? "never" : "always");
     document.addEventListener("visibilitychange", onVis);
     return () => document.removeEventListener("visibilitychange", onVis);
-  }, [quality]);
+  }, [live]);
 
-  const dprMax = quality === "high" ? 1.8 : 1.3;
+  const dprMax = live === "high" ? 1.8 : 1.3;
 
   return (
     <div
@@ -398,7 +446,11 @@ export default function CinematicWorld({ quality = "high" }) {
         style={{ pointerEvents: "none" }}
       >
         <Suspense fallback={null}>
-          <Scene quality={quality} />
+          <PerformanceMonitor
+            onDecline={() => setLive((c) => (c === "high" ? "mid" : c))}
+          >
+            <Scene quality={live} />
+          </PerformanceMonitor>
         </Suspense>
       </Canvas>
     </div>

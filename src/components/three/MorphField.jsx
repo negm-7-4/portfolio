@@ -113,6 +113,8 @@ const VERT = /* glsl */ `
   uniform float uReveal;
   uniform float uDrift;
   uniform float uSize;
+  uniform vec3  uPointer; // cursor projected onto the field's plane (world)
+  uniform float uPush;    // pointer interaction strength (0 on touch tiers)
 
   attribute vec3  aTo;
   attribute float aSeed;
@@ -120,6 +122,7 @@ const VERT = /* glsl */ `
 
   varying float vColT;
   varying float vTw;
+  varying float vPinf;
 
   void main() {
     vColT = aColT;
@@ -140,10 +143,18 @@ const VERT = /* glsl */ `
     float ex = 1.0 - clamp(uReveal, 0.0, 1.0);
     pos += normalize(pos + 0.0001) * ex * (6.0 + aSeed * 6.0);
 
-    vec4 mv = modelViewMatrix * vec4(pos, 1.0);
+    // Pointer field: particles part around the cursor like disturbed water —
+    // computed in WORLD space so it stays honest while the group rotates.
+    vec4 wp = modelMatrix * vec4(pos, 1.0);
+    vec3 toP = wp.xyz - uPointer;
+    float pd = length(toP);
+    vPinf = smoothstep(2.6, 0.0, pd) * uPush;
+    wp.xyz += normalize(toP + 0.0001) * vPinf * 1.5;
+
+    vec4 mv = viewMatrix * wp;
 
     vTw = 0.55 + 0.45 * sin(uTime * 2.0 + ph * 3.0);
-    float s = uSize * (0.45 + aSeed) * vTw;
+    float s = uSize * (0.45 + aSeed) * vTw * (1.0 + vPinf * 1.1);
     gl_PointSize = clamp(s * (220.0 / -mv.z), 1.0, 64.0);
 
     gl_Position = projectionMatrix * mv;
@@ -159,6 +170,7 @@ const FRAG = /* glsl */ `
 
   varying float vColT;
   varying float vTw;
+  varying float vPinf;
 
   void main() {
     vec2 uv = gl_PointCoord - 0.5;
@@ -170,17 +182,23 @@ const FRAG = /* glsl */ `
 
     vec3 col = mix(uColorA, uColorB, vColT);
     col += uColorHot * core * 0.8;
+    // Particles near the cursor heat toward white — the wake reads as energy.
+    col = mix(col, uColorHot, vPinf * 0.6);
 
     float alpha = glow * glow * uOpacity * (0.35 + 0.65 * vTw) * clamp(uReveal, 0.0, 1.0);
+    alpha *= 1.0 + vPinf * 0.5;
     gl_FragColor = vec4(col, alpha);
 
     #include <colorspace_fragment>
   }
 `;
 
-export default function MorphField({ quality = "high" }) {
+export default function MorphField({ quality = "high", interactive = false }) {
   const group = useRef(null);
   const lastSeg = useRef(-1);
+  // Cursor-ray scratch vectors (world-space pointer projection, no allocs).
+  const rayDir = useRef(new THREE.Vector3());
+  const pointerWorld = useRef(new THREE.Vector3(0, 0, 999));
 
   const N = quality === "high" ? 7000 : 3600;
 
@@ -239,6 +257,8 @@ export default function MorphField({ quality = "high" }) {
           uBlend: { value: 0 },
           uReveal: { value: 0 },
           uDrift: { value: 0.06 },
+          uPointer: { value: new THREE.Vector3(0, 0, 999) },
+          uPush: { value: 0 },
           uSize: { value: quality === "high" ? 0.8 : 1.1 },
           uOpacity: { value: 0.68 },
           uColorA: { value: new THREE.Color("#6f7c8c") },
@@ -269,8 +289,30 @@ export default function MorphField({ quality = "high" }) {
   const F = forms.length;
 
   useFrame((state, dt) => {
-    const { scroll, velocity, sectionIndex } = experience.getState();
+    const { scroll, velocity, sectionIndex, pointer, warp } = experience.getState();
     const u = material.uniforms;
+
+    // Cast the cursor through the camera onto the field's plane (z = 0) so
+    // the repulsion happens where the eye says the cursor is. Mouse only —
+    // touch tiers keep uPush at 0 and skip all of this.
+    if (interactive) {
+      const cam = state.camera;
+      rayDir.current
+        .set(pointer.x, pointer.y, 0.5)
+        .unproject(cam)
+        .sub(cam.position)
+        .normalize();
+      const dz = rayDir.current.z;
+      if (Math.abs(dz) > 1e-4) {
+        const tHit = -cam.position.z / dz;
+        if (tHit > 0 && tHit < 80) {
+          pointerWorld.current.copy(cam.position).addScaledVector(rayDir.current, tHit);
+        }
+      }
+      // Chase, don't snap — the wake trails the cursor like a real fluid.
+      u.uPointer.value.lerp(pointerWorld.current, Math.min(1, dt * 7));
+      damp(u.uPush, "value", 1, 0.5, dt);
+    }
 
     // Global morph position across the whole page → segment + fraction.
     const g = Math.min(F - 1 - 1e-4, Math.max(0, scroll * (F - 1)));
@@ -294,9 +336,10 @@ export default function MorphField({ quality = "high" }) {
 
     u.uTime.value = state.clock.elapsedTime;
 
-    // Fast scrolling energises the whole field (turbulence + a size lift).
+    // Fast scrolling energises the whole field (turbulence + a size lift);
+    // a warp arrival electrifies it for a beat as the new shot lands.
     const turb = Math.min(Math.abs(velocity) * 10, 1);
-    damp(u.uDrift, "value", 0.06 + turb * 0.55, 0.2, dt);
+    damp(u.uDrift, "value", 0.06 + turb * 0.55 + warp * 0.85, 0.2, dt);
 
     // Intro reveal — synced to the world's first painted frame.
     const ready = experience.getState().ready;
