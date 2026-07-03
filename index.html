@@ -5,6 +5,7 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/favicon.svg" />
     <link rel="manifest" href="/site.webmanifest" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
@@ -71,17 +72,6 @@
       />
     </noscript>
 
-    <!-- Spline 3D scene — early connection so the heavy robot starts
-         downloading in parallel with our JS bundles -->
-    <link rel="preconnect" href="https://prod.spline.design" crossorigin />
-    <link rel="dns-prefetch" href="https://prod.spline.design" />
-    <link
-      rel="preload"
-      as="fetch"
-      crossorigin
-      href="https://prod.spline.design/dyZOoabO4AAJ7D9X/scene.splinecode"
-    />
-
     <!-- Structured data — helps Google show a rich result / knowledge panel -->
     <script type="application/ld+json">
       {
@@ -130,7 +120,7 @@
         "color:#aab4c4;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;letter-spacing:0.18em;"
       );
       console.log(
-        "%cCurious about how this was built?\n%cReact · Three.js · Framer Motion · Spline · GSAP\n\n→ github.com/negm-7-4",
+        "%cCurious about how this was built?\n%cReact · Three.js · React-Three-Fiber · GSAP · Framer Motion\n\n→ github.com/negm-7-4",
         "color:#dfe3ea;font-family:sans-serif;font-size:12px;",
         "color:#8a93a6;font-family:sans-serif;font-size:11px;letter-spacing:0.05em;"
       );

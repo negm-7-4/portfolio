@@ -16,6 +16,7 @@ import {
   Vignette,
   ChromaticAberration,
   DepthOfField,
+  SMAA,
 } from "@react-three/postprocessing";
 import { BlendFunction } from "postprocessing";
 import { damp3, damp, dampC } from "maath/easing";
@@ -312,8 +313,13 @@ function Post({ quality }) {
     caOffset.set(k, k);
   });
 
+  // multisampling is 0 on purpose: MSAA + a depth-sampling effect
+  // (DepthOfField) makes the driver blit the MSAA depth/stencil buffer every
+  // frame, which some GPUs reject (GL_INVALID_OPERATION: glBlitFramebuffer).
+  // We drop MSAA and antialias in post with SMAA instead — same clean edges,
+  // no depth blit, and DoF gets an honest single-sampled depth texture.
   return (
-    <EffectComposer multisampling={quality === "high" ? 4 : 0} enableNormalPass={false}>
+    <EffectComposer multisampling={0} enableNormalPass={false}>
       {/* Cinematic depth — focus sits ~where the hero orb lives, so it stays
           crisp while the receding background + far particles soften. Subtle
           on purpose (small focal length / bokeh). High-tier only. */}
@@ -341,6 +347,7 @@ function Post({ quality }) {
         />
       ) : null}
       <Vignette eskil={false} offset={0.28} darkness={0.82} />
+      <SMAA />
     </EffectComposer>
   );
 }
@@ -437,7 +444,10 @@ export default function CinematicWorld({ quality = "high" }) {
         dpr={[1, dprMax]}
         camera={{ position: [2, 4.5, 15], fov: 40, near: 0.1, far: 120 }}
         gl={{
-          antialias: quality === "high",
+          // AA is done in post (SMAA); the default framebuffer is never shown
+          // when the EffectComposer is active, so MSAA here would just waste a
+          // backbuffer. Keep depth for the DoF pass; no stencil.
+          antialias: false,
           alpha: false,
           stencil: false,
           depth: true,
