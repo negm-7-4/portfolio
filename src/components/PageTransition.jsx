@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import { sections } from "../data/sections";
 import { experience } from "../store/experience";
+import { sfxWarp } from "../lib/ambientAudio";
 
 const PANELS = 8;
 
@@ -31,8 +32,10 @@ export default function PageTransition() {
         else el.scrollIntoView();
         setStage("out");
         // Arrival shockwave — as the panels lift, the world lands the new
-        // shot with an fov punch, CA spike and a nebula flash (decays there).
+        // shot with an fov punch, CA spike and a nebula flash (decays there),
+        // and (if sound is on) a synthesized landing whoosh.
         experience.getState().setWarp(1);
+        sfxWarp();
       }, 430);
       // 1200ms lets the last staggered panel finish its lift (430 + 224 +
       // 480) before the instant reset — no mid-flight snap.

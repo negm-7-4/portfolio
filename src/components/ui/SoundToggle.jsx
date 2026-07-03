@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "motion/react";
-import { toggleAudio } from "../../lib/ambientAudio";
+import { toggleAudio, sfxChapter } from "../../lib/ambientAudio";
+import { experience } from "../../store/experience";
 
 /**
  * Opt-in ambient-sound control. Muted by default (autoplay-policy friendly).
@@ -10,6 +11,17 @@ export default function SoundToggle() {
   const [on, setOn] = useState(false);
 
   const handle = () => setOn(toggleAudio());
+
+  // While sound is on, entering each chapter rings a soft sonar ping that
+  // climbs a pentatonic scale as you travel the page. The SFX itself no-ops
+  // when audio is off, but we only subscribe while enabled to stay idle.
+  useEffect(() => {
+    if (!on) return;
+    return experience.subscribe(
+      (s) => s.sectionIndex,
+      (index) => sfxChapter(index)
+    );
+  }, [on]);
 
   // Five equaliser bars; they "play" only while enabled.
   const bars = [0, 1, 2, 3, 4];

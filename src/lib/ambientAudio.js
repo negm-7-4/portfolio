@@ -11,6 +11,7 @@
 
 let ctx = null;
 let master = null;
+let sfxBus = null; // interaction SFX bus — independent of the pad's breathing
 let built = false;
 let enabled = false;
 
@@ -23,6 +24,13 @@ function build() {
   master = ctx.createGain();
   master.gain.value = 0;
   master.connect(ctx.destination);
+
+  // SFX bus: a fixed, gentle gain straight to the output. Kept off the
+  // master so the pad's breathing LFO / mute ramp never touches interaction
+  // sounds — they read cleanly on their own.
+  sfxBus = ctx.createGain();
+  sfxBus.gain.value = 0.5;
+  sfxBus.connect(ctx.destination);
 
   // Warmth filter in front of the master bus.
   const lp = ctx.createBiquadFilter();
@@ -120,4 +128,87 @@ export function toggleAudio() {
   }
   enableAudio();
   return true;
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+   INTERACTION SFX — synthesized on the fly, no assets. Every one is a hard
+   no-op unless the user has opted into sound, so nothing ever plays
+   unrequested. All voices self-stop and disconnect, so there is no node
+   accumulation over a long session.
+   ─────────────────────────────────────────────────────────────────────── */
+
+/** Cinematic arrival whoosh — a down-swept bandpassed noise gust + a soft
+ *  sub thump. Fired as a navigation warp lands. */
+export function sfxWarp() {
+  if (!enabled || !ctx) return;
+  const t = ctx.currentTime;
+
+  // Noise gust.
+  const dur = 0.55;
+  const buf = ctx.createBuffer(1, Math.ceil(ctx.sampleRate * dur), ctx.sampleRate);
+  const d = buf.getChannelData(0);
+  for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+  const noise = ctx.createBufferSource();
+  noise.buffer = buf;
+
+  const bp = ctx.createBiquadFilter();
+  bp.type = "bandpass";
+  bp.Q.value = 0.9;
+  bp.frequency.setValueAtTime(1800, t);
+  bp.frequency.exponentialRampToValueAtTime(220, t + dur); // sweep down = motion
+
+  const ng = ctx.createGain();
+  ng.gain.setValueAtTime(0.0001, t);
+  ng.gain.exponentialRampToValueAtTime(0.5, t + 0.06);
+  ng.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+
+  noise.connect(bp);
+  bp.connect(ng);
+  ng.connect(sfxBus);
+  noise.start(t);
+  noise.stop(t + dur);
+
+  // Sub thump — grounds the landing.
+  const osc = ctx.createOscillator();
+  osc.type = "sine";
+  osc.frequency.setValueAtTime(120, t);
+  osc.frequency.exponentialRampToValueAtTime(48, t + 0.5);
+  const og = ctx.createGain();
+  og.gain.setValueAtTime(0.0001, t);
+  og.gain.exponentialRampToValueAtTime(0.32, t + 0.04);
+  og.gain.exponentialRampToValueAtTime(0.0001, t + 0.55);
+  osc.connect(og);
+  og.connect(sfxBus);
+  osc.start(t);
+  osc.stop(t + 0.6);
+
+  noise.onended = () => { bp.disconnect(); ng.disconnect(); };
+  osc.onended = () => og.disconnect();
+}
+
+// A consonant pentatonic scale — chapter pings can never sound "wrong".
+const PING_SCALE = [523.25, 587.33, 698.46, 783.99, 880.0, 1046.5];
+
+/** Soft chapter-arrival sonar — a bell-ish two-partial ping, pitched by the
+ *  chapter index so travelling the page climbs a gentle scale. */
+export function sfxChapter(index = 0) {
+  if (!enabled || !ctx) return;
+  const t = ctx.currentTime;
+  const base = PING_SCALE[index % PING_SCALE.length];
+
+  [1, 2.01].forEach((mult, i) => {
+    const osc = ctx.createOscillator();
+    osc.type = i === 0 ? "sine" : "triangle";
+    osc.frequency.value = base * mult;
+    const g = ctx.createGain();
+    const peak = i === 0 ? 0.14 : 0.05;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(peak, t + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.9);
+    osc.connect(g);
+    g.connect(sfxBus);
+    osc.start(t);
+    osc.stop(t + 0.95);
+    osc.onended = () => g.disconnect();
+  });
 }
