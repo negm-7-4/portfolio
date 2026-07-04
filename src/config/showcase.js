@@ -18,6 +18,10 @@
  *
  *   "classic"  — The original two-column scrollytelling gallery,
  *                preserved untouched.
+ *
+ * This is the DEFAULT for first-time visitors — the section now renders a
+ * three-button mode switcher (globe / timeline / cards) and remembers the
+ * visitor's choice in localStorage ("showcase-mode").
  */
 export const SHOWCASE_MODE = "globe";
 

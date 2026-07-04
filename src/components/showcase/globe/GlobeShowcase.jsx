@@ -11,6 +11,7 @@ import useWorldDye from "../useWorldDye";
 import DescriptionLines from "../DescriptionLines";
 import TechBadges from "../TechBadges";
 import ShowcaseCta from "../ShowcaseCta";
+import ProjectVisual from "../ProjectVisual";
 import { destinations, formatCoords } from "./destinations";
 import { globeState } from "./globeState";
 
@@ -388,6 +389,32 @@ function ProjectPanel({ active }) {
             exit={{ opacity: 0, y: -14, transition: { duration: 0.22 } }}
             transition={{ duration: 0.55, ease: EASE_OUT }}
           >
+            {/* Postcard from the destination — the project's artwork. */}
+            <motion.div
+              initial={{ clipPath: "inset(0 0 100% 0)", opacity: 0.4 }}
+              animate={{ clipPath: "inset(0 0 0% 0)", opacity: 1 }}
+              transition={{ duration: 0.75, delay: 0.08, ease: [0.76, 0, 0.24, 1] }}
+              className="group relative mb-5 h-28 overflow-hidden rounded-xl border border-white/10 sm:h-32 md:h-40 lg:h-48"
+              data-cursor="hover"
+            >
+              <ProjectVisual
+                project={p}
+                imgClassName="transition-transform duration-700 group-hover:scale-[1.04]"
+              />
+              {/* readability grade + accent wash */}
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-0"
+                style={{
+                  background: `linear-gradient(160deg, transparent 55%, ${p.color}1f 100%), linear-gradient(180deg, transparent 60%, rgba(6,8,12,0.45) 100%)`,
+                }}
+              />
+              {/* postcard stamp — coordinates chip */}
+              <span className="absolute bottom-2.5 right-3 rounded-full border border-white/15 bg-black/40 px-2.5 py-1 font-mono text-[8px] tracking-[0.18em] text-white/60 backdrop-blur-sm">
+                {formatCoords(destinations[active].lat, destinations[active].lng)}
+              </span>
+            </motion.div>
+
             <span
               className="block font-display text-[11px] font-semibold uppercase tracking-[0.32em]"
               style={{ color: `${p.color}cc` }}
