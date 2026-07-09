@@ -3,6 +3,7 @@ import { motion, useScroll, useTransform } from "motion/react";
 import SectionHeading from "../ui/SectionHeading";
 import TiltCard from "../ui/TiltCard";
 import Portrait from "../ui/Portrait";
+import SignatureFlourish from "../ui/SignatureFlourish";
 import { profile, aboutCards } from "../../data/content";
 
 /* ─── Subtle SVG glyphs for the trait cards ─── */
@@ -135,18 +136,18 @@ export default function About() {
               Always learning. Always building.
             </motion.p>
 
-            {/* signature */}
+            {/* signature — name + a GSAP DrawSVG swash that draws itself */}
             <motion.div
-              initial={{ opacity: 0, scaleX: 0 }}
-              whileInView={{ opacity: 1, scaleX: 1 }}
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: false, margin: "-10%" }}
               transition={{ delay: 0.45, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className="mt-8 flex items-center gap-4"
+              className="mt-8 flex flex-col gap-1"
             >
-              <span className="h-px w-16 origin-left bg-white/30" />
               <span className="text-[11px] font-semibold uppercase tracking-[0.3em] text-white/50">
                 — Mohamed Negm
               </span>
+              <SignatureFlourish className="h-12 w-56 -ml-1" />
             </motion.div>
           </motion.div>
 

@@ -5,7 +5,16 @@ import tailwindcss from "@tailwindcss/vite";
 // Chunks that should NOT be modulepreloaded — they're huge and only
 // needed lazily / on interaction. Preloading them would defeat the
 // whole point of code-splitting.
-const LAZY_CHUNKS = new Set(["spline", "gsap", "three"]);
+const LAZY_CHUNKS = new Set(["spline", "gsap", "gsap-plugins", "three"]);
+
+// The now-free GSAP club plugins (SplitText, MorphSVG, DrawSVG, …). They are
+// only pulled in by `loadGsap()` when a premium effect first mounts, so they
+// live in their OWN lazy chunk — kept out of the small `gsap` core chunk that
+// ScrollTrigger loads early, and off the critical path entirely.
+// NB: Observer is intentionally NOT here — ScrollTrigger (in the core `gsap`
+// chunk) imports it, so splitting it out creates a gsap ⇄ gsap-plugins cycle.
+const GSAP_PLUGINS =
+  /[\\/]gsap[\\/](SplitText|MorphSVGPlugin|DrawSVGPlugin|MotionPathPlugin|Flip|ScrambleTextPlugin|CustomEase|CustomBounce|CustomWiggle|InertiaPlugin|Physics2DPlugin|Draggable|EasePack|TextPlugin)/;
 
 // The full React-Three-Fiber stack. Isolated into one lazy chunk so the
 // ~860 kB of three.js + drei + postprocessing is ONLY fetched on mid/high
@@ -72,6 +81,8 @@ export default defineConfig({
           // Animation libs
           if (id.includes("framer-motion") || id.includes("motion"))
             return "motion";
+          // Premium GSAP plugins → separate lazy chunk (before the core test).
+          if (GSAP_PLUGINS.test(id))                    return "gsap-plugins";
           if (id.includes("gsap"))                      return "gsap";
 
           // Smooth scroll

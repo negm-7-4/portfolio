@@ -21,13 +21,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@gsap/react": "^2.1.2",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.6.1",
     "@react-three/postprocessing": "^3.0.4",
     "@splinetool/react-spline": "^4.1.0",
     "@splinetool/runtime": "^1.12.95",
     "canvas-confetti": "^1.9.4",
-    "gsap": "^3.12.7",
+    "gsap": "^3.15.0",
     "lenis": "^1.1.20",
     "motion": "^12.5.0",
     "react": "^19.0.0",
