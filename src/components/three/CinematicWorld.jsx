@@ -43,22 +43,40 @@ const smootherstep = (t) => {
 };
 const lerp = (a, b, t) => a + (b - a) * t;
 
-/* One composed camera shot per chapter (pos + lookAt + fov). Scroll eases
-   between consecutive keys, so the journey reads as deliberate cinematic
-   cuts rather than one continuous spin. Tuned so the hero + contact beats sit
-   close/centred and the text-heavy middle pulls WIDE (centre left calm). */
+/* One composed camera shot per chapter (pos + lookAt + fov + dutch roll).
+   Scroll eases between consecutive keys, so the journey reads as deliberate
+   cinematic cuts rather than one continuous spin. Tuned so the hero +
+   contact beats sit close/centred and the text-heavy middle pulls WIDE
+   (centre left calm). `roll` banks each shot a hair differently — the
+   almost-subliminal dutch angle that makes a rig feel hand-operated. */
+const DEG = Math.PI / 180;
 const CAM_KEYS = [
-  { pos: [2.8, 0.6, 9.8], look: [-2.1, 0.2, 0], fov: 42 }, // 00 hero
-  { pos: [-3.2, 1.4, 10.6], look: [0.4, 0.0, 0], fov: 45 }, // 01 about
-  { pos: [4.8, 2.6, 11.4], look: [0.0, 0.4, 0], fov: 47 }, // 02 services
-  { pos: [-5.4, 0.4, 12.2], look: [0.2, -0.2, 0], fov: 49 }, // 03 skills
-  { pos: [0.0, 5.0, 12.8], look: [0.0, -0.8, 0], fov: 49 }, // 04 journey
-  { pos: [5.8, -1.8, 12.0], look: [-0.5, 0.2, 0], fov: 47 }, // 05 process
-  { pos: [-2.0, 1.0, 16.5], look: [0.7, 0.0, 0], fov: 46 }, // 06 projects (wide)
-  { pos: [3.6, 2.2, 12.4], look: [0.0, 0.2, 0], fov: 45 }, // 07 reviews
-  { pos: [-3.8, 0.8, 10.4], look: [0.3, 0.0, 0], fov: 44 }, // 08 socials
-  { pos: [0.6, 0.3, 8.0], look: [0.0, 0.0, 0], fov: 41 }, // 09 contact
+  { pos: [2.8, 0.6, 9.8], look: [-2.1, 0.2, 0], fov: 42, roll: 0 }, // 00 hero
+  { pos: [-3.2, 1.4, 10.6], look: [0.4, 0.0, 0], fov: 45, roll: -1.2 * DEG }, // 01 about
+  { pos: [4.8, 2.6, 11.4], look: [0.0, 0.4, 0], fov: 47, roll: 1.5 * DEG }, // 02 services
+  { pos: [-5.4, 0.4, 12.2], look: [0.2, -0.2, 0], fov: 49, roll: -1.8 * DEG }, // 03 skills
+  { pos: [0.0, 5.0, 12.8], look: [0.0, -0.8, 0], fov: 49, roll: 1.0 * DEG }, // 04 journey
+  { pos: [5.8, -1.8, 12.0], look: [-0.5, 0.2, 0], fov: 47, roll: -1.5 * DEG }, // 05 process
+  { pos: [-2.0, 1.0, 16.5], look: [0.7, 0.0, 0], fov: 46, roll: 2.0 * DEG }, // 06 projects (wide)
+  { pos: [3.6, 2.2, 12.4], look: [0.0, 0.2, 0], fov: 45, roll: -1.2 * DEG }, // 07 reviews
+  { pos: [-3.8, 0.8, 10.4], look: [0.3, 0.0, 0], fov: 44, roll: 1.4 * DEG }, // 08 socials
+  { pos: [0.6, 0.3, 8.0], look: [0.0, 0.0, 0], fov: 41, roll: 0 }, // 09 contact
 ];
+
+/* The keys strung onto centripetal Catmull-Rom splines: getPoint(m/(K-1))
+   still lands EXACTLY on shot m, so the hold-move-hold cadence survives —
+   but the road between shots is now a continuous curved dolly track instead
+   of straight chords. Centripetal parameterisation = no overshoot loops. */
+const CAM_PATH = new THREE.CatmullRomCurve3(
+  CAM_KEYS.map((k) => new THREE.Vector3(k.pos[0], k.pos[1], k.pos[2])),
+  false,
+  "centripetal"
+);
+const LOOK_PATH = new THREE.CatmullRomCurve3(
+  CAM_KEYS.map((k) => new THREE.Vector3(k.look[0], k.look[1], k.look[2])),
+  false,
+  "centripetal"
+);
 
 /* ──────────────────────────────────────────────────────────────────────
    CAMERA RIG
@@ -97,19 +115,21 @@ function CameraRig() {
     const px = pointer.x * 0.8;
     const py = pointer.y * 0.5;
 
+    // Ride the spline: the eased per-segment parameter maps straight onto
+    // the curve, so shots still hold — but travel bends through space.
+    const tGlobal = (i + e) / (K - 1);
+    CAM_PATH.getPoint(tGlobal, tmpPos.current);
+    LOOK_PATH.getPoint(tGlobal, tmpLook.current);
+
     // Inside the projects gallery the active project steps the camera
     // laterally (-1 → 1), like walking along a gallery wall. The damp below
     // turns each step into a smooth tracking move; zero everywhere else.
-    tmpPos.current.set(
-      lerp(a.pos[0], b.pos[0], e) + px + gallery * 1.3,
-      lerp(a.pos[1], b.pos[1], e) + py,
-      lerp(a.pos[2], b.pos[2], e) + speed * 0.6
-    );
-    tmpLook.current.set(
-      lerp(a.look[0], b.look[0], e) + px * 0.4 + gallery * 0.45,
-      lerp(a.look[1], b.look[1], e) + py * 0.3,
-      0
-    );
+    tmpPos.current.x += px + gallery * 1.3;
+    tmpPos.current.y += py;
+    tmpPos.current.z += speed * 0.6;
+    tmpLook.current.x += px * 0.4 + gallery * 0.45;
+    tmpLook.current.y += py * 0.3;
+    tmpLook.current.z = 0;
 
     // Handheld micro-drift — strongest when the scroll is at rest, so a held
     // shot still breathes like a camera on a shoulder rig instead of a tripod.
@@ -134,11 +154,11 @@ function CameraRig() {
     camera.lookAt(lookAt.current);
 
     // fov breathes between shots + widens with speed; a warp arrival lands
-    // with a wide-lens punch that settles back; a faint roll banks the
-    // camera into fast travel (applied after lookAt, so it never accumulates).
+    // with a wide-lens punch that settles back. Roll = the shot's dutch
+    // angle + velocity banking (applied after lookAt → never accumulates).
     damp(camera, "fov", lerp(a.fov, b.fov, e) + speed * 3.0 + warp * 9, 0.3, dt);
     camera.updateProjectionMatrix();
-    camera.rotation.z += velocity * 0.06;
+    camera.rotation.z += lerp(a.roll, b.roll, e) + velocity * 0.06;
 
     if (firstFrame.current) {
       firstFrame.current = false;

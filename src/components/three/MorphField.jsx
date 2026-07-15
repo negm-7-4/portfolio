@@ -17,19 +17,26 @@ import { sections } from "../../data/sections";
 
      scroll 0.0  Hero      → SPHERE   (a coherent core — the identity)
             0.2  About     → TORUS    (it opens, starts to breathe)
-            0.4  Skills    → HELIX    (structured, systematic)
+            0.4  Skills    → ATOM     (the React mark — three orbits + nucleus)
             0.6  Journey   → WAVE     (a drifting landscape)
             0.8  Projects  → SCATTER  (a wide constellation — centre left open)
-            1.0  Contact   → SPHERE'  (re-gathers into a tight luminous core)
+            1.0  Contact   → "MN"     (the initials assemble — the signature)
 
-   Every particle keeps its identity across formations, so a scroll reads as
-   thousands of points travelling coherent arcs — not a cut. Colour drifts
-   toward the active chapter's accent; scroll velocity adds turbulence; the
-   cloud explodes in from nothing on the intro, synced to the preloader lift.
+   Every particle keeps its identity across formations and travels a seeded
+   ARC with its own departure window (swarm, not tween). The atom and the
+   initials are "readable" shapes, so the field's yaw squares up to the
+   camera while they hold the stage and releases as you move off. Colour
+   drifts toward the active chapter's accent; scroll velocity adds
+   turbulence; the cloud explodes in from nothing on the intro.
    ─────────────────────────────────────────────────────────────────────── */
 
 const TAU = Math.PI * 2;
 const GOLDEN = Math.PI * (3 - Math.sqrt(5)); // golden angle
+
+/* Formations that must read head-on → their rotational symmetry period.
+   The yaw snaps to the nearest multiple while they hold the stage, so the
+   correction is always the shortest possible move. */
+const FACE_SYMMETRY = { 2: Math.PI / 3, 5: TAU }; // atom (60° sym) · "MN"
 
 // Small, fast, deterministic RNG so the scatter formation is stable across
 // reloads (important — the morph must look identical every visit).
@@ -107,12 +114,86 @@ function formScatter(out, N, rMin, rMax, flatten, rng) {
   }
 }
 
+/* The React mark — three elliptical orbits 60° apart + a dense nucleus.
+   Faces +Z; the group's facing logic squares it to the camera. */
+function formAtom(out, N, R, rng) {
+  const nucleus = Math.floor(N * 0.2);
+  for (let k = 0; k < N; k++) {
+    if (k < nucleus) {
+      // Nucleus — a tight gaussian-ish ball.
+      const theta = rng() * TAU;
+      const phi = Math.acos(2 * rng() - 1);
+      const rad = Math.pow(rng(), 0.6) * R * 0.22;
+      out[k * 3] = Math.sin(phi) * Math.cos(theta) * rad;
+      out[k * 3 + 1] = Math.cos(phi) * rad;
+      out[k * 3 + 2] = Math.sin(phi) * Math.sin(theta) * rad;
+      continue;
+    }
+    const ring = k % 3;
+    const u = (k - nucleus) / (N - nucleus);
+    const a = u * TAU * 3 + ring * 2.1; // 3 laps per ring → even coverage
+    // Flat ellipse in XY…
+    const ex = Math.cos(a) * R;
+    const ey = Math.sin(a) * R * 0.38;
+    // …rotated around Z by the ring's 60° step.
+    const rot = ring * (Math.PI / 3);
+    const c = Math.cos(rot);
+    const s = Math.sin(rot);
+    out[k * 3] = ex * c - ey * s;
+    out[k * 3 + 1] = ex * s + ey * c;
+    out[k * 3 + 2] = (rng() - 0.5) * 0.24; // slight slab depth
+  }
+}
+
+/* Rasterise text to an offscreen canvas and sample the letterforms — the
+   particles literally assemble the initials. Deterministic (seeded rng),
+   with a sphere fallback if the canvas is unavailable for any reason. */
+function formText(out, N, text, height, zCenter, rng) {
+  try {
+    const W = 360;
+    const H = 160;
+    const c = document.createElement("canvas");
+    c.width = W;
+    c.height = H;
+    const ctx = c.getContext("2d", { willReadFrequently: true });
+    if (!ctx) throw new Error("no 2d context");
+    ctx.fillStyle = "#000";
+    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = "#fff";
+    ctx.font = "900 132px sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(text, W / 2, H / 2 + 8);
+
+    const img = ctx.getImageData(0, 0, W, H).data;
+    const px = [];
+    for (let y = 0; y < H; y++) {
+      for (let x = 0; x < W; x++) {
+        if (img[(y * W + x) * 4] > 120) px.push(x, y);
+      }
+    }
+    if (px.length < 200) throw new Error("text sample too sparse");
+
+    const count = px.length / 2;
+    const scale = height / H;
+    for (let k = 0; k < N; k++) {
+      const p = Math.floor(rng() * count);
+      out[k * 3] = (px[p * 2] - W / 2) * scale + (rng() - 0.5) * 0.05;
+      out[k * 3 + 1] = (H / 2 - px[p * 2 + 1]) * scale + (rng() - 0.5) * 0.05;
+      out[k * 3 + 2] = zCenter + (rng() - 0.5) * 0.5;
+    }
+  } catch {
+    formSphere(out, N, 2.1); // never break the journey over a canvas quirk
+  }
+}
+
 const VERT = /* glsl */ `
   uniform float uTime;
   uniform float uBlend;
   uniform float uReveal;
   uniform float uDrift;
   uniform float uSize;
+  uniform float uArc;     // swarm arc strength (how far particles bow out)
   uniform vec3  uPointer; // cursor projected onto the field's plane (world)
   uniform float uPush;    // pointer interaction strength (0 on touch tiers)
 
@@ -123,13 +204,24 @@ const VERT = /* glsl */ `
   varying float vColT;
   varying float vTw;
   varying float vPinf;
+  varying float vDepth;
 
   void main() {
     vColT = aColT;
     float ph = aSeed * 6.28318;
 
-    // Core morph: every particle lerps from its current shape to the next.
-    vec3 pos = mix(position, aTo, uBlend);
+    // Staggered departure: each particle's blend window is offset by its
+    // seed, so the shape FLOCKS into place — a swarm, never a tween.
+    float b = clamp(uBlend * 1.35 - aSeed * 0.35, 0.0, 1.0);
+    b = b * b * (3.0 - 2.0 * b);
+    vec3 pos = mix(position, aTo, b);
+
+    // Arc travel: every particle bows out along its own seeded direction,
+    // scaled by how far it has to fly. Straight lines read mechanical;
+    // arcs read alive. Zero when settled (sin(0)=sin(π)=0).
+    float travel = length(aTo - position);
+    vec3 arcDir = normalize(vec3(sin(ph), cos(ph * 1.31), sin(ph * 0.73)) + 0.0001);
+    pos += arcDir * sin(b * 3.14159) * travel * uArc * (0.3 + 0.7 * aSeed);
 
     // Always-alive drift so a settled formation still shimmers.
     vec3 drift = vec3(
@@ -152,6 +244,7 @@ const VERT = /* glsl */ `
     wp.xyz += normalize(toP + 0.0001) * vPinf * 1.5;
 
     vec4 mv = viewMatrix * wp;
+    vDepth = -mv.z;
 
     vTw = 0.55 + 0.45 * sin(uTime * 2.0 + ph * 3.0);
     float s = uSize * (0.45 + aSeed) * vTw * (1.0 + vPinf * 1.1);
@@ -171,6 +264,7 @@ const FRAG = /* glsl */ `
   varying float vColT;
   varying float vTw;
   varying float vPinf;
+  varying float vDepth;
 
   void main() {
     vec2 uv = gl_PointCoord - 0.5;
@@ -184,6 +278,10 @@ const FRAG = /* glsl */ `
     col += uColorHot * core * 0.8;
     // Particles near the cursor heat toward white — the wake reads as energy.
     col = mix(col, uColorHot, vPinf * 0.6);
+    // Depth grade — near particles run hot, far ones cool off and recede.
+    // Gives the flat additive cloud a real sense of volume.
+    float dn = smoothstep(6.0, 22.0, vDepth);
+    col = mix(col * 1.18 + uColorHot * 0.05, col * 0.55, dn);
 
     float alpha = glow * glow * uOpacity * (0.35 + 0.65 * vTw) * clamp(uReveal, 0.0, 1.0);
     alpha *= 1.0 + vPinf * 0.5;
@@ -212,13 +310,15 @@ export default function MorphField({ quality = "high", interactive = false }) {
     const f1 = mk();
     formTorus(f1, N, 3.0, 0.85); // about — opens
     const f2 = mk();
-    formHelix(f2, N, 1.7, 7.2, 5); // skills — structured
+    formAtom(f2, N, 3.1, rng); // skills — the React mark
     const f3 = mk();
     formWave(f3, N, 11, 1.3); // journey — landscape
     const f4 = mk();
     formScatter(f4, N, 3.8, 7.6, 0.72, rng); // projects — wide constellation
     const f5 = mk();
-    formSphere(f5, N, 2.1); // contact — re-gather, tight
+    // contact — the initials assemble in front of the core (z=2.2), the
+    // luminous orb glowing through the letterforms behind them.
+    formText(f5, N, "MN", 3.4, 2.2, rng);
 
     return [f0, f1, f2, f3, f4, f5];
   }, [N]);
@@ -257,6 +357,7 @@ export default function MorphField({ quality = "high", interactive = false }) {
           uBlend: { value: 0 },
           uReveal: { value: 0 },
           uDrift: { value: 0.06 },
+          uArc: { value: 0.16 },
           uPointer: { value: new THREE.Vector3(0, 0, 999) },
           uPush: { value: 0 },
           uSize: { value: quality === "high" ? 0.8 : 1.1 },
@@ -356,9 +457,23 @@ export default function MorphField({ quality = "high", interactive = false }) {
     dampC(u.uColorB.value, dye, 0.6, dt);
 
     // Slow signature rotation + a scroll-linked yaw so traversal feels like
-    // orbiting a living object.
+    // orbiting a living object. Readable formations (the atom, the initials)
+    // square up: while one holds the stage the yaw eases to its nearest
+    // symmetric orientation, then releases as you scroll off it.
     if (group.current) {
-      group.current.rotation.y = state.clock.elapsedTime * 0.035 + scroll * Math.PI * 0.55;
+      let ry = state.clock.elapsedTime * 0.035 + scroll * Math.PI * 0.55;
+      const near = Math.round(g);
+      const sym = FACE_SYMMETRY[near];
+      if (sym) {
+        const settle = 1 - Math.min(1, Math.abs(g - near) * 2.2);
+        if (settle > 0) {
+          const w = settle * settle * (3 - 2 * settle);
+          const wrapped = ((ry % sym) + sym) % sym;
+          const delta = wrapped > sym / 2 ? wrapped - sym : wrapped;
+          ry -= delta * w;
+        }
+      }
+      group.current.rotation.y = ry;
       group.current.rotation.x = Math.sin(scroll * Math.PI) * 0.15;
     }
   });
