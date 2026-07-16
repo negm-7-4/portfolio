@@ -129,9 +129,13 @@ function HeroFocus({ lite }) {
         className="absolute left-1/2 top-1/2 h-[62%] w-[62%] -translate-x-1/2 -translate-y-1/2 rounded-full"
         style={{ pointerEvents: "auto" }}
         data-cursor="hover"
-        data-cursor-text="Explore"
+        data-cursor-text="Pulse"
         onPointerEnter={() => experience.getState().setHovered(true)}
         onPointerLeave={() => experience.getState().setHovered(false)}
+        // Clicking the orb detonates a radial shockwave through the whole
+        // particle field (MorphField owns the decay) — touch the world and
+        // the world answers.
+        onClick={() => experience.getState().setShock(1)}
       />
     </div>
   );

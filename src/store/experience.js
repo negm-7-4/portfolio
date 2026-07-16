@@ -22,6 +22,7 @@ export const useExperience = create(
     accentOverride: null, // hex string while the projects gallery is on screen — dyes the world
     gallery: 0, // -1 → 1 across the projects gallery; lateral camera dolly
     warp: 0, // arrival shockwave — set to 1 on anchor nav, decays inside the world
+    shock: 0, // radial pulse through the particle field — hero-orb click sets 1, MorphField owns the decay
 
     // ── Configuration (written once on mount) ──
     sectionCount: 10,
@@ -52,6 +53,7 @@ export const useExperience = create(
     setGallery: (gallery) =>
       set((s) => (s.gallery === gallery ? {} : { gallery })),
     setWarp: (warp) => set({ warp }),
+    setShock: (shock) => set({ shock }),
     setQuality: (quality) => set({ quality }),
     setReducedMotion: (reducedMotion) => set({ reducedMotion }),
     setReady: (ready) => set({ ready }),

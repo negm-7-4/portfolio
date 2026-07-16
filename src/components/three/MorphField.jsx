@@ -16,11 +16,15 @@ import { sections } from "../../data/sections";
    rebuilds itself around the story:
 
      scroll 0.0  Hero      → SPHERE   (a coherent core — the identity)
-            0.2  About     → TORUS    (it opens, starts to breathe)
+            0.2  About     → PORTRAIT (the real photo, sampled into light)
             0.4  Skills    → ATOM     (the React mark — three orbits + nucleus)
             0.6  Journey   → WAVE     (a drifting landscape)
             0.8  Projects  → SCATTER  (a wide constellation — centre left open)
             1.0  Contact   → "MN"     (the initials assemble — the signature)
+
+   The portrait decodes the actual photo asynchronously; a torus holds the
+   slot until it lands (always within the hero beat), then the buffers are
+   hot-swapped.
 
    Every particle keeps its identity across formations and travels a seeded
    ARC with its own departure window (swarm, not tween). The atom and the
@@ -36,7 +40,7 @@ const GOLDEN = Math.PI * (3 - Math.sqrt(5)); // golden angle
 /* Formations that must read head-on → their rotational symmetry period.
    The yaw snaps to the nearest multiple while they hold the stage, so the
    correction is always the shortest possible move. */
-const FACE_SYMMETRY = { 2: Math.PI / 3, 5: TAU }; // atom (60° sym) · "MN"
+const FACE_SYMMETRY = { 1: TAU, 2: Math.PI / 3, 5: TAU }; // portrait · atom (60°) · "MN"
 
 // Small, fast, deterministic RNG so the scatter formation is stable across
 // reloads (important — the morph must look identical every visit).
@@ -187,6 +191,72 @@ function formText(out, N, text, height, zCenter, rng) {
   }
 }
 
+/* Sample the real portrait photo into a particle formation. The shot is a
+   bright subject on a dark backdrop (measured: face ~90, corners ~20), so a
+   luminance-weighted CDF pulls every point onto the person; a bottom
+   falloff keeps the bright shirt from out-voting the face. Brightness also
+   drives a z relief — the face literally comes forward. Async (image
+   decode) → resolves null on any failure and the torus keeps the slot. */
+function buildPortrait(url, N, width, zCenter, seed) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      try {
+        const W = 132;
+        const H = Math.max(1, Math.round((img.height / img.width) * W));
+        const c = document.createElement("canvas");
+        c.width = W;
+        c.height = H;
+        const ctx = c.getContext("2d", { willReadFrequently: true });
+        if (!ctx) throw new Error("no 2d context");
+        ctx.drawImage(img, 0, 0, W, H);
+        const d = ctx.getImageData(0, 0, W, H).data;
+
+        const lumAt = (i4) =>
+          (0.299 * d[i4] + 0.587 * d[i4 + 1] + 0.114 * d[i4 + 2]) / 255;
+
+        const cdf = new Float32Array(W * H);
+        let acc = 0;
+        for (let y = 0; y < H; y++) {
+          const v = y / H;
+          const fall = v > 0.72 ? 1 - ((v - 0.72) / 0.28) * 0.65 : 1;
+          for (let x = 0; x < W; x++) {
+            acc += Math.pow(lumAt((y * W + x) * 4), 1.8) * fall;
+            cdf[y * W + x] = acc;
+          }
+        }
+        if (acc < 1) throw new Error("frame too dark to sample");
+
+        const rng = mulberry32(seed);
+        const out = new Float32Array(N * 3);
+        const scale = width / W;
+        for (let k = 0; k < N; k++) {
+          const target = rng() * acc;
+          let lo = 0;
+          let hi = cdf.length - 1;
+          while (lo < hi) {
+            const mid = (lo + hi) >> 1;
+            if (cdf[mid] < target) lo = mid + 1;
+            else hi = mid;
+          }
+          const x = lo % W;
+          const y = (lo / W) | 0;
+          const lum = lumAt((y * W + x) * 4);
+          out[k * 3] = (x - W / 2 + rng()) * scale;
+          out[k * 3 + 1] = (H / 2 - y + rng()) * scale;
+          // Relief: bright features float toward the camera.
+          out[k * 3 + 2] = zCenter + (lum - 0.35) * 1.4 + (rng() - 0.5) * 0.12;
+        }
+        resolve(out);
+      } catch {
+        resolve(null);
+      }
+    };
+    img.onerror = () => resolve(null);
+    img.src = url;
+  });
+}
+
 const VERT = /* glsl */ `
   uniform float uTime;
   uniform float uBlend;
@@ -194,6 +264,8 @@ const VERT = /* glsl */ `
   uniform float uDrift;
   uniform float uSize;
   uniform float uArc;     // swarm arc strength (how far particles bow out)
+  uniform float uShock;   // radial pulse strength (0..1, JS owns the decay)
+  uniform float uShockR;  // the pulse ring's current radius (world units)
   uniform vec3  uPointer; // cursor projected onto the field's plane (world)
   uniform float uPush;    // pointer interaction strength (0 on touch tiers)
 
@@ -242,6 +314,13 @@ const VERT = /* glsl */ `
     float pd = length(toP);
     vPinf = smoothstep(2.6, 0.0, pd) * uPush;
     wp.xyz += normalize(toP + 0.0001) * vPinf * 1.5;
+
+    // Shockwave: an expanding spherical ring from the core that throws
+    // particles outward and heats them as it passes through.
+    float ringD = length(wp.xyz) - uShockR;
+    float shockInf = exp(-ringD * ringD * 1.6) * uShock;
+    wp.xyz += normalize(wp.xyz + 0.0001) * shockInf * 1.1;
+    vPinf = max(vPinf, shockInf);
 
     vec4 mv = viewMatrix * wp;
     vDepth = -mv.z;
@@ -297,6 +376,9 @@ export default function MorphField({ quality = "high", interactive = false }) {
   // Cursor-ray scratch vectors (world-space pointer projection, no allocs).
   const rayDir = useRef(new THREE.Vector3());
   const pointerWorld = useRef(new THREE.Vector3(0, 0, 999));
+  // Shockwave state (this component owns the pulse's lifecycle).
+  const shockR = useRef(0);
+  const lastShock = useRef(0);
 
   const N = quality === "high" ? 7000 : 3600;
 
@@ -322,6 +404,24 @@ export default function MorphField({ quality = "high", interactive = false }) {
 
     return [f0, f1, f2, f3, f4, f5];
   }, [N]);
+
+  // The About slot upgrades itself: once the real photo decodes, its
+  // sampled formation replaces the torus in place. Offset in front of the
+  // core (like the initials) so the orb glows behind the face.
+  useEffect(() => {
+    let cancelled = false;
+    buildPortrait("/mohamed.jpg", N, 3.9, 1.9, 0xfa11ce).then((arr) => {
+      if (cancelled || !arr) return;
+      forms[1].set(arr);
+      // If the live buffers currently hold the About slot, force a
+      // re-upload on the next frame; otherwise the next boundary crossing
+      // picks the new data up for free.
+      if (lastSeg.current <= 1) lastSeg.current = -1;
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [forms, N]);
 
   // ── Static per-particle attributes: seed + colour position. ───────
   const { seeds, colT } = useMemo(() => {
@@ -358,6 +458,8 @@ export default function MorphField({ quality = "high", interactive = false }) {
           uReveal: { value: 0 },
           uDrift: { value: 0.06 },
           uArc: { value: 0.16 },
+          uShock: { value: 0 },
+          uShockR: { value: 0 },
           uPointer: { value: new THREE.Vector3(0, 0, 999) },
           uPush: { value: 0 },
           uSize: { value: quality === "high" ? 0.8 : 1.1 },
@@ -446,6 +548,20 @@ export default function MorphField({ quality = "high", interactive = false }) {
     const ready = experience.getState().ready;
     damp(u.uReveal, "value", ready ? 1 : 0, 0.9, dt);
 
+    // Shockwave lifecycle — MorphField is the single owner: the orb click
+    // sets shock=1, we expand the ring and decay the strength to nothing.
+    const shock = experience.getState().shock;
+    if (shock > 0.001) {
+      if (lastShock.current <= 0.001) shockR.current = 0; // a fresh pulse
+      shockR.current += dt * 9;
+      u.uShock.value = shock;
+      u.uShockR.value = shockR.current;
+      experience.getState().setShock(shock * Math.exp(-1.5 * dt));
+    } else if (u.uShock.value !== 0) {
+      u.uShock.value = 0;
+    }
+    lastShock.current = shock;
+
     // Colour drifts toward the active chapter's accent — the field is dyed
     // by wherever you are in the story. Inside the projects gallery the
     // active project's brand colour takes over, so each project re-dyes
@@ -467,8 +583,14 @@ export default function MorphField({ quality = "high", interactive = false }) {
       if (sym) {
         const settle = 1 - Math.min(1, Math.abs(g - near) * 2.2);
         if (settle > 0) {
+          // Square up to where the camera actually is (its azimuth around
+          // the origin), not to a fixed axis — the About shot views from
+          // the side, and the portrait must meet its gaze.
+          const cam = state.camera.position;
+          const az = Math.atan2(cam.x, cam.z);
           const w = settle * settle * (3 - 2 * settle);
-          const wrapped = ((ry % sym) + sym) % sym;
+          const rel = ry - az;
+          const wrapped = ((rel % sym) + sym) % sym;
           const delta = wrapped > sym / 2 ? wrapped - sym : wrapped;
           ry -= delta * w;
         }

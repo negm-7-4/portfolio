@@ -69,6 +69,9 @@ export default function HeroModel() {
 
   const shardsA = useMemo(() => makeShards(8, 1.62, 0xa11ce), []);
   const shardsB = useMemo(() => makeShards(6, 1.98, 0xbee5), []);
+  // Birth choreography progress — 0 until the world's first frame, then
+  // climbs to 1 while the shards pop into orbit one after another.
+  const reveal = useRef(0);
 
   // One geometry + one material for every shard — 14 meshes, 1 of each.
   const shardGeo = useMemo(() => new THREE.OctahedronGeometry(1, 0), []);
@@ -112,6 +115,26 @@ export default function HeroModel() {
     // Counter-rotating orbits — hover energises the whole system.
     if (orbitA.current) orbitA.current.rotation.y += dt * (hovered ? 0.85 : 0.32);
     if (orbitB.current) orbitB.current.rotation.y -= dt * (hovered ? 0.65 : 0.26);
+
+    // Birth choreography: once the world is ready the shards pop into
+    // their orbits one after another with a back-out overshoot — the
+    // system assembles itself in front of the visitor.
+    const ready = experience.getState().ready;
+    reveal.current = Math.min(1, reveal.current + (ready ? dt * 0.5 : 0));
+    const spawn = (orbit, data, offset) => {
+      if (!orbit) return;
+      const kids = orbit.children;
+      for (let i = 0; i < kids.length; i++) {
+        const r = Math.min(1, Math.max(0, reveal.current * 2.4 - (i + offset) * 0.16));
+        const e = r - 1;
+        const back = 1 + 2.70158 * e * e * e + 1.70158 * e * e; // back.out
+        kids[i].scale.setScalar(data[i].scale * Math.max(0.0001, back));
+        kids[i].rotation.x += dt * 0.35;
+        kids[i].rotation.y += dt * 0.28;
+      }
+    };
+    spawn(orbitA.current, shardsA, 0);
+    spawn(orbitB.current, shardsB, 8);
 
     // The light inside beats like a slow heart; hover feeds it.
     const pulse = 0.5 + 0.5 * Math.sin(t * 1.7);

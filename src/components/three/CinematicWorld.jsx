@@ -205,9 +205,11 @@ function Core({ quality, heroFade }) {
     }
     if (shell.current) {
       shell.current.uTime = state.clock.elapsedTime;
-      // Scroll speed ripples the surface; hover adds a steady pulse.
+      // Scroll speed ripples the surface; hover adds a steady pulse; the
+      // orb-click shockwave slams the shell for the beat it lives.
       const pulse = Math.min(Math.abs(velocity) * 12, 1);
-      damp(shell.current, "uScrollPulse", Math.max(pulse, hovered ? 0.6 : 0), 0.25, dt);
+      const { shock } = experience.getState();
+      damp(shell.current, "uScrollPulse", Math.max(pulse, hovered ? 0.6 : 0, shock), 0.25, dt);
       // Calm the glow through the text-heavy middle so copy stays readable;
       // hover lifts it back up as a reward for interacting, and the finale
       // heartbeat surges it into the bloom.
