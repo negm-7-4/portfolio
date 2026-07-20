@@ -57,21 +57,19 @@ void main(){
   col=mix(col,c2,smoothstep(.44,.70,f));
   col=mix(col,c3,smoothstep(.64,.84,f)*.55);
 
-<<<<<<< HEAD
   /* drifting volumetric light blooms — cheap 2-octave field that slides
      across the frame, giving the aurora a continuous cinematic motion */
   float lb=fbm(uv*0.9+vec2(t*0.8,-t*0.5)+q*0.3,2);
   col+=vec3(.10,.123,.162)*pow(max(lb-.55,0.)/.45,2.)*0.6;
 
-  /* slow global breathing so the whole field gently pulses with light */
-  col*=1.0+0.035*sin(T*0.18);
-=======
   /* subtle drifting iridescence — cool blue → violet → teal, kept low so
      it reads as premium colour grading rather than a rainbow */
   vec3 tint = .5 + .5*cos(vec3(0.0, 2.1, 4.2) + f*2.6 + T*.05 + uv.x*1.4 + uv.y*.6);
   tint = mix(vec3(.55,.62,.80), tint, .6);           /* bias toward steel-blue */
   col = mix(col, col*(.7+.6*tint), .22*smoothstep(.3,.9,f));
->>>>>>> f1d2a6a8c337112cf46da766879af46521e3a5bd
+
+  /* slow global breathing so the whole field gently pulses with light */
+  col*=1.0+0.035*sin(T*0.18);
 
   /* micro sparkles */
   float sp=vn(uv*42.+T*.3);

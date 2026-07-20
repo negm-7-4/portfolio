@@ -2,13 +2,9 @@ import { useRef } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
 import SectionHeading from "../ui/SectionHeading";
 import TiltCard from "../ui/TiltCard";
-<<<<<<< HEAD
-import Portrait from "../ui/Portrait";
 import SignatureFlourish from "../ui/SignatureFlourish";
-=======
 import HangingPortrait from "../ui/HangingPortrait";
 import { Gyro, Diamond } from "../ui/Shapes3D";
->>>>>>> f1d2a6a8c337112cf46da766879af46521e3a5bd
 import { profile, aboutCards } from "../../data/content";
 
 /* ─── Subtle SVG glyphs for the trait cards ─── */
