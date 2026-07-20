@@ -52,7 +52,7 @@ export default function SectionHeading({ eyebrow, title, accent, num }) {
             </motion.span>
           )}
 
-          {/* center diamond glyph that pulses */}
+          {/* center diamond glyph that pulses + slowly rotates (sparkle) */}
           <motion.span
             initial={{ opacity: 0, rotate: -45 }}
             whileInView={{ opacity: 1, rotate: 0 }}
@@ -63,7 +63,7 @@ export default function SectionHeading({ eyebrow, title, accent, num }) {
             <motion.span
               animate={{ opacity: [0.5, 1, 0.5] }}
               transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
-              className="inline-block"
+              className="sparkle inline-block"
             >
               ◆
             </motion.span>

@@ -14,11 +14,39 @@
  */
 export const destinations = [
   {
+    // SAMS — San Francisco, the AI capital. Bright confident midday.
+    name: "San Francisco, USA",
+    lat: 37.7749,
+    lng: -122.4194,
+    sun: { az: -70, el: 30 },
+  },
+  {
+    // Vera — Paris, the perfume capital. Warm golden afternoon.
+    name: "Paris, France",
+    lat: 48.8566,
+    lng: 2.3522,
+    sun: { az: -38, el: 24 },
+  },
+  {
     // Nexora ERP — home base. Warm morning light over the Nile delta.
     name: "Cairo, Egypt",
     lat: 30.0444,
     lng: 31.2357,
     sun: { az: -38, el: 16 },
+  },
+  {
+    // AutomationHub — Singapore, the connected hub. Clean equatorial light.
+    name: "Singapore",
+    lat: 1.3521,
+    lng: 103.8198,
+    sun: { az: 12, el: 44 },
+  },
+  {
+    // Acoustic Room Mapper — Sydney riding the dawn terminator.
+    name: "Sydney, Australia",
+    lat: -33.8688,
+    lng: 151.2093,
+    sun: { az: 72, el: -2 },
   },
   {
     // Social Network Analyzer — Tokyo at night: a living network of light.
@@ -40,13 +68,6 @@ export const destinations = [
     lat: 40.7128,
     lng: -74.006,
     sun: { az: -62, el: 22 },
-  },
-  {
-    // Acoustic Room Mapper — Sydney riding the dawn terminator.
-    name: "Sydney, Australia",
-    lat: -33.8688,
-    lng: 151.2093,
-    sun: { az: 72, el: -2 },
   },
 ];
 

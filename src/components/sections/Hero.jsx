@@ -4,6 +4,7 @@ import useDeviceProfile from "../../hooks/useDeviceProfile";
 import { experience } from "../../store/experience";
 import MagneticButton from "../ui/MagneticButton";
 import MagneticText from "../ui/MagneticText";
+import SplitText from "../ui/SplitText";
 import { celebrate } from "../../lib/confetti";
 import { profile, heroTags } from "../../data/content";
 import { EASE_OUT, EASE_BACK } from "../../lib/motion";
@@ -61,6 +62,18 @@ function TypewriterRole() {
       </span>
     </span>
   );
+}
+
+/* ─── Tiny inline arrow glyph cycle: → → ⇨ → ↦ → … feels alive ───
+   Cheap, transform-only, accessible (aria-hidden on the parent). */
+const ARROW_FRAMES = ["→", "⇨", "↦", "⇒", "→"];
+function ArrowCycle() {
+  const [i, setI] = useState(0);
+  useEffect(() => {
+    const t = setInterval(() => setI((n) => (n + 1) % ARROW_FRAMES.length), 900);
+    return () => clearInterval(t);
+  }, []);
+  return <span key={i} style={{ display: "inline-block", minWidth: "0.7em" }}>{ARROW_FRAMES[i]}</span>;
 }
 
 /* ─── Hero focal frame ───
@@ -226,6 +239,19 @@ export default function Hero() {
             <span className="text-green-400/90">Available</span>
             <span className="text-white/25">·</span>
             <span>For New Projects</span>
+            {/* expanding hairline — reads as a "live" progress bar under the pill */}
+            <motion.span
+              aria-hidden
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ delay: 0.7, duration: 0.9, ease: EASE_OUT }}
+              className="absolute -bottom-1 left-3 right-3 h-px origin-left bg-gradient-to-r from-green-400/0 via-green-400/70 to-green-400/0"
+            />
+            <motion.span
+              aria-hidden
+              className="badge-pulse absolute -bottom-1 left-1/2 h-1 w-1 -translate-x-1/2 translate-y-1 rounded-full bg-green-400"
+              style={{ boxShadow: "0 0 8px rgba(74,222,128,0.9)" }}
+            />
           </motion.div>
 
           {/* Hi there I'm */}
@@ -258,9 +284,21 @@ export default function Hero() {
               <motion.span
                 className="block whitespace-nowrap"
                 style={{ transformOrigin: "0% 100%" }}
-                initial={{ y: "118%", rotateX: 48, filter: "blur(10px)" }}
-                animate={{ y: 0, rotateX: 0, filter: "blur(0px)" }}
-                transition={{ duration: 1.1, delay: 0.55, ease: EASE_OUT, filter: { duration: 0.7, delay: 0.55 } }}
+                initial={{ y: "118%", rotateX: 48, filter: "blur(10px) drop-shadow(0 0 0px rgba(170,180,196,0))" }}
+                animate={{
+                  y: 0,
+                  rotateX: 0,
+                  filter: [
+                    "blur(0px) drop-shadow(0 0 0px rgba(170,180,196,0))",
+                    "blur(0px) drop-shadow(0 0 28px rgba(170,180,196,0.55))",
+                    "blur(0px) drop-shadow(0 0 0px rgba(170,180,196,0))",
+                  ],
+                }}
+                transition={{
+                  y: { duration: 1.1, delay: 0.55, ease: EASE_OUT },
+                  rotateX: { duration: 1.1, delay: 0.55, ease: EASE_OUT },
+                  filter: { duration: 1.6, delay: 0.55, times: [0, 0.35, 1] },
+                }}
               >
                 <MagneticText text={profile.firstName} radius={180} strength={24} />
               </motion.span>
@@ -288,14 +326,14 @@ export default function Hero() {
             <TypewriterRole />
           </motion.div>
 
-          {/* tagline */}
+          {/* tagline — hinges up word by word via the shared SplitText primitive */}
           <motion.p
-            initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={{ delay: 1.08, duration: 0.65, ease: EASE_OUT }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.08, duration: 0.4 }}
             className="mt-6 max-w-md text-base leading-relaxed text-white/55 md:text-lg"
           >
-            {profile.tagline}
+            <SplitText text={profile.tagline} delay={1.08} stagger={0.04} />
           </motion.p>
 
           {/* CTAs */}
@@ -320,10 +358,11 @@ export default function Hero() {
               <span className="relative">View My Work</span>
               <motion.span
                 className="relative inline-block"
+                aria-hidden
                 animate={{ x: [0, 4, 0] }}
                 transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
               >
-                →
+                <ArrowCycle />
               </motion.span>
             </MagneticButton>
 
