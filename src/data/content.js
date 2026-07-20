@@ -141,14 +141,96 @@ export const skillCategories = [
       { name: "Next.js",      icon: "nextjs",     color: "#ffffff" },
       { name: "Tailwind CSS", icon: "tailwind",   color: "#38bdf8" },
       { name: "HTML & CSS",   icon: "html",       color: "#e34f26" },
+      { name: "Vite",         icon: "vite",       color: "#646cff" },
     ],
   },
   {
-    label: "Motion & 3D",
+    // Animation & transition libraries — the toolkit behind award-style,
+    // motion-heavy landing pages and product-marketing sites.
+    label: "Animation & Motion",
     items: [
-      { name: "Framer Motion", icon: "framer", color: "#bb44ff" },
-      { name: "GSAP",          icon: "gsap",   color: "#88ce02" },
-      { name: "Three.js",      icon: "three",  color: "#dddddd" },
+      { name: "Framer Motion", icon: "framer",      color: "#bb44ff" },
+      { name: "GSAP",          icon: "gsap",        color: "#88ce02" },
+      { name: "Motion One",    icon: "motionone",   color: "#ffb800" },
+      { name: "Anime.js",      icon: "anime",       color: "#f43e5c" },
+      { name: "Lottie",        icon: "lottie",      color: "#00ddb3" },
+      { name: "Rive",          icon: "rive",        color: "#ff5447" },
+      { name: "React Spring",  icon: "spring",      color: "#ff6d6d" },
+      { name: "Theatre.js",    icon: "theatre",     color: "#8b5cf6" },
+      { name: "AOS",           icon: "aos",         color: "#5b8def" },
+      { name: "Auto-Animate",  icon: "autoanimate", color: "#a78bfa" },
+    ],
+  },
+  {
+    // 3D / WebGL — the engines behind immersive 3D websites.
+    label: "3D & WebGL",
+    items: [
+      { name: "Three.js",            icon: "three",   color: "#dddddd" },
+      { name: "React Three Fiber",   icon: "r3f",     color: "#ffffff" },
+      { name: "Drei",                icon: "drei",    color: "#ffce3a" },
+      { name: "WebGPU / TSL",        icon: "webgpu",  color: "#1a73e8" },
+      { name: "Spline",              icon: "spline",  color: "#e879f9" },
+      { name: "Babylon.js",          icon: "babylon", color: "#bb464b" },
+    ],
+  },
+  {
+    // 2D rendering / canvas engines for motion graphics & interactive art.
+    label: "2D & Canvas",
+    items: [
+      { name: "PixiJS",       icon: "pixi",        color: "#ff43a0" },
+      { name: "Two.js",       icon: "twojs",       color: "#c0c0c0" },
+      { name: "Konva",        icon: "konva",       color: "#0d83cd" },
+      { name: "Fabric.js",    icon: "fabric",      color: "#ff9f1c" },
+      { name: "Matter.js",    icon: "matter",      color: "#4caf50" },
+      { name: "tsParticles",  icon: "tsparticles", color: "#2a9df4" },
+      { name: "p5.js",        icon: "p5",          color: "#ed225d" },
+    ],
+  },
+  {
+    // Scroll-driven motion & page transitions — smooth scroll, pinned
+    // scenes, scroll-triggered video and seamless route transitions.
+    label: "Scroll & Transitions",
+    items: [
+      { name: "Lenis",             icon: "lenis",         color: "#c0f000" },
+      { name: "Locomotive Scroll", icon: "locomotive",    color: "#b6ff00" },
+      { name: "ScrollTrigger",     icon: "scrolltrigger", color: "#88ce02" },
+      { name: "Scrollama",         icon: "scrollama",     color: "#20c997" },
+      { name: "Barba.js",          icon: "barba",         color: "#ff8c42" },
+      { name: "Swiper",            icon: "swiper",        color: "#0080ff" },
+    ],
+  },
+  {
+    // Data visualisation & charts — for dashboards and product analytics.
+    label: "Charts & Data Viz",
+    items: [
+      { name: "D3.js",      icon: "d3",       color: "#f9a03c" },
+      { name: "Chart.js",   icon: "chartjs",  color: "#ff6384" },
+      { name: "Recharts",   icon: "recharts", color: "#22b5bf" },
+      { name: "visx",       icon: "visx",     color: "#ff1231" },
+      { name: "Nivo",       icon: "nivo",     color: "#e8584c" },
+      { name: "ECharts",    icon: "echarts",  color: "#c1232b" },
+      { name: "ApexCharts", icon: "apex",     color: "#008ffb" },
+      { name: "Tremor",     icon: "tremor",   color: "#3b82f6" },
+      { name: "deck.gl",    icon: "deckgl",   color: "#00bcd4" },
+    ],
+  },
+  {
+    // Modern animated UI component libraries used on marketing/landing pages.
+    label: "UI & Components",
+    items: [
+      { name: "shadcn/ui",    icon: "shadcn",     color: "#ffffff" },
+      { name: "Aceternity UI", icon: "aceternity", color: "#a855f7" },
+      { name: "Magic UI",     icon: "magicui",    color: "#ffffff" },
+      { name: "Vanta.js",     icon: "vanta",      color: "#38bdf8" },
+    ],
+  },
+  {
+    // Immersive web — AR / VR / WebXR.
+    label: "Immersive · XR",
+    items: [
+      { name: "A-Frame",      icon: "aframe",      color: "#ef2d5e" },
+      { name: "WebXR",        icon: "webxr",       color: "#ff6b00" },
+      { name: "model-viewer", icon: "modelviewer", color: "#4285f4" },
     ],
   },
   {

@@ -5,7 +5,7 @@ import useMagneticPull from "../../hooks/useMagneticPull";
 import { skillCategories } from "../../data/content";
 
 /* ─── Flatten all categories into one wall, mark featured items ─── */
-const FEATURED = new Set(["React", "Next.js", "Tailwind CSS", "Three.js", "Framer Motion"]);
+const FEATURED = new Set(["React", "Next.js", "Tailwind CSS", "Three.js", "Framer Motion", "GSAP", "Lottie", "D3.js"]);
 
 const WALL = skillCategories.flatMap((cat) =>
   cat.items.map((it) => ({ ...it, cat: cat.label, featured: FEATURED.has(it.name) }))

@@ -73,6 +73,7 @@ function SectionPlaceholder({ id }) {
 const CinematicWorld    = lazy(() => import("./components/three/CinematicWorld"));
 const SpaceBackground   = lazy(() => import("./components/three/SpaceBackground"));
 const ChapterBackdrop   = lazy(() => import("./components/ui/ChapterBackdrop"));
+const AmbientField      = lazy(() => import("./components/ui/AmbientField"));
 const ChapterRail       = lazy(() => import("./components/ui/ChapterRail"));
 const ChapterIntro      = lazy(() => import("./components/ui/ChapterIntro"));
 const CursorParticles   = lazy(() => import("./components/ui/CursorParticles"));
@@ -130,6 +131,7 @@ export default function App() {
             <DeferredMount>
               {isLow && <SpaceBackground />}
               <ChapterBackdrop />
+              {!isLow && <AmbientField />}
               {!isLow && !touch && <CursorSpotlight />}
               {!isLow && <VelocityVignette />}
               {!isLow && <GrainOverlay />}
@@ -153,7 +155,7 @@ export default function App() {
             <Stats />
             <About />
             <Suspense fallback={<SectionPlaceholder id="services" />}><Services /></Suspense>
-            <VelocityMarquee text="REACT · NEXT.JS · THREE.JS · GSAP · TAILWIND" baseVelocity={2.5} />
+            <VelocityMarquee text="REACT · NEXT.JS · THREE.JS · GSAP · FRAMER MOTION · LOTTIE · WEBGL · D3 · TAILWIND" baseVelocity={2.5} />
             <Suspense fallback={<SectionPlaceholder id="skills" />}><Skills /></Suspense>
             <Suspense fallback={<SectionPlaceholder id="experience" />}><Experience /></Suspense>
             <Suspense fallback={<SectionPlaceholder id="process" />}><Process /></Suspense>

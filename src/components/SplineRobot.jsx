@@ -110,7 +110,7 @@ export default function SplineRobot() {
 
   return (
     <div
-      className="relative h-full w-full pointer-events-none md:pointer-events-auto"
+      className="relative h-full w-full pointer-events-auto"
       style={{ overflow: "visible" }}
     >
       <ErrorBoundary fallback={<RobotFallback />}>

@@ -32,10 +32,10 @@ export default function ChapterBackdrop() {
   }, [active, r, g, b]);
 
   const bg = useMotionTemplate`
-    radial-gradient(80% 50% at 50% 0%, rgba(${r}, ${g}, ${b}, 0.12), transparent 70%),
-    radial-gradient(70% 50% at 50% 100%, rgba(${r}, ${g}, ${b}, 0.10), transparent 70%),
-    radial-gradient(40% 40% at 15% 50%, rgba(${r}, ${g}, ${b}, 0.05), transparent 70%),
-    radial-gradient(40% 40% at 85% 50%, rgba(${r}, ${g}, ${b}, 0.05), transparent 70%)
+    radial-gradient(80% 50% at 50% 0%, rgba(${r}, ${g}, ${b}, 0.17), transparent 70%),
+    radial-gradient(70% 50% at 50% 100%, rgba(${r}, ${g}, ${b}, 0.14), transparent 70%),
+    radial-gradient(45% 45% at 12% 45%, rgba(${r}, ${g}, ${b}, 0.08), transparent 70%),
+    radial-gradient(45% 45% at 88% 55%, rgba(${r}, ${g}, ${b}, 0.08), transparent 70%)
   `;
 
   return (

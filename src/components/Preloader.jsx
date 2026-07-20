@@ -1,9 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence, useMotionValue, useSpring } from "motion/react";
 import { profile } from "../data/content";
+<<<<<<< HEAD
 import { experience } from "../store/experience";
 import useDeviceProfile from "../hooks/useDeviceProfile";
 import PreloaderAtmosphere from "./ui/PreloaderAtmosphere";
+=======
+import { Gyro, WireCube } from "./ui/Shapes3D";
+>>>>>>> f1d2a6a8c337112cf46da766879af46521e3a5bd
 
 const greetings = ["Hello", "مرحبا", "Bonjour", "こんにちは", "Hola", "Ciao", "Hallo"];
 const PANELS    = 8;
@@ -246,6 +250,19 @@ export default function Preloader({ onDone }) {
           className="pointer-events-none absolute left-1/2 top-1/2 h-[700px] w-[700px] -translate-x-1/2 -translate-y-1/2 rounded-full"
           style={{ background: "radial-gradient(circle, rgba(170,180,196,0.12) 0%, transparent 60%)" }}
         />
+
+        {/* ── Subtle 3D atmosphere — slow wireframe sculptures drifting behind ── */}
+        <motion.div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 flex items-center justify-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: phase === "done" ? 0 : 1 }}
+          transition={{ duration: 1.2, delay: 0.2 }}
+        >
+          <Gyro size={460} dur={48} color="rgba(170,184,210,0.16)" className="absolute" />
+          <WireCube size={150} dur={40} color="rgba(170,184,210,0.14)" className="absolute left-[14%] top-[24%] hidden md:block" />
+          <WireCube size={110} dur={34} color="rgba(170,184,210,0.12)" className="absolute right-[16%] bottom-[26%] hidden md:block" />
+        </motion.div>
 
         {/* ══ LOADING PHASE ══ */}
         <AnimatePresence mode="wait">
