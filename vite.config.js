@@ -1,12 +1,3 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import tailwindcss from "@tailwindcss/vite";
-
-// https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [react(), tailwindcss()],
-});
-
 // Chunks that should NOT be modulepreloaded — they're huge and only
 // needed lazily / on interaction. Preloading them would defeat the
 // whole point of code-splitting.
@@ -30,7 +21,7 @@ const GSAP_PLUGINS =
 const THREE_STACK =
   /[\\/](three|three-stdlib|three-mesh-bvh|@react-three|postprocessing|maath|troika[-\w]*|bidi-js|webgl-sdf-generator|suspend-react|its-fine|react-reconciler|react-use-measure|detect-gpu|glsl-noise|hls\.js|stats-gl|camera-controls|meshline|potpack|@monogrid|n8ao)[\\/]/;
 
-export default defineConfig({
+export default defineConfig({ // This is now the only default export
   plugins: [react(), tailwindcss()],
 
   // ── React-Three-Fiber + Vite interop ──────────────────────────────────
