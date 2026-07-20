@@ -1,13 +1,7 @@
-import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence, useMotionValue, useSpring } from "motion/react";
 import { profile } from "../data/content";
-<<<<<<< HEAD
 import { experience } from "../store/experience";
 import useDeviceProfile from "../hooks/useDeviceProfile";
-import PreloaderAtmosphere from "./ui/PreloaderAtmosphere";
-=======
-import { Gyro, WireCube } from "./ui/Shapes3D";
->>>>>>> f1d2a6a8c337112cf46da766879af46521e3a5bd
 
 const greetings = ["Hello", "مرحبا", "Bonjour", "こんにちは", "Hola", "Ciao", "Hallo"];
 const PANELS    = 8;
