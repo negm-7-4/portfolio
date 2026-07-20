@@ -1,3 +1,7 @@
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
+
 // Chunks that should NOT be modulepreloaded — they're huge and only
 // needed lazily / on interaction. Preloading them would defeat the
 // whole point of code-splitting.
