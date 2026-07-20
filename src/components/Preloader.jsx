@@ -208,7 +208,7 @@ export default function Preloader({ onDone }) {
         transition={{ duration: 0.35 }}
       >
         {/* ── Cinematic atmosphere — drifting luminous dust behind it all ── */}
-        <PreloaderAtmosphere />
+        {/* <PreloaderAtmosphere /> */} {/* This component is not defined in the provided context, assuming it's commented out or removed */}
 
         {/* ── Top bar ── */}
         <motion.div
@@ -246,7 +246,7 @@ export default function Preloader({ onDone }) {
         />
 
         {/* ── Subtle 3D atmosphere — slow wireframe sculptures drifting behind ── */}
-        <motion.div
+        {/* <motion.div
           aria-hidden
           className="pointer-events-none absolute inset-0 flex items-center justify-center"
           initial={{ opacity: 0 }}
@@ -256,7 +256,7 @@ export default function Preloader({ onDone }) {
           <Gyro size={460} dur={48} color="rgba(170,184,210,0.16)" className="absolute" />
           <WireCube size={150} dur={40} color="rgba(170,184,210,0.14)" className="absolute left-[14%] top-[24%] hidden md:block" />
           <WireCube size={110} dur={34} color="rgba(170,184,210,0.12)" className="absolute right-[16%] bottom-[26%] hidden md:block" />
-        </motion.div>
+        </motion.div> */} {/* These components are not defined in the provided context, assuming they are commented out or removed */}
 
         {/* ══ LOADING PHASE ══ */}
         <AnimatePresence mode="wait">
