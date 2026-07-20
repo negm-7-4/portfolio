@@ -33,12 +33,8 @@
     "motion": "^12.5.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-<<<<<<< HEAD
     "three": "^0.185.0",
     "zustand": "^5.0.14"
-=======
-    "three": "^0.169.0"
->>>>>>> f1d2a6a8c337112cf46da766879af46521e3a5bd
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.0.14",
