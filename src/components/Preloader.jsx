@@ -1,3 +1,4 @@
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useMotionValue, useSpring } from "motion/react";
 import { profile } from "../data/content";
 import { experience } from "../store/experience";
