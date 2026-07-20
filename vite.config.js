@@ -2,10 +2,15 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [react(), tailwindcss()],
+});
+
 // Chunks that should NOT be modulepreloaded — they're huge and only
 // needed lazily / on interaction. Preloading them would defeat the
 // whole point of code-splitting.
-<<<<<<< HEAD
+
 const LAZY_CHUNKS = new Set(["spline", "gsap", "gsap-plugins", "three"]);
 
 // The now-free GSAP club plugins (SplitText, MorphSVG, DrawSVG, …). They are
@@ -24,9 +29,6 @@ const GSAP_PLUGINS =
 // ExperienceBridge, so it must live in a small, eager-safe chunk.
 const THREE_STACK =
   /[\\/](three|three-stdlib|three-mesh-bvh|@react-three|postprocessing|maath|troika[-\w]*|bidi-js|webgl-sdf-generator|suspend-react|its-fine|react-reconciler|react-use-measure|detect-gpu|glsl-noise|hls\.js|stats-gl|camera-controls|meshline|potpack|@monogrid|n8ao)[\\/]/;
-=======
-const LAZY_CHUNKS = new Set(["spline", "gsap", "three"]);
->>>>>>> f1d2a6a8c337112cf46da766879af46521e3a5bd
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
@@ -74,7 +76,7 @@ export default defineConfig({
           // Spline — biggest contributor by far.
           if (id.includes("@splinetool"))               return "spline";
 
-<<<<<<< HEAD
+
           // zustand is tiny and on the EAGER path (the experience store) —
           // pin it to vendor BEFORE the three test so it can never drag the
           // 3D stack onto the critical path.
@@ -82,10 +84,6 @@ export default defineConfig({
 
           // The whole React-Three-Fiber stack → one lazy chunk.
           if (THREE_STACK.test(id))                     return "three";
-=======
-          // Three.js — only needed for the lazy Globe project view.
-          if (id.includes("/three/") || id.includes("three/build")) return "three";
->>>>>>> f1d2a6a8c337112cf46da766879af46521e3a5bd
 
           // Animation libs
           if (id.includes("framer-motion") || id.includes("motion"))
