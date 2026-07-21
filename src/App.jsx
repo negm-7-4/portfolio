@@ -125,6 +125,22 @@ export default function App() {
             </Suspense>
           )}
 
+          {/* Mobile readability veil — on phones the single-column layout puts
+              copy directly over the full-width 3D world, so dim it to an
+              ambient backdrop so text always stays crisp. Most visitors are on
+              phones, so legibility wins over spectacle here. Desktop: none. */}
+          {!isLow && (
+            <div
+              aria-hidden
+              className="pointer-events-none fixed inset-0 md:hidden"
+              style={{
+                zIndex: -5,
+                background:
+                  "linear-gradient(180deg, rgba(6,8,12,0.6) 0%, rgba(6,8,12,0.74) 45%, rgba(6,8,12,0.68) 100%)",
+              }}
+            />
+          )}
+
           {/* These are visual but not critical for first paint.
               Touched-down tiers skip the heaviest extras to stay smooth. */}
           <Suspense fallback={null}>
