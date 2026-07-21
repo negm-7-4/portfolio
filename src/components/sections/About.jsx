@@ -3,7 +3,7 @@ import { motion, useScroll, useTransform } from "motion/react";
 import SectionHeading from "../ui/SectionHeading";
 import TiltCard from "../ui/TiltCard";
 import SignatureFlourish from "../ui/SignatureFlourish";
-import HangingPortrait from "../ui/HangingPortrait";
+import StablePortrait from "../ui/StablePortrait";
 import { Gyro, Diamond } from "../ui/Shapes3D";
 import { profile, aboutCards } from "../../data/content";
 
@@ -164,8 +164,8 @@ export default function About() {
             transition={{ delay: 0.15, duration: 0.7 }}
             className="flex flex-col gap-8 md:col-span-5"
           >
-            {/* Interactive hanging portrait — drag it, watch it swing */}
-            <HangingPortrait />
+            {/* Stable premium portrait — fixed, tilts a touch to the cursor */}
+            <StablePortrait />
 
             <TiltCard
               max={6}
