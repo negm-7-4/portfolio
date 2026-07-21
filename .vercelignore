@@ -1,0 +1,25 @@
+# Vercel builds from src/ + public/ — nothing else needs uploading.
+node_modules
+dist
+.git
+.claude
+.vscode
+studio
+
+# Raw local asset originals (optimized copies live in public/)
+image.png
+*.mp4
+Recording*.mp4
+acoustic room.jpeg
+automation.jpeg
+BascalScalar.png
+Nexora.jpg
+Nexora 2.png
+Nexora 3.png
+Saas.png
+SAMS.png
+SocialNetwork.jpg
+ToDoList.jpg
+vera.png
+vera2.png
+vera 3.png

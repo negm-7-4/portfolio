@@ -29,3 +29,5 @@ Thumbs.db
 # misc large local assets (originals — optimized copies live in public/)
 image.png
 Recording*.mp4
+
+.vercel

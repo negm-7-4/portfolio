@@ -26,7 +26,6 @@ import { experience } from "../../store/experience";
 import { sections } from "../../data/sections";
 import { FresnelMaterial } from "./materials/FresnelMaterial"; // registers <fresnelMaterial>
 import MorphField from "./MorphField";
-import HeroModel from "./HeroModel";
 import Architecture from "./Architecture";
 import Nebula from "./Nebula";
 import Comets from "./Comets";
@@ -376,7 +375,6 @@ function Post({ quality }) {
 
 /* ── The whole 3D scene graph. ── */
 function Scene({ quality }) {
-  const heroModel = quality === "high";
   return (
     <>
       <color attach="background" args={["#06080c"]} />
@@ -386,8 +384,10 @@ function Scene({ quality }) {
       <Lighting />
       <SectionAccent />
 
-      <Core quality={quality} heroFade={heroModel} />
-      {heroModel && <HeroModel />}
+      {/* The glowing metal-and-fresnel Core is the single hero centrepiece —
+          full size at the top (heroFade off), the morph field forming its
+          particle shell. One clear focal object; no competing sculptures. */}
+      <Core quality={quality} heroFade={false} />
       {/* Pointer interaction is a mouse gesture — high tier only (touch is mid). */}
       <MorphField quality={quality} interactive={quality === "high"} />
       <BackdropKnot />

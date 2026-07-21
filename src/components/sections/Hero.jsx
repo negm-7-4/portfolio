@@ -4,7 +4,6 @@ import useDeviceProfile from "../../hooks/useDeviceProfile";
 import { experience } from "../../store/experience";
 import MagneticButton from "../ui/MagneticButton";
 import MagneticText from "../ui/MagneticText";
-import SplitText from "../ui/SplitText";
 import { celebrate } from "../../lib/confetti";
 import { profile, heroTags } from "../../data/content";
 import { EASE_OUT, EASE_BACK } from "../../lib/motion";
@@ -326,14 +325,15 @@ export default function Hero() {
             <TypewriterRole />
           </motion.div>
 
-          {/* tagline — hinges up word by word via the shared SplitText primitive */}
+          {/* tagline — body copy stays plain for guaranteed spacing/readability
+              (clarity > effect); a single soft fade+lift is enough. */}
           <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.08, duration: 0.4 }}
+            initial={{ opacity: 0, y: 16, filter: "blur(4px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            transition={{ delay: 1.08, duration: 0.7, ease: EASE_OUT }}
             className="mt-6 max-w-md text-base leading-relaxed text-white/55 md:text-lg"
           >
-            <SplitText text={profile.tagline} delay={1.08} stagger={0.04} />
+            {profile.tagline}
           </motion.p>
 
           {/* CTAs */}
