@@ -376,7 +376,6 @@ function Post({ quality }) {
 
 /* ── The whole 3D scene graph. ── */
 function Scene({ quality }) {
-  const heroModel = quality === "high";
   return (
     <>
       <color attach="background" args={["#06080c"]} />
@@ -386,11 +385,14 @@ function Scene({ quality }) {
       <Lighting />
       <SectionAccent />
 
-      {/* The faceted Prism + its orbiting shards is the hero star (high tier).
-          The metal Core shrinks away behind it at the top and swells back to
-          anchor the body + contact beats; mid tier keeps the Core full-size. */}
-      <Core quality={quality} heroFade={heroModel} />
-      {heroModel && <HeroModel />}
+      {/* The faceted Prism + its orbiting shards is the hero star on EVERY
+          tier that mounts the world — it's ~20 low-poly meshes, far cheaper
+          than the particle field, so it must never disappear when the
+          PerformanceMonitor steps quality down mid-session (that flap was
+          "the hero keeps changing"). The metal Core shrinks away behind it
+          at the top and swells back to anchor the body + contact beats. */}
+      <Core quality={quality} heroFade />
+      <HeroModel />
       {/* Pointer interaction is a mouse gesture — high tier only (touch is mid). */}
       <MorphField quality={quality} interactive={quality === "high"} />
       <BackdropKnot />
