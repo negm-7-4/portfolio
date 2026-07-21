@@ -53,7 +53,7 @@ function makeShards(count, radius, seed) {
         Math.sin(a) * (radius + (rng() - 0.5) * 0.22),
       ],
       rot: [rng() * Math.PI, rng() * Math.PI, rng() * Math.PI],
-      scale: 0.06 + rng() * 0.08,
+      scale: 0.09 + rng() * 0.09,
     });
   }
   return shards;
@@ -78,10 +78,10 @@ export default function HeroModel() {
   const shardMat = useMemo(
     () =>
       new THREE.MeshStandardMaterial({
-        color: "#131b28",
+        color: "#2a3850",
         metalness: 1,
-        roughness: 0.24,
-        envMapIntensity: 1.5,
+        roughness: 0.18,
+        envMapIntensity: 2.0,
         flatShading: true,
       }),
     []
@@ -149,21 +149,22 @@ export default function HeroModel() {
     // Fresnel shell breathes with the heart and flares on hover.
     if (shell.current) {
       shell.current.uTime = t;
-      damp(shell.current, "uOpacity", (hovered ? 1.05 : 0.7) + pulse * 0.15, 0.3, dt);
+      damp(shell.current, "uOpacity", (hovered ? 1.35 : 1.0) + pulse * 0.18, 0.3, dt);
       damp(shell.current, "uScrollPulse", hovered ? 0.5 : 0.12, 0.35, dt);
     }
   });
 
   return (
     <group ref={group} scale={0.001} position={[0.3, BASE_Y, 2.3]}>
-      {/* The gem — dark faceted metal, crisp flat-shaded facets. */}
+      {/* The gem — polished faceted metal. Bright env catch + low roughness
+          so every facet glints as it turns instead of reading as a dark mass. */}
       <mesh>
         <icosahedronGeometry args={[1.02, 0]} />
         <meshStandardMaterial
-          color="#0e141d"
-          metalness={1}
-          roughness={0.16}
-          envMapIntensity={1.7}
+          color="#3a4a68"
+          metalness={0.78}
+          roughness={0.22}
+          envMapIntensity={2.4}
           flatShading
         />
       </mesh>
@@ -173,7 +174,10 @@ export default function HeroModel() {
         <icosahedronGeometry args={[1, 1]} />
         <meshBasicMaterial color="#dfe8f8" toneMapped={false} />
       </mesh>
-      <pointLight ref={light} color="#8fb0ff" intensity={5} distance={9} />
+      <pointLight ref={light} color="#8fb0ff" intensity={7} distance={10} />
+      {/* Dedicated key light — rakes the upper facets so the gem always
+          reads as a lit, dimensional object against the bright particles. */}
+      <pointLight position={[2.4, 2.2, 3.2]} intensity={26} distance={12} color="#e8eefb" />
 
       {/* Energy shell — the site's hand-written fresnel GLSL. */}
       <mesh scale={1.14}>

@@ -26,6 +26,7 @@ import { experience } from "../../store/experience";
 import { sections } from "../../data/sections";
 import { FresnelMaterial } from "./materials/FresnelMaterial"; // registers <fresnelMaterial>
 import MorphField from "./MorphField";
+import HeroModel from "./HeroModel";
 import Architecture from "./Architecture";
 import Nebula from "./Nebula";
 import Comets from "./Comets";
@@ -375,6 +376,7 @@ function Post({ quality }) {
 
 /* ── The whole 3D scene graph. ── */
 function Scene({ quality }) {
+  const heroModel = quality === "high";
   return (
     <>
       <color attach="background" args={["#06080c"]} />
@@ -384,11 +386,11 @@ function Scene({ quality }) {
       <Lighting />
       <SectionAccent />
 
-      {/* The morph field's solid particle orb IS the hero centrepiece. The
-          metal Core shrinks away behind it at the top (heroFade) so its dark
-          body never punches a hexagon through the orb, then swells back to
-          anchor the body + contact beats. One clear focal object. */}
-      <Core quality={quality} heroFade />
+      {/* The faceted Prism + its orbiting shards is the hero star (high tier).
+          The metal Core shrinks away behind it at the top and swells back to
+          anchor the body + contact beats; mid tier keeps the Core full-size. */}
+      <Core quality={quality} heroFade={heroModel} />
+      {heroModel && <HeroModel />}
       {/* Pointer interaction is a mouse gesture — high tier only (touch is mid). */}
       <MorphField quality={quality} interactive={quality === "high"} />
       <BackdropKnot />
