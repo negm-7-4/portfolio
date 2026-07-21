@@ -70,6 +70,23 @@ function formSphere(out, N, R) {
   }
 }
 
+/* A SOLID, filled sphere — golden-spiral directions for an even angular
+   spread, radius biased toward the surface (pow 0.62) so the silhouette
+   stays crisp while the interior fills in. With additive blending this
+   reads as one complete luminous orb, not a hollow shell with a dark
+   centre. The hero's identity core. */
+function formBall(out, N, R, rng) {
+  for (let k = 0; k < N; k++) {
+    const y = 1 - 2 * ((k + 0.5) / N);
+    const ring = Math.sqrt(Math.max(0, 1 - y * y));
+    const phi = k * GOLDEN;
+    const rad = R * Math.pow(rng(), 0.62);
+    out[k * 3] = Math.cos(phi) * ring * rad;
+    out[k * 3 + 1] = y * rad;
+    out[k * 3 + 2] = Math.sin(phi) * ring * rad;
+  }
+}
+
 function formTorus(out, N, R, r) {
   for (let k = 0; k < N; k++) {
     const u = k / N;
@@ -388,7 +405,7 @@ export default function MorphField({ quality = "high", interactive = false }) {
     const rng = mulberry32(0xc0ffee);
 
     const f0 = mk();
-    formSphere(f0, N, 2.2); // hero — coherent core (tight, so the mech reads)
+    formBall(f0, N, 2.35, rng); // hero — a solid, complete luminous orb
     const f1 = mk();
     formTorus(f1, N, 3.0, 0.85); // about — opens
     const f2 = mk();

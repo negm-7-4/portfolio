@@ -384,10 +384,11 @@ function Scene({ quality }) {
       <Lighting />
       <SectionAccent />
 
-      {/* The glowing metal-and-fresnel Core is the single hero centrepiece —
-          full size at the top (heroFade off), the morph field forming its
-          particle shell. One clear focal object; no competing sculptures. */}
-      <Core quality={quality} heroFade={false} />
+      {/* The morph field's solid particle orb IS the hero centrepiece. The
+          metal Core shrinks away behind it at the top (heroFade) so its dark
+          body never punches a hexagon through the orb, then swells back to
+          anchor the body + contact beats. One clear focal object. */}
+      <Core quality={quality} heroFade />
       {/* Pointer interaction is a mouse gesture — high tier only (touch is mid). */}
       <MorphField quality={quality} interactive={quality === "high"} />
       <BackdropKnot />
