@@ -87,9 +87,15 @@ export default function useMagneticPull({
     };
   }, []);
 
-  // Subscribe to the shared rAF loop
+  // Subscribe to the shared rAF loop.
+  // Skip entirely on coarse pointers (touch): magnetism is a mouse
+  // affordance, and on phones a lingering touch point would otherwise
+  // leave tiles/buttons nudged off-centre (and burn a rAF for nothing).
   useEffect(() => {
     if (!c) return;
+    if (typeof window !== "undefined" && window.matchMedia?.("(pointer: coarse)").matches) {
+      return;
+    }
     const R2 = radius * radius;
     const onTick = (mx, my) => {
       const rect = rectRef.current;

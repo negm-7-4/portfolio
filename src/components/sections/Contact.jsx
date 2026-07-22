@@ -270,7 +270,7 @@ export default function Contact() {
           transition={{ duration: 0.7 }}
           className="mx-auto mb-16 max-w-2xl text-center font-display font-light leading-[1.3] text-white/75"
         >
-          Have a project, an idea, or just want to say hi?
+          Have a project, an idea, or just want to say hi?{" "}
           <br className="hidden sm:block" />
           The inbox is{" "}
           <span className="text-gradient italic font-medium">always open</span>.

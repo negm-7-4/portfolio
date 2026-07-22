@@ -28,9 +28,9 @@ function TechTile({ item, i }) {
   const amp   = 8 + ((i * 3) % 12);
 
   const isBig = item.featured;
-  const size = isBig ? "h-44 w-44 md:h-56 md:w-56" : "h-32 w-32 md:h-40 md:w-40";
-  const iconSize = isBig ? 78 : 52;
-  const textSize = isBig ? "text-xl md:text-2xl" : "text-sm md:text-base";
+  const size = isBig ? "h-36 w-36 md:h-56 md:w-56" : "h-28 w-28 md:h-40 md:w-40";
+  const iconSize = isBig ? 62 : 44;
+  const textSize = isBig ? "text-lg md:text-2xl" : "text-sm md:text-base";
 
   return (
     <motion.div
@@ -244,7 +244,7 @@ export default function Skills() {
         {/* ── The constellation wall — single flowing arrangement, no dividers ── */}
         <motion.div
           style={{ rotateX: wallTilt, transformPerspective: 1600 }}
-          className="flex flex-wrap items-center justify-center gap-x-10 gap-y-14 md:gap-x-16 md:gap-y-20"
+          className="flex flex-wrap items-center justify-center gap-x-6 gap-y-10 md:gap-x-16 md:gap-y-20"
         >
           {WALL.map((item, i) => (
             <TechTile key={item.name} item={item} i={i} />
