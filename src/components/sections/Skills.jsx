@@ -2,6 +2,7 @@ import { useRef } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
 import TechIcon from "../ui/TechIcon";
 import useMagneticPull from "../../hooks/useMagneticPull";
+import useMediaQuery from "../../hooks/useMediaQuery";
 import { skillCategories } from "../../data/content";
 
 /* ─── Flatten all categories into one wall, mark featured items ─── */
@@ -12,7 +13,7 @@ const WALL = skillCategories.flatMap((cat) =>
 );
 
 /* ─── Single floating tech tile — varies in size, cursor-reactive ─── */
-function TechTile({ item, i }) {
+function TechTile({ item, i, desktop }) {
   // Cursor magnetic pull — all tiles share ONE rAF loop and cached rects
   const { ref, sx, sy, srx, sry } = useMagneticPull({
     radius: 260,
@@ -28,9 +29,9 @@ function TechTile({ item, i }) {
   const amp   = 8 + ((i * 3) % 12);
 
   const isBig = item.featured;
-  const size = isBig ? "h-36 w-36 md:h-56 md:w-56" : "h-28 w-28 md:h-40 md:w-40";
-  const iconSize = isBig ? 62 : 44;
-  const textSize = isBig ? "text-lg md:text-2xl" : "text-sm md:text-base";
+  const size = isBig ? "h-28 w-28 md:h-56 md:w-56" : "h-24 w-24 md:h-40 md:w-40";
+  const iconSize = isBig ? (desktop ? 78 : 46) : (desktop ? 52 : 34);
+  const textSize = isBig ? "text-sm md:text-2xl" : "text-xs md:text-base";
 
   return (
     <motion.div
@@ -115,6 +116,7 @@ function TechTile({ item, i }) {
 /* ─── Section ─── */
 export default function Skills() {
   const ref = useRef(null);
+  const desktop = useMediaQuery("(min-width: 768px)");
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"],
@@ -247,7 +249,7 @@ export default function Skills() {
           className="flex flex-wrap items-center justify-center gap-x-6 gap-y-10 md:gap-x-16 md:gap-y-20"
         >
           {WALL.map((item, i) => (
-            <TechTile key={item.name} item={item} i={i} />
+            <TechTile key={item.name} item={item} i={i} desktop={desktop} />
           ))}
         </motion.div>
 

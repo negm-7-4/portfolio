@@ -141,8 +141,17 @@ function GlobeScene({ compact }) {
   const ringRefs = useRef([]);
 
   const center = useMemo(
-    () => new THREE.Vector3(compact ? 0 : -1.15, compact ? 0.55 : 0, 0),
+    () => new THREE.Vector3(compact ? 0 : -1.15, compact ? 0.35 : 0, 0),
     [compact]
+  );
+  // On a tall/narrow phone the horizontal FOV is the tight one, so pull the
+  // camera well back to keep the WHOLE globe in frame instead of cropping it.
+  const camZ = compact ? 10.8 : CAM_Z;
+  // …and aim the camera below the globe so it renders in the upper part of
+  // the screen, fully clear of the bottom project sheet.
+  const lookTarget = useMemo(
+    () => (compact ? center.clone().setY(center.y - 1.9) : center),
+    [compact, center]
   );
 
   const maps = useTexture({
@@ -200,7 +209,7 @@ function GlobeScene({ compact }) {
      the quaternion that rotates that city into the camera's gaze, the sun
      direction it arrives to, and the surface marker's local transform. */
   const flight = useMemo(() => {
-    const face = new THREE.Vector3(0, 0, CAM_Z).sub(center).normalize();
+    const face = new THREE.Vector3(0, 0, camZ).sub(center).normalize();
     return destinations.map((d) => {
       const p = latLngToVec3(d.lat, d.lng, 1).normalize();
       return {
@@ -213,7 +222,7 @@ function GlobeScene({ compact }) {
         ),
       };
     });
-  }, [center]);
+  }, [center, camZ]);
 
   const tmpQ = useRef(new THREE.Quaternion());
   const tmpSun = useRef(new THREE.Vector3());
@@ -246,8 +255,8 @@ function GlobeScene({ compact }) {
     const cam = state.camera;
     cam.position.x += (pointer.x * 0.28 - cam.position.x) * k;
     cam.position.y += (pointer.y * 0.2 - cam.position.y) * k;
-    cam.position.z += (CAM_Z + transit * 1.15 - cam.position.z) * k;
-    cam.lookAt(center);
+    cam.position.z += (camZ + transit * 1.15 - cam.position.z) * k;
+    cam.lookAt(lookTarget);
 
     if (clouds.current) clouds.current.rotation.y += dt * 0.012;
 
@@ -526,7 +535,7 @@ export default function GlobeShowcase() {
             <Canvas
               frameloop={inView ? "always" : "never"}
               dpr={[1, 1.6]}
-              camera={{ position: [0, 0, CAM_Z], fov: 42, near: 0.1, far: 60 }}
+              camera={{ position: [0, 0, isDesktop ? CAM_Z : 10.8], fov: isDesktop ? 42 : 44, near: 0.1, far: 60 }}
               gl={{
                 antialias: true,
                 alpha: true,
