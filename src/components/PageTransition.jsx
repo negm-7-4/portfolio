@@ -124,7 +124,7 @@ export default function PageTransition() {
             initial={false}
             animate={{ opacity: stage === "in" ? 1 : 0, y: stage === "in" ? 0 : -8 }}
             transition={{ duration: 0.38, delay: stage === "in" ? 0.36 : 0 }}
-            className="text-[10px] font-semibold uppercase tracking-[0.4em] text-white/35"
+            className="text-[10px] font-semibold uppercase tracking-[0.4em] text-white/55"
           >
             Going to
           </motion.span>
@@ -141,9 +141,9 @@ export default function PageTransition() {
               className="font-display text-base font-medium tracking-[0.18em]"
               style={{ color: target?.color || "#aab4c4" }}
             >
-              <span className="text-white/30">( </span>
+              <span className="text-white/50">( </span>
               {target.num}
-              <span className="text-white/30"> )</span>
+              <span className="text-white/50"> )</span>
             </motion.span>
           )}
 

@@ -85,9 +85,9 @@ function ServiceRow({ s, i, isOpen, onHover }) {
           animate={{ color: isOpen ? "rgba(255,255,255,0.95)" : "rgba(255,255,255,0.45)" }}
           className="font-display text-2xl font-medium tracking-[0.12em] md:text-3xl"
         >
-          <span className="text-white/35">( </span>
+          <span className="text-white/55">( </span>
           {s.num}
-          <span className="text-white/35"> )</span>
+          <span className="text-white/55"> )</span>
         </motion.span>
 
         {/* title — shifts right slightly when active */}

@@ -174,7 +174,7 @@ function SocialOrb({ s, i }) {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: false, margin: "-15%" }}
         transition={{ delay: i * 0.14 + 0.45, duration: 0.5 }}
-        className="mt-6 text-[11px] uppercase tracking-[0.3em] text-white/45 transition-colors duration-300 group-hover:text-white"
+        className="mt-6 text-[11px] uppercase tracking-[0.3em] text-white/65 transition-colors duration-300 group-hover:text-white"
       >
         {s.label}
       </motion.span>

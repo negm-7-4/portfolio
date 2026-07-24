@@ -49,7 +49,7 @@ export default function KeyboardHint() {
           >
             ✦
           </motion.span>
-          <span className="text-white/40">Tip</span>
+          <span className="text-white/60">Tip</span>
           <span className="h-3 w-px bg-white/15" />
           <motion.kbd
             animate={{ scale: [1, 1.08, 1] }}

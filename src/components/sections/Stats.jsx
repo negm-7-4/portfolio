@@ -72,7 +72,7 @@ export default function Stats() {
           transition={{ duration: 0.6 }}
           className="mb-12 flex items-center gap-4"
         >
-          <span className="font-display text-[12px] font-semibold tracking-[0.3em] text-white/45">
+          <span className="font-display text-[12px] font-semibold tracking-[0.3em] text-white/65">
             ( • )
           </span>
           <span className="h-px w-14 bg-gradient-to-r from-white/40 to-white/0" />
@@ -93,7 +93,7 @@ export default function Stats() {
               className="group flex flex-col items-start px-4 md:px-8"
             >
               {/* tiny stat marker — index */}
-              <span className="mb-3 font-display text-[10px] font-semibold tracking-[0.3em] text-white/25">
+              <span className="mb-3 font-display text-[10px] font-semibold tracking-[0.3em] text-white/45">
                 / 0{i + 1}
               </span>
 
@@ -130,7 +130,7 @@ export default function Stats() {
               <p className="mt-4 text-[11px] font-semibold uppercase tracking-[0.28em] text-white/65 md:text-xs">
                 {s.label}
               </p>
-              <p className="mt-1.5 text-[13px] leading-relaxed text-white/35">
+              <p className="mt-1.5 text-[13px] leading-relaxed text-white/55">
                 {s.note}
               </p>
 

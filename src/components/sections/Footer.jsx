@@ -54,7 +54,7 @@ export default function Footer() {
             transition={{ duration: 0.6 }}
             className="mb-8 flex items-center gap-4"
           >
-            <span className="font-display text-[12px] font-semibold tracking-[0.3em] text-white/45">
+            <span className="font-display text-[12px] font-semibold tracking-[0.3em] text-white/65">
               ( 10 )
             </span>
             <span className="h-px w-14 bg-gradient-to-r from-white/40 to-white/0" />
@@ -90,7 +90,7 @@ export default function Footer() {
             transition={{ delay: 0.25, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             className="mt-10 flex flex-wrap items-baseline gap-4"
           >
-            <span className="flex items-center gap-2 text-[11px] uppercase tracking-[0.32em] text-white/40">
+            <span className="flex items-center gap-2 text-[11px] uppercase tracking-[0.32em] text-white/60">
               <motion.span
                 animate={{ scale: [1, 1.4, 1], opacity: [0.4, 1, 0.4] }}
                 transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
@@ -126,7 +126,7 @@ export default function Footer() {
           viewport={{ once: false }}
           className="my-12 flex items-center gap-6 border-t border-white/[0.08] pt-8"
         >
-          <span className="text-[10px] uppercase tracking-[0.3em] text-white/30">
+          <span className="text-[10px] uppercase tracking-[0.3em] text-white/50">
             Index
           </span>
           <span className="shimmer-line h-px flex-1 bg-white/5" />
@@ -151,7 +151,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 gap-10 pb-10 md:grid-cols-3 md:gap-12">
           {/* navigation */}
           <div>
-            <h4 className="mb-5 text-[10px] uppercase tracking-[0.3em] text-white/35">
+            <h4 className="mb-5 text-[10px] uppercase tracking-[0.3em] text-white/55">
               Navigate
             </h4>
             <ul className="space-y-2.5">
@@ -172,7 +172,7 @@ export default function Footer() {
 
           {/* contact */}
           <div>
-            <h4 className="mb-5 text-[10px] uppercase tracking-[0.3em] text-white/35">
+            <h4 className="mb-5 text-[10px] uppercase tracking-[0.3em] text-white/55">
               Connect
             </h4>
             <ul className="space-y-2.5">
@@ -194,13 +194,13 @@ export default function Footer() {
                   {profile.phone}
                 </a>
               </li>
-              <li className="text-sm text-white/40">{profile.location}</li>
+              <li className="text-sm text-white/60">{profile.location}</li>
             </ul>
           </div>
 
           {/* socials */}
           <div>
-            <h4 className="mb-5 text-[10px] uppercase tracking-[0.3em] text-white/35">
+            <h4 className="mb-5 text-[10px] uppercase tracking-[0.3em] text-white/55">
               Elsewhere
             </h4>
             <ul className="space-y-2.5">
@@ -214,7 +214,7 @@ export default function Footer() {
                     className="group inline-flex items-center gap-2 text-sm font-medium text-white/55 transition-colors hover:text-white"
                   >
                     {s.label}
-                    <span className="text-[10px] text-white/30 transition-transform duration-300 group-hover:translate-x-1">↗</span>
+                    <span className="text-[10px] text-white/50 transition-transform duration-300 group-hover:translate-x-1">↗</span>
                   </a>
                 </li>
               ))}
@@ -225,7 +225,7 @@ export default function Footer() {
         {/* ── Signature row ───────────────────────────────────── */}
         <div className="flex flex-col items-center gap-8 border-t border-white/[0.07] pt-12 pb-4">
           <div className="flex flex-col items-center gap-3">
-            <p className="text-[10px] uppercase tracking-[0.35em] text-white/30">
+            <p className="text-[10px] uppercase tracking-[0.35em] text-white/50">
               With my own hand
             </p>
             <Signature />
@@ -235,7 +235,7 @@ export default function Footer() {
         </div>
 
         {/* ── Bottom signature row ────────────────────────────── */}
-        <div className="flex flex-col-reverse items-start gap-4 py-8 text-[11px] uppercase tracking-[0.25em] text-white/35 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col-reverse items-start gap-4 py-8 text-[11px] uppercase tracking-[0.25em] text-white/55 sm:flex-row sm:items-center sm:justify-between">
           <span>
             © {new Date().getFullYear()} {profile.name} · All rights reserved
           </span>

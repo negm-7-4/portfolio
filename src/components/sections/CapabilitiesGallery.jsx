@@ -55,7 +55,7 @@ export default function CapabilitiesGallery() {
         <div className="mx-auto mb-8 flex w-[90%] max-w-7xl items-end justify-between gap-6">
           <div>
             <div className="mb-3 flex items-center gap-3">
-              <span className="font-display text-[12px] font-semibold tracking-[0.3em] text-white/45">( ✦ )</span>
+              <span className="font-display text-[12px] font-semibold tracking-[0.3em] text-white/65">( ✦ )</span>
               <span className="h-px w-12 bg-gradient-to-r from-white/40 to-transparent" />
               <span className="text-[11px] font-semibold uppercase tracking-[0.32em] text-white/60">Capabilities</span>
             </div>
@@ -65,7 +65,7 @@ export default function CapabilitiesGallery() {
           </div>
 
           <div className="hidden shrink-0 flex-col items-end gap-2 md:flex">
-            <span className="flex items-center gap-2 text-[10px] uppercase tracking-[0.3em] text-white/40">
+            <span className="flex items-center gap-2 text-[10px] uppercase tracking-[0.3em] text-white/60">
               Scroll
               <motion.span animate={{ x: [0, 6, 0] }} transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}>→</motion.span>
             </span>
@@ -164,7 +164,7 @@ export default function CapabilitiesGallery() {
           {/* closer card */}
           <div className="flex h-[64vh] w-[64vw] shrink-0 flex-col items-center justify-center gap-4 sm:w-[42vw] lg:w-[30vw]">
             <span className="spin-slower font-display text-3xl text-[#aab4c4]">✦</span>
-            <p className="max-w-[16rem] text-center text-[12px] uppercase leading-relaxed tracking-[0.28em] text-white/40">
+            <p className="max-w-[16rem] text-center text-[12px] uppercase leading-relaxed tracking-[0.28em] text-white/60">
               Got something in mind?
             </p>
             <button

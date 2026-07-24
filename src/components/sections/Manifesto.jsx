@@ -84,7 +84,7 @@ export default function Manifesto() {
         <div className="mx-auto w-[90%] max-w-6xl">
           {/* lead-in — same grammar as the other chapters */}
           <div className="mb-10 flex items-center gap-4">
-            <span className="font-display text-[12px] font-semibold tracking-[0.3em] text-white/45">
+            <span className="font-display text-[12px] font-semibold tracking-[0.3em] text-white/65">
               ( ✦ )
             </span>
             <span className="h-px w-14 bg-gradient-to-r from-white/40 to-transparent" />
@@ -116,7 +116,7 @@ export default function Manifesto() {
           {/* closing signature — lands after the final word */}
           <div className="mf-sig mt-12 flex items-center gap-4">
             <span className="block h-px w-16 bg-gradient-to-r from-[#aab4c4] to-transparent" />
-            <span className="text-[11px] uppercase tracking-[0.32em] text-white/40">
+            <span className="text-[11px] uppercase tracking-[0.32em] text-white/60">
               Every frame earns its place
             </span>
           </div>

@@ -24,7 +24,7 @@ function ExperienceRow({ e, i, total }) {
         transition={{ delay: 0.15 + i * 0.08, duration: 0.55 }}
         className="md:pt-2"
       >
-        <span className="font-display text-[10px] font-semibold tracking-[0.3em] text-white/30">
+        <span className="font-display text-[10px] font-semibold tracking-[0.3em] text-white/50">
           ({num})
         </span>
         <p className="mt-1 font-display text-lg font-semibold tracking-tight text-white md:text-xl">
@@ -76,7 +76,7 @@ function ExperienceRow({ e, i, total }) {
           <h3 className="font-display text-2xl font-bold tracking-tight text-white md:text-3xl">
             {e.role}
           </h3>
-          <span className="text-[11px] font-semibold uppercase tracking-[0.3em] text-white/45">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.3em] text-white/65">
             @ {e.company}
           </span>
         </div>
@@ -160,7 +160,7 @@ export default function Experience() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false, margin: "-10%" }}
           transition={{ delay: 0.2, duration: 0.7 }}
-          className="mt-12 flex items-center justify-center gap-4 text-[10px] uppercase tracking-[0.35em] text-white/30"
+          className="mt-12 flex items-center justify-center gap-4 text-[10px] uppercase tracking-[0.35em] text-white/50"
         >
           <span className="h-px w-16 bg-white/15" />
           <span>journey continues</span>

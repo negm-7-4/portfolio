@@ -69,7 +69,7 @@ export default function ChapterRail() {
                         boxShadow: `0 0 24px ${s.color}25, inset 0 1px 0 rgba(255,255,255,0.06)`,
                       }}
                     >
-                      <span className="text-white/45 tabular-nums">{s.num}</span>
+                      <span className="text-white/65 tabular-nums">{s.num}</span>
                       <span>{s.label}</span>
                       <motion.span
                         animate={{ scale: [1, 1.5, 1], opacity: [1, 0.4, 1] }}
@@ -121,7 +121,7 @@ function ProgressPercent({ progress }) {
   const pct = useTransform(progress, (v) => String(Math.round(v * 100)).padStart(3, "0"));
   return (
     <div className="absolute -bottom-12 right-0 flex flex-col items-end gap-1">
-      <span className="font-display text-[9px] font-semibold uppercase tracking-[0.3em] text-white/30 tabular-nums">
+      <span className="font-display text-[9px] font-semibold uppercase tracking-[0.3em] text-white/50 tabular-nums">
         <motion.span>{pct}</motion.span>
         <span className="text-white/15">%</span>
       </span>

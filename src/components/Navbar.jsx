@@ -135,7 +135,7 @@ export default function Navbar() {
           </span>
 
           <span className="transition-colors duration-300">
-            <span className="text-white/40 transition-colors duration-300 group-hover:text-white/70">&lt;</span>
+            <span className="text-white/60 transition-colors duration-300 group-hover:text-white/70">&lt;</span>
             <span className="bar-shimmer"
               style={{
                 backgroundImage:
@@ -146,7 +146,7 @@ export default function Navbar() {
                 backgroundClip: "text",
               }}
             >ME</span>
-            <span className="text-white/40 transition-colors duration-300 group-hover:text-white/70"> /&gt;</span>
+            <span className="text-white/60 transition-colors duration-300 group-hover:text-white/70"> /&gt;</span>
           </span>
         </motion.button>
 
@@ -248,7 +248,7 @@ export default function Navbar() {
             <span className="pointer-events-none absolute right-3 bottom-3 h-2 w-2 border-r border-b border-white/30" />
 
             {/* tiny header */}
-            <p className="mb-3 px-4 text-[9px] uppercase tracking-[0.35em] text-white/30">
+            <p className="mb-3 px-4 text-[9px] uppercase tracking-[0.35em] text-white/50">
               ◆ Navigate
             </p>
 
@@ -269,7 +269,7 @@ export default function Navbar() {
                     }`}
                   >
                     <span className="flex items-center gap-3">
-                      <span className="text-[10px] font-bold tracking-widest text-white/30 transition-colors group-hover:text-white/60">
+                      <span className="text-[10px] font-bold tracking-widest text-white/50 transition-colors group-hover:text-white/60">
                         0{i + 1}
                       </span>
                       {l.label}

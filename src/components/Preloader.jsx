@@ -227,11 +227,11 @@ export default function Preloader({ onDone }) {
               ✦
             </motion.span>
             <span>
-              <span className="text-white/35">&lt;</span>ME
-              <span className="text-white/35"> /&gt;</span>
+              <span className="text-white/55">&lt;</span>ME
+              <span className="text-white/55"> /&gt;</span>
             </span>
           </span>
-          <span className="flex items-center gap-2 text-[9px] uppercase tracking-[0.35em] text-white/30 tabular-nums">
+          <span className="flex items-center gap-2 text-[9px] uppercase tracking-[0.35em] text-white/50 tabular-nums">
             <span className="h-1 w-1 rounded-full bg-white/40" />
             Portfolio · {new Date().getFullYear()}
           </span>
@@ -289,7 +289,7 @@ export default function Preloader({ onDone }) {
                   <div className="font-display text-2xl font-bold tabular-nums text-white">
                     {count}
                   </div>
-                  <div className="text-[8px] uppercase tracking-[0.25em] text-white/35">%</div>
+                  <div className="text-[8px] uppercase tracking-[0.25em] text-white/55">%</div>
                 </div>
               </div>
 
@@ -388,7 +388,7 @@ export default function Preloader({ onDone }) {
                   transition={{ delay: 0.2 }}
                 >
                   <motion.span
-                    className="block text-[11px] uppercase tracking-[0.38em] text-white/45 md:text-xs"
+                    className="block text-[11px] uppercase tracking-[0.38em] text-white/65 md:text-xs"
                     initial={{ clipPath: "inset(0 100% 0 0)" }}
                     animate={{ clipPath: "inset(0 0% 0 0)" }}
                     transition={{ duration: 0.9, delay: profile.name.length * 0.055 + 0.2, ease: [0.76, 0, 0.24, 1] }}
@@ -409,7 +409,7 @@ export default function Preloader({ onDone }) {
           transition={{ duration: 0.6, delay: 0.25 }}
         >
           <div className="flex flex-col gap-1.5">
-            <span className="flex items-center gap-2 text-[9px] uppercase tracking-[0.35em] text-white/35">
+            <span className="flex items-center gap-2 text-[9px] uppercase tracking-[0.35em] text-white/55">
               <motion.span
                 animate={{ scale: [1, 1.5, 1], opacity: [0.5, 1, 0.5] }}
                 transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
@@ -433,7 +433,7 @@ export default function Preloader({ onDone }) {
             />
             <span className="relative">
               {String(count).padStart(3, "0")}
-              <span className="ml-1 text-xl text-white/25 md:text-2xl">%</span>
+              <span className="ml-1 text-xl text-white/45 md:text-2xl">%</span>
             </span>
           </div>
         </motion.div>
@@ -449,7 +449,7 @@ export default function Preloader({ onDone }) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.5 }}
-              className="group absolute bottom-24 left-1/2 z-10 -translate-x-1/2 text-[10px] uppercase tracking-[0.35em] text-white/35 transition-colors hover:text-white/80"
+              className="group absolute bottom-24 left-1/2 z-10 -translate-x-1/2 text-[10px] uppercase tracking-[0.35em] text-white/55 transition-colors hover:text-white/80"
             >
               Skip intro
               <span className="mx-auto mt-1.5 block h-px w-0 bg-white/50 transition-all duration-400 group-hover:w-full" />

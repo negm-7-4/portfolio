@@ -69,7 +69,7 @@ function Field({ label, type = "text", name, required, multiline = false, value,
         className={`pointer-events-none absolute left-4 transition-all duration-300 ${
           lifted
             ? "top-2 text-[10px] uppercase tracking-[0.3em] text-white/50"
-            : "top-4 text-[14px] text-white/35"
+            : "top-4 text-[14px] text-white/55"
         }`}
       >
         {label} {required && <span className="text-[#aab4c4]/70">*</span>}
@@ -120,7 +120,7 @@ function InfoRow({ icon: Icon, label, value, href, copyable, i }) {
     >
       <span className="absolute inset-x-0 bottom-0 h-px origin-left scale-x-0 bg-white/40 transition-transform duration-500 group-hover:scale-x-100" />
 
-      <p className="mb-2 flex items-center gap-3 text-[10px] uppercase tracking-[0.3em] text-white/35">
+      <p className="mb-2 flex items-center gap-3 text-[10px] uppercase tracking-[0.3em] text-white/55">
         <Icon size={12} className="opacity-60" />
         {label}
       </p>
@@ -286,7 +286,7 @@ export default function Contact() {
               transition={{ duration: 0.55 }}
               className="mb-6 flex items-center gap-4"
             >
-              <span className="font-display text-[12px] font-semibold tracking-[0.3em] text-white/45">
+              <span className="font-display text-[12px] font-semibold tracking-[0.3em] text-white/65">
                 ( • )
               </span>
               <span className="h-px w-14 bg-gradient-to-r from-white/40 to-white/0" />
@@ -320,7 +320,7 @@ export default function Contact() {
               whileInView={{ opacity: 1 }}
               viewport={{ once: false, margin: "-10%" }}
               transition={{ delay: 0.7 }}
-              className="mt-2 text-[11px] uppercase tracking-[0.3em] text-white/30"
+              className="mt-2 text-[11px] uppercase tracking-[0.3em] text-white/50"
             >
               Avg response · within 24h
             </motion.p>
@@ -344,7 +344,7 @@ export default function Contact() {
                 </span>
                 <div>
                   <p className="font-display text-sm font-semibold text-white">My Résumé</p>
-                  <p className="text-[11px] text-white/45">PDF · one page · updated {new Date().getFullYear()}</p>
+                  <p className="text-[11px] text-white/65">PDF · one page · updated {new Date().getFullYear()}</p>
                 </div>
               </div>
               <div className="relative flex shrink-0 items-center gap-2">
@@ -391,7 +391,7 @@ export default function Contact() {
               <p className="text-[11px] font-semibold uppercase tracking-[0.32em] text-white/55">
                 Send a message
               </p>
-              <span className="font-display text-[10px] tracking-widest text-white/30">
+              <span className="font-display text-[10px] tracking-widest text-white/50">
                 ( 01 / 01 )
               </span>
             </div>
@@ -464,7 +464,7 @@ export default function Contact() {
               )}
             </MagneticButton>
 
-            <p className="mt-4 text-center text-[10px] uppercase tracking-[0.3em] text-white/30">
+            <p className="mt-4 text-center text-[10px] uppercase tracking-[0.3em] text-white/50">
               Or DM on{" "}
               <a
                 href={profile.socials.find((s) => s.label === "LinkedIn")?.url}

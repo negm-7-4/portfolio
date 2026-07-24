@@ -37,7 +37,7 @@ export default function SectionHeading({ eyebrow, title, accent, num }) {
               <motion.span
                 animate={{ y: [0, -2, 0], opacity: [0.35, 0.6, 0.35] }}
                 transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                className="text-white/35"
+                className="text-white/55"
               >
                 (
               </motion.span>
@@ -45,7 +45,7 @@ export default function SectionHeading({ eyebrow, title, accent, num }) {
               <motion.span
                 animate={{ y: [0, -2, 0], opacity: [0.35, 0.6, 0.35] }}
                 transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 0.4 }}
-                className="text-white/35"
+                className="text-white/55"
               >
                 )
               </motion.span>

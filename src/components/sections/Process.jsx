@@ -25,7 +25,7 @@ function StepRow({ step, i, total }) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false, margin: "-10%" }}
           transition={{ delay: 0.2, duration: 0.5 }}
-          className="absolute top-2 left-2 font-display text-[10px] font-semibold tracking-[0.3em] text-white/30"
+          className="absolute top-2 left-2 font-display text-[10px] font-semibold tracking-[0.3em] text-white/50"
         >
           Phase / {String(i + 1).padStart(2, "0")}
         </motion.span>
@@ -165,7 +165,7 @@ export default function Process() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false, margin: "-10%" }}
           transition={{ delay: 0.2, duration: 0.7 }}
-          className="mt-12 flex items-center justify-center gap-4 text-[10px] uppercase tracking-[0.35em] text-white/30"
+          className="mt-12 flex items-center justify-center gap-4 text-[10px] uppercase tracking-[0.35em] text-white/50"
         >
           <span className="h-px w-16 bg-white/15" />
           <span>{steps.length} steps · every project</span>

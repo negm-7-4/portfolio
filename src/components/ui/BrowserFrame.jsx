@@ -78,18 +78,18 @@ export default function BrowserFrame({
             </div>
 
             {/* nav buttons (hidden on small) */}
-            <div className="hidden items-center gap-2 pl-3 text-white/25 md:flex">
+            <div className="hidden items-center gap-2 pl-3 text-white/45 md:flex">
               <span className="text-[10px]">◀</span>
               <span className="text-[10px]">▶</span>
               <span className="text-[10px]">↻</span>
             </div>
 
             {/* URL bar */}
-            <div className="ml-1 flex flex-1 items-center gap-2 truncate rounded-md bg-black/30 px-3 py-1 text-[10px] uppercase tracking-widest text-white/40">
+            <div className="ml-1 flex flex-1 items-center gap-2 truncate rounded-md bg-black/30 px-3 py-1 text-[10px] uppercase tracking-widest text-white/60">
               {/* lock icon */}
               <span className="text-[9px] text-green-400/70">🔒</span>
               <span className="truncate">
-                <span className="text-white/30">https://</span>
+                <span className="text-white/50">https://</span>
                 {url}
               </span>
             </div>
@@ -102,7 +102,7 @@ export default function BrowserFrame({
                 className="h-2 w-2 rounded-full"
                 style={{ background: accent, boxShadow: `0 0 8px ${accent}` }}
               />
-              <span className="text-[9px] uppercase tracking-widest text-white/35">Live</span>
+              <span className="text-[9px] uppercase tracking-widest text-white/55">Live</span>
             </div>
           </div>
 

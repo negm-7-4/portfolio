@@ -31,3 +31,9 @@ image.png
 Recording*.mp4
 
 .vercel
+
+# Raw screenshot originals — optimized copies live in public/projects/
+/*.png
+/*.jpg
+/*.jpeg
+!/index.html

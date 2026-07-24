@@ -127,7 +127,7 @@ function Card({ p, i, onFocus }) {
               <span className="mt-2 block font-display text-2xl font-bold leading-[1.0] tracking-tight text-white md:text-3xl">
                 {p.title}
               </span>
-              <span className="mt-3 flex items-center gap-2 text-[10px] uppercase tracking-[0.28em] text-white/40">
+              <span className="mt-3 flex items-center gap-2 text-[10px] uppercase tracking-[0.28em] text-white/60">
                 <span
                   className="inline-block h-1.5 w-1.5 rounded-full"
                   style={{ background: p.color, boxShadow: `0 0 8px ${p.color}` }}
@@ -185,7 +185,7 @@ function Card({ p, i, onFocus }) {
               data-cursor="hover"
               tabIndex={flipped ? 0 : -1}
               aria-label={`Flip ${p.title} back to artwork`}
-              className="mt-5 self-start text-[10px] font-semibold uppercase tracking-[0.28em] text-white/40 transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/70"
+              className="mt-5 self-start text-[10px] font-semibold uppercase tracking-[0.28em] text-white/60 transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/70"
             >
               ← Flip back
             </button>

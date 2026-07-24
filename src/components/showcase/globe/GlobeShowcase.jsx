@@ -365,14 +365,14 @@ function DestinationHud({ active }) {
           exit={{ opacity: 0, y: -10, filter: "blur(4px)" }}
           transition={{ duration: 0.45, ease: EASE_OUT }}
         >
-          <span className="block font-display text-[10px] font-semibold uppercase tracking-[0.35em] text-white/40">
+          <span className="block font-display text-[10px] font-semibold uppercase tracking-[0.35em] text-white/60">
             Destination {String(active + 1).padStart(2, "0")} /{" "}
             {String(destinations.length).padStart(2, "0")}
           </span>
           <span className="mt-2 block font-display text-xl font-bold tracking-tight text-white md:text-2xl">
             {d.name}
           </span>
-          <span className="mt-1 block font-mono text-[10px] tracking-[0.2em] text-white/35">
+          <span className="mt-1 block font-mono text-[10px] tracking-[0.2em] text-white/55">
             {formatCoords(d.lat, d.lng)}
           </span>
         </motion.div>
@@ -578,7 +578,7 @@ export default function GlobeShowcase() {
 
         {/* ── Scroll cue — fades once the journey starts. ── */}
         <motion.div
-          className="pointer-events-none absolute bottom-8 left-[5%] z-10 hidden items-center gap-3 text-[10px] uppercase tracking-[0.3em] text-white/35 md:flex"
+          className="pointer-events-none absolute bottom-8 left-[5%] z-10 hidden items-center gap-3 text-[10px] uppercase tracking-[0.3em] text-white/55 md:flex"
           animate={{ opacity: active === 0 ? 1 : 0 }}
           transition={{ duration: 0.5 }}
         >

@@ -43,6 +43,11 @@ const smootherstep = (t) => {
 };
 const lerp = (a, b, t) => a + (b - a) * t;
 
+/* A real mouse is present — decided once, independent of the perf tier. */
+const HAS_FINE_POINTER =
+  typeof window !== "undefined" &&
+  !window.matchMedia?.("(pointer: coarse)").matches;
+
 /* One composed camera shot per chapter (pos + lookAt + fov + dutch roll).
    Scroll eases between consecutive keys, so the journey reads as deliberate
    cinematic cuts rather than one continuous spin. Tuned so the hero +
@@ -385,16 +390,17 @@ function Scene({ quality }) {
       <Lighting />
       <SectionAccent />
 
-      {/* The faceted Prism + its orbiting shards is the hero star on EVERY
-          tier that mounts the world — it's ~20 low-poly meshes, far cheaper
-          than the particle field, so it must never disappear when the
-          PerformanceMonitor steps quality down mid-session (that flap was
-          "the hero keeps changing"). The metal Core shrinks away behind it
-          at the top and swells back to anchor the body + contact beats. */}
-      <Core quality={quality} heroFade />
+      {/* The faceted gem + its orbiting shards is the single constant of the
+          world — present on every tier and at every scroll depth. The old
+          procedural Core sphere is gone: it used to swell in as the gem
+          faded, so scrolling appeared to turn the geometric solid into a
+          plain circle. Now only the particle formations change. */}
       <HeroModel />
-      {/* Pointer interaction is a mouse gesture — high tier only (touch is mid). */}
-      <MorphField quality={quality} interactive={quality === "high"} />
+      {/* Pointer repulsion is a MOUSE capability, not a quality tier. Tying
+          it to `quality === "high"` meant the PerformanceMonitor stepping
+          down mid-scroll killed the interaction permanently — it must
+          survive that. Gated on a fine pointer instead (so touch skips it). */}
+      <MorphField quality={quality} interactive={HAS_FINE_POINTER} />
       <BackdropKnot />
       <Architecture quality={quality} />
       <Nebula quality={quality} />

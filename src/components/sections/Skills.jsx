@@ -37,15 +37,18 @@ function TechTile({ item, i, desktop }) {
     <motion.div
       ref={ref}
       style={{ x: sx, y: sy, rotateX: srx, rotateY: sry, transformPerspective: 900 }}
-      initial={{ opacity: 0, scale: 0.35, rotate: -90, y: 60 }}
+      initial={{ opacity: 0, scale: 0.6, rotate: -18, y: 26 }}
       whileInView={{ opacity: 1, scale: 1, rotate: 0, y: 0 }}
-      viewport={{ once: false, margin: "-10%" }}
+      // Fire once, a little before the tile reaches the viewport, with a
+      // capped stagger — the old 0.045s×30 cascade + long spring meant the
+      // last tiles took well over a second to settle.
+      viewport={{ once: true, margin: "10% 0px 10% 0px" }}
       transition={{
-        delay: i * 0.045,
-        duration: 0.95,
+        delay: Math.min(i, 8) * 0.035,
         type: "spring",
-        stiffness: 95,
-        damping: 14,
+        stiffness: 210,
+        damping: 22,
+        mass: 0.7,
       }}
       whileHover={{ scale: 1.12, zIndex: 10 }}
       data-cursor="hover"
@@ -103,7 +106,7 @@ function TechTile({ item, i, desktop }) {
 
           {/* tiny category badge (only on featured) */}
           {isBig && (
-            <span className="mt-1.5 text-[9px] uppercase tracking-[0.3em] text-white/35">
+            <span className="mt-1.5 text-[9px] uppercase tracking-[0.3em] text-white/55">
               {item.cat}
             </span>
           )}
@@ -174,7 +177,7 @@ export default function Skills() {
             transition={{ duration: 0.6 }}
             className="mb-6 flex items-center justify-center gap-4"
           >
-            <span className="font-display text-[12px] font-semibold tracking-[0.3em] text-white/45">
+            <span className="font-display text-[12px] font-semibold tracking-[0.3em] text-white/65">
               ( 03 )
             </span>
             <span className="h-px w-14 bg-gradient-to-r from-transparent via-white/40 to-transparent" />
@@ -237,7 +240,7 @@ export default function Skills() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: false, margin: "-10%" }}
             transition={{ delay: 0.5, duration: 0.7 }}
-            className="mx-auto mt-8 max-w-xl text-base text-white/45 md:text-lg"
+            className="mx-auto mt-8 max-w-xl text-base text-white/65 md:text-lg"
           >
             Every tool I reach for, floating in one constellation.
           </motion.p>
@@ -262,7 +265,7 @@ export default function Skills() {
           className="mt-24 flex items-center justify-center gap-5 md:mt-32"
         >
           <span className="h-px w-16 bg-white/15" />
-          <span className="text-[10px] uppercase tracking-[0.35em] text-white/35">
+          <span className="text-[10px] uppercase tracking-[0.35em] text-white/55">
             and always learning more
           </span>
           <span className="h-px w-16 bg-white/15" />

@@ -120,7 +120,7 @@ export default function KonamiEasterEgg() {
               transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
               className="relative"
             >
-              <p className="mb-2 flex items-center justify-center gap-2 text-[10px] font-semibold uppercase tracking-[0.4em] text-white/45">
+              <p className="mb-2 flex items-center justify-center gap-2 text-[10px] font-semibold uppercase tracking-[0.4em] text-white/65">
                 <span className="block h-1 w-1 rounded-full bg-green-400" style={{ boxShadow: "0 0 6px rgba(74,222,128,0.8)" }} />
                 {active ? "Unlocked" : "Locked"}
               </p>

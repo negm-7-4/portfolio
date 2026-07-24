@@ -49,7 +49,7 @@ export default function ReadingIndicator() {
               ✦
             </motion.span>
 
-            <span className="font-display text-[10px] font-semibold tracking-[0.3em] text-white/35">
+            <span className="font-display text-[10px] font-semibold tracking-[0.3em] text-white/55">
               ( {active.num} )
             </span>
 

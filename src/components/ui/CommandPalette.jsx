@@ -178,9 +178,9 @@ export default function CommandPalette() {
                 aria-expanded="true"
                 aria-controls="cmd-listbox"
                 aria-activedescendant={filtered[idx] ? `cmd-opt-${filtered[idx].id}` : undefined}
-                className="flex-1 bg-transparent text-sm text-white outline-none placeholder:text-white/30"
+                className="flex-1 bg-transparent text-sm text-white outline-none placeholder:text-white/50"
               />
-              <kbd className="rounded-md border border-white/15 bg-white/[0.05] px-2 py-0.5 text-[10px] uppercase tracking-widest text-white/45">
+              <kbd className="rounded-md border border-white/15 bg-white/[0.05] px-2 py-0.5 text-[10px] uppercase tracking-widest text-white/65">
                 Esc
               </kbd>
             </div>
@@ -194,7 +194,7 @@ export default function CommandPalette() {
               className="max-h-[55vh] overflow-y-auto py-2"
             >
               {filtered.length === 0 ? (
-                <div className="px-5 py-8 text-center text-sm text-white/40">
+                <div className="px-5 py-8 text-center text-sm text-white/60">
                   No matches. Try a different word.
                 </div>
               ) : (
@@ -228,7 +228,7 @@ export default function CommandPalette() {
                         <p className={`truncate font-display text-sm font-semibold ${active ? "text-white" : "text-white/75"}`}>
                           {c.label}
                         </p>
-                        <p className="truncate text-[10px] uppercase tracking-[0.25em] text-white/35">
+                        <p className="truncate text-[10px] uppercase tracking-[0.25em] text-white/55">
                           {c.hint}
                         </p>
                       </div>
@@ -245,7 +245,7 @@ export default function CommandPalette() {
             </div>
 
             {/* footer hint row */}
-            <div className="flex items-center justify-between gap-3 border-t border-white/[0.06] px-5 py-3 text-[10px] uppercase tracking-[0.25em] text-white/40">
+            <div className="flex items-center justify-between gap-3 border-t border-white/[0.06] px-5 py-3 text-[10px] uppercase tracking-[0.25em] text-white/60">
               <span className="flex items-center gap-2">
                 <kbd className="rounded border border-white/15 bg-white/[0.04] px-1.5 py-0.5">↑</kbd>
                 <kbd className="rounded border border-white/15 bg-white/[0.04] px-1.5 py-0.5">↓</kbd>

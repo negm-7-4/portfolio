@@ -60,7 +60,7 @@ function SectionPlaceholder({ id }) {
           <span className="absolute inset-0 animate-spin rounded-full border border-white/15 border-t-white/45" style={{ animationDuration: "2.4s" }} />
           <span className="absolute inset-2 rounded-full bg-white/20" />
         </div>
-        <span className="text-[9px] uppercase tracking-[0.35em] text-white/40">Loading</span>
+        <span className="text-[9px] uppercase tracking-[0.35em] text-white/60">Loading</span>
       </div>
     </section>
   );

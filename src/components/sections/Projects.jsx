@@ -121,7 +121,7 @@ function ShowcasePlaceholder() {
           />
           <span className="absolute inset-2 rounded-full bg-white/20" />
         </div>
-        <span className="text-[9px] uppercase tracking-[0.35em] text-white/40">Loading</span>
+        <span className="text-[9px] uppercase tracking-[0.35em] text-white/60">Loading</span>
       </div>
     </div>
   );
@@ -185,7 +185,7 @@ export default function Projects() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false, margin: "-10%" }}
           transition={{ delay: 0.2 }}
-          className="text-center text-sm text-white/35"
+          className="text-center text-sm text-white/55"
         >
           All projects live on{" "}
           <a

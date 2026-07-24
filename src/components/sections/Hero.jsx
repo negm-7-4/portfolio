@@ -129,7 +129,7 @@ function HeroFocus({ lite }) {
         <span key={i} className={`absolute ${c} h-5 w-5 border-white/15`} />
       ))}
       {/* live-render caption */}
-      <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-2 text-[9px] uppercase tracking-[0.3em] text-white/35">
+      <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-2 text-[9px] uppercase tracking-[0.3em] text-white/55">
         <span className="h-1 w-1 animate-pulse rounded-full bg-[#aab4c4]" style={{ boxShadow: "0 0 6px rgba(170,180,196,0.7)" }} />
         Real-time · WebGL
       </div>
@@ -236,7 +236,7 @@ export default function Hero() {
               />
             </span>
             <span className="text-green-400/90">Available</span>
-            <span className="text-white/25">·</span>
+            <span className="text-white/45">·</span>
             <span>For New Projects</span>
             {/* expanding hairline — reads as a "live" progress bar under the pill */}
             <motion.span
@@ -390,7 +390,7 @@ export default function Hero() {
             transition={{ delay: 1.4 }}
             className="mt-8"
           >
-            <p className="mb-2.5 text-[9px] font-semibold uppercase tracking-[0.3em] text-white/30">
+            <p className="mb-2.5 text-[9px] font-semibold uppercase tracking-[0.3em] text-white/50">
               Crafting with
             </p>
             <ul className="flex flex-wrap gap-2">
@@ -429,7 +429,7 @@ export default function Hero() {
         data-cursor="hover"
         data-cursor-text="Down"
         style={{ opacity }}
-        className="group absolute bottom-24 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-3 text-white/40"
+        className="group absolute bottom-24 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-3 text-white/60"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.7, duration: 0.6 }}

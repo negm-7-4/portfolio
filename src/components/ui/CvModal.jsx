@@ -27,7 +27,7 @@ function Block({ label, index, children }) {
       transition={{ duration: 0.55, ease: EASE, delay: 0.18 + index * 0.07 }}
       className="border-t border-white/10 pt-5"
     >
-      <h3 className="mb-3 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.3em] text-white/40">
+      <h3 className="mb-3 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.3em] text-white/60">
         <span className="text-[#aab4c4]">◆</span>
         {label}
       </h3>
@@ -117,14 +117,14 @@ export default function CvModal() {
                 className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"
               >
                 <div>
-                  <p className="mb-1 text-[10px] uppercase tracking-[0.4em] text-white/35">Curriculum Vitae</p>
+                  <p className="mb-1 text-[10px] uppercase tracking-[0.4em] text-white/55">Curriculum Vitae</p>
                   <h2 className="font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
                     {profile.name}
                   </h2>
                   <p className="mt-1.5 text-sm font-medium text-[#aab4c4]">
                     {resume.headline}
                   </p>
-                  <p className="text-xs text-white/45">{resume.subhead}</p>
+                  <p className="text-xs text-white/65">{resume.subhead}</p>
                 </div>
 
                 {/* contact chips */}
@@ -144,7 +144,7 @@ export default function CvModal() {
                     ) : (
                       <span
                         key={c.label}
-                        className="rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[10px] text-white/45"
+                        className="rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[10px] text-white/65"
                       >
                         {c.value}
                       </span>
@@ -190,7 +190,7 @@ export default function CvModal() {
                   <Block label="Education" index={1}>
                     <p className="text-[12px] font-semibold text-white/80">{resume.education.degree}</p>
                     <p className="mt-1 text-[11px] text-white/50">{resume.education.school}</p>
-                    <p className="text-[11px] text-white/40">{resume.education.location}</p>
+                    <p className="text-[11px] text-white/60">{resume.education.location}</p>
                     <p className="mt-1 text-[11px] text-[#aab4c4]">{resume.education.detail}</p>
                   </Block>
 
@@ -199,7 +199,7 @@ export default function CvModal() {
                       {resume.languages.map((l) => (
                         <div key={l.name} className="flex items-center justify-between text-[11px]">
                           <span className="text-white/70">{l.name}</span>
-                          <span className="text-white/40">{l.level}</span>
+                          <span className="text-white/60">{l.level}</span>
                         </div>
                       ))}
                     </div>
@@ -215,7 +215,7 @@ export default function CvModal() {
                       <div key={p.name} className="group/pr rounded-xl border border-white/8 bg-white/[0.02] p-4 transition-colors hover:border-white/20">
                         <div className="flex items-baseline justify-between gap-3">
                           <h4 className="font-display text-sm font-bold text-white">{p.name}</h4>
-                          <span className="shrink-0 text-[10px] text-white/35">{p.kind}</span>
+                          <span className="shrink-0 text-[10px] text-white/55">{p.kind}</span>
                         </div>
                         <p className="mt-1.5 text-[12px] leading-relaxed text-white/55">{p.desc}</p>
                         <p className="mt-2 text-[10px] uppercase tracking-[0.15em] text-[#aab4c4]/80">{p.stack}</p>
@@ -247,7 +247,7 @@ export default function CvModal() {
               <button
                 onClick={() => setOpen(false)}
                 data-cursor="hover"
-                className="text-[11px] uppercase tracking-[0.25em] text-white/40 transition-colors hover:text-white/80"
+                className="text-[11px] uppercase tracking-[0.25em] text-white/60 transition-colors hover:text-white/80"
               >
                 ← Close
               </button>

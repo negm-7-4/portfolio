@@ -33,7 +33,7 @@ function StatLine({ label, value, i }) {
       className="group relative flex items-baseline justify-between border-b border-white/[0.07] py-4"
     >
       <span className="absolute inset-x-0 bottom-0 h-px origin-left scale-x-0 bg-white/40 transition-transform duration-500 group-hover:scale-x-100" />
-      <span className="text-[10px] font-semibold uppercase tracking-[0.3em] text-white/35">
+      <span className="text-[10px] font-semibold uppercase tracking-[0.3em] text-white/55">
         {label}
       </span>
       <span className="font-display text-sm font-semibold tracking-tight text-white md:text-base" dir="auto">
@@ -136,7 +136,7 @@ export default function About() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: false, margin: "-10%" }}
               transition={{ delay: 0.3, duration: 0.7 }}
-              className="mt-6 max-w-2xl text-sm leading-relaxed text-white/35 italic md:text-base"
+              className="mt-6 max-w-2xl text-sm leading-relaxed text-white/55 italic md:text-base"
             >
               Always learning. Always building.
             </motion.p>
@@ -174,7 +174,7 @@ export default function About() {
             >
               {/* tiny header */}
               <div className="mb-5 flex items-center justify-between">
-                <span className="text-[10px] font-semibold uppercase tracking-[0.3em] text-white/35">
+                <span className="text-[10px] font-semibold uppercase tracking-[0.3em] text-white/55">
                   ◆ Profile
                 </span>
                 <motion.span
@@ -216,7 +216,7 @@ export default function About() {
           transition={{ delay: 0.3, duration: 0.7 }}
           className="mt-20 mb-6 flex items-center gap-4 md:mt-28"
         >
-          <span className="text-[10px] font-semibold uppercase tracking-[0.3em] text-white/35">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.3em] text-white/55">
             What I bring
           </span>
           <span className="h-px flex-1 bg-white/10" />
@@ -245,7 +245,7 @@ export default function About() {
                 />
 
                 {/* number index — small upper-right marker */}
-                <span className="absolute right-5 top-5 font-display text-[10px] font-semibold tracking-[0.3em] text-white/25">
+                <span className="absolute right-5 top-5 font-display text-[10px] font-semibold tracking-[0.3em] text-white/45">
                   0{i + 1}
                 </span>
 

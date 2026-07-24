@@ -71,7 +71,7 @@ function FeaturedQuote({ t }) {
               <p className="font-display text-base font-semibold text-white">
                 — {t.name}
               </p>
-              <p className="text-[10px] uppercase tracking-[0.3em] text-white/40">
+              <p className="text-[10px] uppercase tracking-[0.3em] text-white/60">
                 {t.role}
               </p>
             </div>
@@ -131,7 +131,7 @@ export default function Testimonials() {
 
           {/* RIGHT — list of clickable testimonial heads */}
           <div className="flex flex-col gap-2">
-            <p className="mb-3 text-[10px] uppercase tracking-[0.3em] text-white/35">
+            <p className="mb-3 text-[10px] uppercase tracking-[0.3em] text-white/55">
               From the inbox · {String(total).padStart(2, "0")}
             </p>
 
@@ -186,12 +186,12 @@ export default function Testimonials() {
                     >
                       {t.name}
                     </p>
-                    <p className="truncate text-[10px] uppercase tracking-[0.25em] text-white/35">
+                    <p className="truncate text-[10px] uppercase tracking-[0.25em] text-white/55">
                       {t.role}
                     </p>
                   </div>
 
-                  <span className="font-display text-[10px] font-bold tracking-widest text-white/30">
+                  <span className="font-display text-[10px] font-bold tracking-widest text-white/50">
                     0{i + 1}
                   </span>
                 </motion.button>
@@ -216,7 +216,7 @@ export default function Testimonials() {
               >
                 <motion.span whileHover={{ x: 2 }}>→</motion.span>
               </button>
-              <span className="ml-2 font-display text-xs tabular-nums text-white/40">
+              <span className="ml-2 font-display text-xs tabular-nums text-white/60">
                 {String(active + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
               </span>
             </div>

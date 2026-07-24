@@ -11,8 +11,8 @@ import { EASE_OUT } from "../../lib/motion";
  * global MotionConfig.
  */
 export default function StablePortrait({
-  src = "/portrait-najm.jpg",
-  alt = "Mohamed Negm — نجم",
+  src = "/portrait-negm.jpg",
+  alt = "Mohamed Negm, front-end developer — portrait",
 }) {
   return (
     <motion.div
@@ -95,7 +95,7 @@ export default function StablePortrait({
         </div>
       </TiltCard>
 
-      <p className="mt-3 text-center text-[9px] uppercase tracking-[0.32em] text-white/25">
+      <p className="mt-3 text-center text-[9px] uppercase tracking-[0.32em] text-white/45">
         ✦ Cairo · Egypt
       </p>
     </motion.div>

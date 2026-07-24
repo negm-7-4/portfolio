@@ -107,7 +107,7 @@ export default function StarSignature({ className = "" }) {
         initial={{ opacity: 0 }}
         animate={inView ? { opacity: 1 } : {}}
         transition={{ delay: 2.4, duration: 0.6 }}
-        className="text-[9px] uppercase tracking-[0.4em] text-white/30"
+        className="text-[9px] uppercase tracking-[0.4em] text-white/50"
       >
         Signed · نجم · Najm
       </motion.p>

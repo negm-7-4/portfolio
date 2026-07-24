@@ -112,7 +112,7 @@ function StickyInfo({ p, idx, total }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.55 }}
-            className="mt-2 text-[10px] uppercase tracking-[0.3em] text-white/30"
+            className="mt-2 text-[10px] uppercase tracking-[0.3em] text-white/50"
           >
             {url}
           </motion.p>
@@ -247,7 +247,7 @@ export default function ClassicShowcase() {
                           >
                             {p.title.split(" ").map((w) => w[0]).join("")}
                           </p>
-                          <p className="mt-3 text-[10px] uppercase tracking-[0.3em] text-white/30">
+                          <p className="mt-3 text-[10px] uppercase tracking-[0.3em] text-white/50">
                             preview · soon
                           </p>
                         </div>
@@ -257,7 +257,7 @@ export default function ClassicShowcase() {
                 </ScrubReveal>
 
                 {/* mobile-only inline label */}
-                <p className="mt-4 text-center text-[11px] uppercase tracking-[0.3em] text-white/40 md:hidden">
+                <p className="mt-4 text-center text-[11px] uppercase tracking-[0.3em] text-white/60 md:hidden">
                   {padded(i)} · {p.title}
                 </p>
               </div>

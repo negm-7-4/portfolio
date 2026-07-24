@@ -76,7 +76,7 @@ export default function WhatsAppButton() {
                 <p className="font-display text-sm font-semibold tracking-tight text-white">
                   Chat on WhatsApp
                 </p>
-                <p className="mt-0.5 text-[10px] uppercase tracking-[0.25em] text-white/40">
+                <p className="mt-0.5 text-[10px] uppercase tracking-[0.25em] text-white/60">
                   Usually replies fast
                 </p>
                 {/* arrow */}

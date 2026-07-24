@@ -42,6 +42,12 @@ const GOLDEN = Math.PI * (3 - Math.sqrt(5)); // golden angle
    correction is always the shortest possible move. */
 const FACE_SYMMETRY = { 1: TAU, 2: Math.PI / 3, 5: TAU }; // portrait · atom (60°) · "MN"
 
+/* Planetary tilt/roll of the hero ring system — enough to read as a disc in
+   perspective (not edge-on, not a flat bullseye). Shared with HeroModel's
+   rim so the whole object sits in one plane. */
+const RING_TILT = 0.42;
+const RING_ROLL = 0.18;
+
 // Small, fast, deterministic RNG so the scatter formation is stable across
 // reloads (important — the morph must look identical every visit).
 function mulberry32(seed) {
@@ -70,6 +76,54 @@ function formSphere(out, N, R) {
   }
 }
 
+/* ── SATURN RINGS — the hero formation. ────────────────────────────────
+   A flat banded ring system (kept in the XZ plane; the group supplies the
+   tilt) with Cassini-style gaps, denser inner bands and a sparse dusty
+   outer band. Radii start outside the gem + its orbiting shards so the
+   whole thing reads as one planet-and-rings object.
+
+   Because a ring is rotationally symmetric about its axis, the group can
+   spin it forever and it still composes identically every time you return
+   to the top — motion without drift. */
+function formRings(out, N, rIn, rOut, thickness, rng) {
+  // [start, end] as a fraction of the ring width; the holes between them
+  // are the divisions that sell the "Saturn" read.
+  const BANDS = [
+    [0.0, 0.26],
+    [0.33, 0.58],
+    [0.65, 0.84],
+    [0.9, 1.0],
+  ];
+  // Relative particle share per band — inner bands are the dense bright ones.
+  const WEIGHT = [0.34, 0.3, 0.24, 0.12];
+  const cum = [];
+  let acc = 0;
+  for (const w of WEIGHT) {
+    acc += w;
+    cum.push(acc);
+  }
+
+  for (let k = 0; k < N; k++) {
+    const pick = rng();
+    let b = 0;
+    while (b < cum.length - 1 && pick > cum[b]) b++;
+    const [b0, b1] = BANDS[b];
+
+    // Bias toward the inner edge of each band so bands have a bright rim.
+    const u = b0 + Math.pow(rng(), 0.75) * (b1 - b0);
+    const rad = rIn + u * (rOut - rIn);
+
+    // Golden-angle base keeps the azimuth even; jitter breaks any moiré.
+    const a = k * GOLDEN + rng() * 0.4;
+
+    // Ring gets thinner (and dustier) toward the outside.
+    const th = thickness * (1.15 - 0.75 * u);
+    out[k * 3] = Math.cos(a) * rad;
+    out[k * 3 + 1] = (rng() - 0.5) * th;
+    out[k * 3 + 2] = Math.sin(a) * rad;
+  }
+}
+
 function formTorus(out, N, R, r) {
   for (let k = 0; k < N; k++) {
     const u = k / N;
@@ -91,6 +145,24 @@ function formHelix(out, N, radius, height, turns) {
     out[k * 3] = Math.cos(a + strand) * (radius + wobble);
     out[k * 3 + 1] = (u - 0.5) * height;
     out[k * 3 + 2] = Math.sin(a + strand) * (radius + wobble);
+  }
+}
+
+/* ── SPIRAL GALAXY ────────────────────────────────────────────────────
+   Logarithmic arms winding out of a dense core bulge, thinning into a
+   dusty disc. Radius follows pow(rng, 0.65) so the core stays bright and
+   the arms trail off — the distribution is what sells it, not the count. */
+function formGalaxy(out, N, radius, arms, twist, thickness, rng) {
+  for (let k = 0; k < N; k++) {
+    const t = Math.pow(rng(), 0.62); // 0 = core, 1 = rim
+    const rad = t * radius;
+    const arm = (k % arms) * (TAU / arms);
+    // Arms are fat near the core and tighten outward.
+    const spread = 0.55 * (1 - t) + 0.1;
+    const a = arm + t * twist + (rng() - 0.5) * spread;
+    out[k * 3] = Math.cos(a) * rad;
+    out[k * 3 + 1] = (rng() - 0.5) * thickness * (1 - t * 0.8);
+    out[k * 3 + 2] = Math.sin(a) * rad;
   }
 }
 
@@ -312,8 +384,10 @@ const VERT = /* glsl */ `
     vec4 wp = modelMatrix * vec4(pos, 1.0);
     vec3 toP = wp.xyz - uPointer;
     float pd = length(toP);
-    vPinf = smoothstep(2.6, 0.0, pd) * uPush;
-    wp.xyz += normalize(toP + 0.0001) * vPinf * 1.5;
+    // The cursor parts the shell like disturbed water and heats its wake —
+    // the field's signature interaction, kept generous so it reads clearly.
+    vPinf = smoothstep(2.4, 0.0, pd) * uPush;
+    wp.xyz += normalize(toP + 0.0001) * vPinf * 1.25;
 
     // Shockwave: an expanding spherical ring from the core that throws
     // particles outward and heats them as it passes through.
@@ -376,6 +450,7 @@ export default function MorphField({ quality = "high", interactive = false }) {
   // Cursor-ray scratch vectors (world-space pointer projection, no allocs).
   const rayDir = useRef(new THREE.Vector3());
   const pointerWorld = useRef(new THREE.Vector3(0, 0, 999));
+  const camFwd = useRef(new THREE.Vector3());
   // Shockwave state (this component owns the pulse's lifecycle).
   const shockR = useRef(0);
   const lastShock = useRef(0);
@@ -388,13 +463,14 @@ export default function MorphField({ quality = "high", interactive = false }) {
     const rng = mulberry32(0xc0ffee);
 
     const f0 = mk();
-    formSphere(f0, N, 2.2); // hero — a shell halo around the Prism star
+    // hero — dense Saturn ring system orbiting the gem
+    formRings(f0, N, 2.45, 3.95, 0.17, rng);
     const f1 = mk();
     formTorus(f1, N, 3.0, 0.85); // about — opens
     const f2 = mk();
     formAtom(f2, N, 3.1, rng); // skills — the React mark
     const f3 = mk();
-    formWave(f3, N, 11, 1.3); // journey — landscape
+    formGalaxy(f3, N, 5.6, 3, 3.4, 0.5, rng); // journey — a spiral galaxy
     const f4 = mk();
     formScatter(f4, N, 3.8, 7.6, 0.72, rng); // projects — wide constellation
     const f5 = mk();
@@ -495,9 +571,9 @@ export default function MorphField({ quality = "high", interactive = false }) {
     const { scroll, velocity, sectionIndex, pointer, warp } = experience.getState();
     const u = material.uniforms;
 
-    // Cast the cursor through the camera onto the field's plane (z = 0) so
-    // the repulsion happens where the eye says the cursor is. Mouse only —
-    // touch tiers keep uPush at 0 and skip all of this.
+    // Cast the cursor through the camera onto the plane through the field's
+    // centre that faces the camera, so the repulsion lands where the eye
+    // says the cursor is at any camera angle. Mouse only.
     if (interactive) {
       const cam = state.camera;
       rayDir.current
@@ -505,16 +581,24 @@ export default function MorphField({ quality = "high", interactive = false }) {
         .unproject(cam)
         .sub(cam.position)
         .normalize();
-      const dz = rayDir.current.z;
-      if (Math.abs(dz) > 1e-4) {
-        const tHit = -cam.position.z / dz;
-        if (tHit > 0 && tHit < 80) {
+      // Plane: passes through the origin (the field's centre), normal =
+      // the camera's forward axis. Robust for every shot in the journey,
+      // unlike a hard-coded z = 0 plane.
+      camFwd.current.set(0, 0, -1).applyQuaternion(cam.quaternion);
+      const denom = rayDir.current.dot(camFwd.current);
+      if (Math.abs(denom) > 1e-4) {
+        const tHit = -cam.position.dot(camFwd.current) / denom;
+        if (tHit > 0 && tHit < 120) {
           pointerWorld.current.copy(cam.position).addScaledVector(rayDir.current, tHit);
         }
       }
       // Chase, don't snap — the wake trails the cursor like a real fluid.
       u.uPointer.value.lerp(pointerWorld.current, Math.min(1, dt * 7));
       damp(u.uPush, "value", 1, 0.5, dt);
+    } else if (u.uPush.value > 0.001) {
+      // Release smoothly so particles settle back instead of freezing in a
+      // pushed-open pose if interaction ever turns off.
+      damp(u.uPush, "value", 0, 0.4, dt);
     }
 
     // Global morph position across the whole page → segment + fraction.
@@ -577,7 +661,10 @@ export default function MorphField({ quality = "high", interactive = false }) {
     // square up: while one holds the stage the yaw eases to its nearest
     // symmetric orientation, then releases as you scroll off it.
     if (group.current) {
-      let ry = state.clock.elapsedTime * 0.035 + scroll * Math.PI * 0.55;
+      // Anchored to scroll (plus a small bounded breath) rather than
+      // accumulating with time, so returning to the top always re-composes
+      // the identical hero shot instead of a drifted one.
+      let ry = scroll * Math.PI * 0.55 + Math.sin(state.clock.elapsedTime * 0.16) * 0.06;
       const near = Math.round(g);
       const sym = FACE_SYMMETRY[near];
       if (sym) {
@@ -595,8 +682,21 @@ export default function MorphField({ quality = "high", interactive = false }) {
           ry -= delta * w;
         }
       }
-      group.current.rotation.y = ry;
-      group.current.rotation.x = Math.sin(scroll * Math.PI) * 0.15;
+      // ── Saturn mode (hero) ──────────────────────────────────────────
+      // While the rings hold the stage they revolve continuously about
+      // their own axis at a fixed planetary tilt. A ring is rotationally
+      // symmetric, so this reads as real orbital motion yet composes
+      // IDENTICALLY every time you return to the top. As the rings morph
+      // away it cross-fades back to the anchored yaw + facing logic.
+      const ringMix = 1 - Math.min(1, Math.max(0, g / 0.85));
+      const rm = ringMix * ringMix * (3 - 2 * ringMix);
+      const orbit = state.clock.elapsedTime * 0.14;
+
+      group.current.rotation.order = "YXZ"; // spin in-plane, then tilt
+      group.current.rotation.y = orbit * rm + ry * (1 - rm);
+      group.current.rotation.x =
+        RING_TILT * rm + Math.sin(scroll * Math.PI) * 0.15 * (1 - rm);
+      group.current.rotation.z = RING_ROLL * rm;
     }
   });
 

@@ -64,7 +64,7 @@ export default function ProjectVisual({
           >
             {project.title.split(" ").map((w) => w[0]).join("")}
           </p>
-          <p className="mt-3 text-[10px] uppercase tracking-[0.3em] text-white/35">preview · soon</p>
+          <p className="mt-3 text-[10px] uppercase tracking-[0.3em] text-white/55">preview · soon</p>
         </div>
       </div>
     );
@@ -113,7 +113,7 @@ export default function ProjectVisual({
               />
             ))}
           </div>
-          <span className="font-mono text-[9px] tracking-[0.2em] text-white/45">
+          <span className="font-mono text-[9px] tracking-[0.2em] text-white/65">
             {String(idx + 1).padStart(2, "0")}/{String(shots.length).padStart(2, "0")}
           </span>
         </div>
