@@ -40,7 +40,14 @@ const GOLDEN = Math.PI * (3 - Math.sqrt(5)); // golden angle
 /* Formations that must read head-on → their rotational symmetry period.
    The yaw snaps to the nearest multiple while they hold the stage, so the
    correction is always the shortest possible move. */
-const FACE_SYMMETRY = { 1: TAU, 2: Math.PI / 3, 5: TAU }; // portrait · atom (60°) · "MN"
+/* Formations that must read head-on, and the YAW period that leaves them
+   looking the same (the yaw snaps to the nearest multiple, so the
+   correction is always the shortest move).
+   NB: a flat shape only faces the camera at a FULL turn — its in-plane
+   symmetry (the ✦'s 4 points, say) is about its own normal, not the yaw
+   axis, so snapping the yaw by 90° would stand it edge-on.
+   1 fingerprint · 2 atom · 5 beacon · 6 the ✦ mark. */
+const FACE_SYMMETRY = { 1: TAU, 2: Math.PI / 3, 5: TAU, 6: TAU };
 
 /* Planetary tilt/roll of the hero ring system — enough to read as a disc in
    perspective (not edge-on, not a flat bullseye). Shared with HeroModel's
@@ -163,6 +170,71 @@ function formGalaxy(out, N, radius, arms, twist, thickness, rng) {
     out[k * 3] = Math.cos(a) * rad;
     out[k * 3 + 1] = (rng() - 0.5) * thickness * (1 - t * 0.8);
     out[k * 3 + 2] = Math.sin(a) * rad;
+  }
+}
+
+/* ── FINGERPRINT ──────────────────────────────────────────────────────
+   Concentric ridges whose centre drifts outward, producing the whorl of a
+   real print. Abstract but instantly readable, and far more elegant than a
+   literal portrait: this is "who I am" as a mark, not a photo.
+   Laid out in the XY plane so the facing logic squares it to the camera. */
+function formFingerprint(out, N, R, rng) {
+  const RIDGES = 24;
+  const per = Math.max(1, Math.floor(N / RIDGES));
+  for (let k = 0; k < N; k++) {
+    const ridge = Math.min(RIDGES - 1, Math.floor(k / per));
+    const i = k - ridge * per;
+    const t = ridge / (RIDGES - 1); // 0 = core whorl, 1 = outer ridge
+    const a = (i / per) * TAU + ridge * 0.22;
+
+    const rad = R * (0.1 + t * 0.9);
+    // Centre drifts as ridges grow → the loop/whorl instead of bullseyes.
+    const cx = R * 0.22 * t;
+    const cy = -R * 0.06 * t;
+    const squash = 0.86 + 0.1 * t;
+    // Organic ridge wobble so the lines breathe like skin, not vector art.
+    const wob = 1 + 0.045 * Math.sin(a * 3.0 + ridge * 1.7);
+
+    out[k * 3] = cx + Math.cos(a) * rad * wob;
+    out[k * 3 + 1] = cy + Math.sin(a) * rad * squash * wob;
+    out[k * 3 + 2] = (rng() - 0.5) * 0.09;
+  }
+}
+
+/* ── BEACON ───────────────────────────────────────────────────────────
+   A transmission: concentric rings pulsing out of a bright core, thinning
+   and scattering as they travel. Reads as "reaching out" — the contact
+   beat — without resorting to an envelope or literal letterforms. */
+function formBeacon(out, N, R, rng) {
+  const RINGS = 8;
+  for (let k = 0; k < N; k++) {
+    // Weight particles toward the inner rings so the core stays bright and
+    // the outermost ring dissolves into dust.
+    const t = Math.pow(rng(), 0.7);
+    const ring = Math.min(RINGS - 1, Math.floor(t * RINGS));
+    const rt = ring / (RINGS - 1);
+    const rad = R * (0.06 + rt * 0.94);
+    const a = ((k * GOLDEN) % TAU) + ring * 0.35;
+    const jitter = (rng() - 0.5) * 0.05 * (1 + rt * 3);
+    out[k * 3] = Math.cos(a) * (rad + jitter);
+    out[k * 3 + 1] = Math.sin(a) * (rad + jitter);
+    out[k * 3 + 2] = (rng() - 0.5) * 0.12;
+  }
+}
+
+/* ── THE MARK (✦) ─────────────────────────────────────────────────────
+   The site's own glyph, drawn by every particle: a sharp four-point star.
+   The journey closes on the signature it opened with. */
+function formStar(out, N, R, rng) {
+  for (let k = 0; k < N; k++) {
+    const a = (k / N) * TAU + rng() * 0.02;
+    // r peaks on the axes and pinches hard at the diagonals → 4 sharp points.
+    const spike = R / (1 + 5.5 * Math.abs(Math.sin(2 * a)));
+    // Bias toward the outline so the silhouette stays crisp, with some fill.
+    const rad = spike * Math.pow(rng(), 0.4);
+    out[k * 3] = Math.cos(a) * rad;
+    out[k * 3 + 1] = Math.sin(a) * rad;
+    out[k * 3 + 2] = (rng() - 0.5) * 0.09;
   }
 }
 
@@ -462,11 +534,12 @@ export default function MorphField({ quality = "high", interactive = false }) {
     const mk = () => new Float32Array(N * 3);
     const rng = mulberry32(0xc0ffee);
 
+    // The journey, told in abstractions rather than literal pictures:
+    //   rings → fingerprint → atom → galaxy → constellation → beacon → ✦
     const f0 = mk();
-    // hero — dense Saturn ring system orbiting the gem
-    formRings(f0, N, 2.45, 3.95, 0.17, rng);
+    formRings(f0, N, 2.45, 3.95, 0.17, rng); // hero — Saturn rings
     const f1 = mk();
-    formTorus(f1, N, 3.0, 0.85); // about — opens
+    formFingerprint(f1, N, 3.0, rng); // about — identity, as a mark
     const f2 = mk();
     formAtom(f2, N, 3.1, rng); // skills — the React mark
     const f3 = mk();
@@ -474,30 +547,12 @@ export default function MorphField({ quality = "high", interactive = false }) {
     const f4 = mk();
     formScatter(f4, N, 3.8, 7.6, 0.72, rng); // projects — wide constellation
     const f5 = mk();
-    // contact — the initials assemble in front of the core (z=2.2), the
-    // luminous orb glowing through the letterforms behind them.
-    formText(f5, N, "MN", 3.4, 2.2, rng);
+    formBeacon(f5, N, 3.6, rng); // contact — a transmission going out
+    const f6 = mk();
+    formStar(f6, N, 3.5, rng); // finale — the site's own ✦ mark
 
-    return [f0, f1, f2, f3, f4, f5];
+    return [f0, f1, f2, f3, f4, f5, f6];
   }, [N]);
-
-  // The About slot upgrades itself: once the real photo decodes, its
-  // sampled formation replaces the torus in place. Offset in front of the
-  // core (like the initials) so the orb glows behind the face.
-  useEffect(() => {
-    let cancelled = false;
-    buildPortrait("/mohamed.jpg", N, 3.9, 1.9, 0xfa11ce).then((arr) => {
-      if (cancelled || !arr) return;
-      forms[1].set(arr);
-      // If the live buffers currently hold the About slot, force a
-      // re-upload on the next frame; otherwise the next boundary crossing
-      // picks the new data up for free.
-      if (lastSeg.current <= 1) lastSeg.current = -1;
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [forms, N]);
 
   // ── Static per-particle attributes: seed + colour position. ───────
   const { seeds, colT } = useMemo(() => {
