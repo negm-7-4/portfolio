@@ -3,7 +3,6 @@ import { motion, useScroll, useTransform } from "motion/react";
 import SectionHeading from "../ui/SectionHeading";
 import TiltCard from "../ui/TiltCard";
 import SignatureFlourish from "../ui/SignatureFlourish";
-import StablePortrait from "../ui/StablePortrait";
 import { Gyro, Diamond } from "../ui/Shapes3D";
 import { profile, aboutCards } from "../../data/content";
 
@@ -164,9 +163,6 @@ export default function About() {
             transition={{ delay: 0.15, duration: 0.7 }}
             className="flex flex-col gap-8 md:col-span-5"
           >
-            {/* Stable premium portrait — fixed, tilts a touch to the cursor */}
-            <StablePortrait />
-
             <TiltCard
               max={6}
               spotColor="170,180,196"

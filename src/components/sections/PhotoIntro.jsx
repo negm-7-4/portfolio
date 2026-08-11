@@ -26,27 +26,10 @@ import { EASE_OUT } from "../../lib/motion";
  * parallax hand-off. Honours reduced motion.
  */
 
-// Two-tone grade. Cool steel-blue to match the site. Shadows are set to the
-// EXACT page background so the photo's dark areas ARE the background — no
-// seam. (Swap DUO_HI for a warm tone like "#e23b3b" + DUO_LO "#160709" for
-// the red cinematic look — the only change needed is the colour.)
-const BG = "#080b12"; // the cover's base — the photo melts into this
-const DUO_LO = BG; // shadows sink into the background (identical tone)
-const DUO_HI = "#aab4c4"; // highlights take the accent
-
-// Feather the photo into the background: a wide horizontal ramp (dissolves
-// the left/text side completely) intersected with a soft top/bottom fade.
-// Result: no visible edge — photo and background read as one graded surface.
-const MASK_H =
-  "linear-gradient(90deg, transparent 0%, transparent 24%, rgba(0,0,0,0.55) 50%, #000 74%)";
-const MASK_V =
-  "linear-gradient(180deg, transparent 0%, #000 16%, #000 82%, transparent 100%)";
-const MASK = {
-  WebkitMaskImage: `${MASK_H}, ${MASK_V}`,
-  WebkitMaskComposite: "source-in",
-  maskImage: `${MASK_H}, ${MASK_V}`,
-  maskComposite: "intersect",
-};
+// The cover's base tone. The subject cutout (transparent background) sits on
+// this, so the two are seamless — no wall, no visible photo edge. To swap to
+// the warm/red look, retint the cutout's `filter` hue-rotate on the <img>.
+const BG = "#080b12";
 
 // Big statement headline — last word carries the accent.
 const HEADLINE = [
@@ -56,74 +39,112 @@ const HEADLINE = [
   { text: "ALIVE.", accent: true },
 ];
 
+const CUT = "/portrait-negm-cut.png";
+
 function DuotonePhoto({ lite, reduce }) {
+  // Parallax (whole figure drifts opposite the cursor).
   const px = useMotionValue(0);
   const py = useMotionValue(0);
-  const sx = useSpring(px, { stiffness: 60, damping: 18, mass: 0.6 });
-  const sy = useSpring(py, { stiffness: 60, damping: 18, mass: 0.6 });
+  const sx = useSpring(px, { stiffness: 55, damping: 18, mass: 0.7 });
+  const sy = useSpring(py, { stiffness: 55, damping: 18, mass: 0.7 });
+  // Cursor spotlight position within the figure (px), + a hover fade.
+  const gx = useMotionValue(-999);
+  const gy = useMotionValue(-999);
+  const glow = useSpring(useMotionValue(0), { stiffness: 120, damping: 24 });
 
   const onMove = (e) => {
     if (lite) return;
     const r = e.currentTarget.getBoundingClientRect();
     const nx = (e.clientX - r.left) / r.width - 0.5;
     const ny = (e.clientY - r.top) / r.height - 0.5;
-    px.set(-nx * 18); // shift opposite the cursor for depth
-    py.set(-ny * 14);
+    px.set(-nx * 16);
+    py.set(-ny * 12);
+    gx.set(e.clientX - r.left);
+    gy.set(e.clientY - r.top);
+    glow.set(1);
   };
   const onLeave = () => {
     px.set(0);
     py.set(0);
+    glow.set(0);
+  };
+
+  // The cutout's silhouette used as a mask, so effects only touch the person.
+  const cutMask = {
+    WebkitMaskImage: `url(${CUT})`,
+    maskImage: `url(${CUT})`,
+    WebkitMaskSize: "contain",
+    maskSize: "contain",
+    WebkitMaskRepeat: "no-repeat",
+    maskRepeat: "no-repeat",
+    WebkitMaskPosition: "bottom",
+    maskPosition: "bottom",
   };
 
   return (
-    <div
-      className="absolute inset-0"
+    <motion.div
+      className="absolute bottom-0 right-0 aspect-[4/5] h-[74%] sm:h-[86%] md:right-[3%] md:h-[94%]
+                 left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0"
       onPointerMove={onMove}
       onPointerLeave={onLeave}
-      style={MASK}
+      style={{ x: sx, y: sy }}
+      initial={reduce ? false : { scale: 1.06, opacity: 0, filter: "blur(12px)" }}
+      animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }}
+      transition={{ duration: 1.3, ease: EASE_OUT }}
     >
+      {/* slow, imperceptible breathing */}
       <motion.div
         className="absolute inset-0"
-        style={{ x: sx, y: sy }}
-        initial={reduce ? false : { scale: 1.14, opacity: 0, filter: "blur(14px)" }}
-        animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }}
-        transition={{ duration: 1.4, ease: EASE_OUT }}
+        animate={reduce ? undefined : { scale: [1, 1.03, 1], y: [0, -7, 0] }}
+        transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
       >
-        {/* Ken-Burns wrapper — slow, imperceptible breathing zoom. */}
-        <motion.div
+        {/* soft cool glow behind the figure so it reads against the dark */}
+        <div
+          aria-hidden
           className="absolute inset-0"
-          animate={reduce ? undefined : { scale: [1.02, 1.09, 1.02], x: [0, -10, 0] }}
-          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-        >
-          {/* base grayscale photo — kept bright so the face reads clearly */}
-          <img
-            src="/portrait-negm.jpg"
-            alt="Mohamed Negm — software engineer"
-            className="absolute inset-0 h-full w-full object-cover object-[62%_22%]"
-            style={{ filter: "grayscale(1) contrast(1.08) brightness(1.06)" }}
-            decoding="async"
-            fetchPriority="high"
-          />
-          {/* TRUE DUOTONE: `color` blend keeps the photo's luminance (face
-              visible) but takes the hue of a shadow→highlight gradient, so
-              darks go steel-navy and lights go silver-blue. */}
-          <div
-            className="absolute inset-0"
-            style={{
-              mixBlendMode: "color",
-              opacity: 0.9,
-              background: `linear-gradient(135deg, ${DUO_LO} 0%, #4a5a72 42%, ${DUO_HI} 78%, #dfe6f0 100%)`,
-            }}
-          />
-          {/* deepen the shadow side toward the page tone so the merge with
-              the background is seamless (no visible photo boundary) */}
-          <div
-            className="absolute inset-0"
-            style={{ background: `linear-gradient(90deg, ${BG} 8%, transparent 55%)` }}
-          />
-        </motion.div>
+          style={{ background: "radial-gradient(58% 52% at 52% 36%, rgba(120,140,175,0.24), transparent 68%)" }}
+        />
+
+        {/* the cutout — REAL colours, lightly graded, melting into the page */}
+        <img
+          src={CUT}
+          alt="Mohamed Negm — software engineer"
+          className="absolute inset-0 h-full w-full object-contain object-bottom"
+          style={{ filter: "contrast(1.04) saturate(1.06) brightness(1.02) drop-shadow(0 26px 55px rgba(0,0,0,0.55))" }}
+          decoding="async"
+          fetchPriority="high"
+        />
+
+        {/* a faint cool wash tying the colours to the site palette (kept low
+            so the real colours stay), masked to the figure only */}
+        <div aria-hidden className="absolute inset-0" style={cutMask}>
+          <div className="absolute inset-0" style={{ background: "#5a76a8", mixBlendMode: "soft-light", opacity: 0.35 }} />
+        </div>
+
+        {/* ✨ cursor spotlight — a warm light that follows the mouse and lifts
+            the colour/brightness where you point, on the figure only */}
+        {!lite && (
+          <motion.div aria-hidden className="absolute inset-0" style={{ ...cutMask, opacity: glow }}>
+            <motion.div
+              className="absolute h-[46%] w-[46%] -translate-x-1/2 -translate-y-1/2 rounded-full"
+              style={{
+                left: gx,
+                top: gy,
+                background: "radial-gradient(circle, rgba(255,246,232,0.9) 0%, rgba(180,205,255,0.35) 40%, transparent 72%)",
+                mixBlendMode: "soft-light",
+              }}
+            />
+          </motion.div>
+        )}
+
+        {/* the suit dissolves down into the page — emerging from darkness */}
+        <div
+          aria-hidden
+          className="absolute inset-x-0 bottom-0 h-[40%]"
+          style={{ background: `linear-gradient(180deg, transparent 0%, ${BG} 94%)` }}
+        />
       </motion.div>
-    </div>
+    </motion.div>
   );
 }
 
