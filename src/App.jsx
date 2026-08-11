@@ -21,6 +21,7 @@ import { ToastProvider } from "./components/ui/Toast";
 
 // Above-the-fold + immediately needed sections are imported eagerly so
 // they're in the main bundle and ready on first paint.
+import PhotoIntro from "./components/sections/PhotoIntro";
 import Hero from "./components/sections/Hero";
 import Stats from "./components/sections/Stats";
 import About from "./components/sections/About";
@@ -167,6 +168,9 @@ export default function App() {
 
           {/* ── Page content ─────────────────────────────────────── */}
           <main id="main-content" className="relative z-[2]">
+            {/* The opaque photo cover screen — hides the 3D world; the gem +
+                Hero reveal on scroll and carry the rest of the journey. */}
+            <PhotoIntro />
             <Hero />
             <Stats />
             <About />
