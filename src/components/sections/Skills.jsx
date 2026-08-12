@@ -6,7 +6,7 @@ import useMediaQuery from "../../hooks/useMediaQuery";
 import { skillCategories } from "../../data/content";
 
 /* ─── Flatten all categories into one wall, mark featured items ─── */
-const FEATURED = new Set(["React", "Next.js", "Tailwind CSS", "Three.js", "Framer Motion", "GSAP", "Lottie", "D3.js"]);
+const FEATURED = new Set(["React", "Next.js", "Tailwind CSS", "Three.js", "Framer Motion", "GSAP"]);
 
 const WALL = skillCategories.flatMap((cat) =>
   cat.items.map((it) => ({ ...it, cat: cat.label, featured: FEATURED.has(it.name) }))
@@ -29,9 +29,14 @@ function TechTile({ item, i, desktop }) {
   const amp   = 8 + ((i * 3) % 12);
 
   const isBig = item.featured;
-  const size = isBig ? "h-28 w-28 md:h-56 md:w-56" : "h-24 w-24 md:h-40 md:w-40";
-  const iconSize = isBig ? (desktop ? 78 : 46) : (desktop ? 52 : 34);
-  const textSize = isBig ? "text-sm md:text-2xl" : "text-xs md:text-base";
+  // Mobile: every tile fills its 4-column grid cell as a uniform square, so
+  // four sit side by side and the section needs far less scroll. Desktop keeps
+  // the free-floating constellation with featured tiles enlarged.
+  const size = isBig
+    ? "h-full w-full md:h-56 md:w-56"
+    : "h-full w-full md:h-40 md:w-40";
+  const iconSize = desktop ? (isBig ? 78 : 52) : 30;
+  const textSize = isBig ? "text-[11px] md:text-2xl" : "text-[11px] md:text-base";
 
   return (
     <motion.div
@@ -53,10 +58,10 @@ function TechTile({ item, i, desktop }) {
       whileHover={{ scale: 1.12, zIndex: 10 }}
       data-cursor="hover"
       data-cursor-text={item.name}
-      className="group relative inline-flex flex-shrink-0"
+      className="group relative aspect-square w-full md:aspect-auto md:inline-flex md:w-auto md:flex-shrink-0"
     >
       <motion.div
-        className="float-tile relative"
+        className="float-tile relative h-full w-full md:h-auto md:w-auto"
         style={{ "--amp": `-${amp}px`, "--dur": `${dur}s`, "--delay": `${delay}s` }}
       >
         {/* outer brand-color glow halo */}
@@ -99,14 +104,14 @@ function TechTile({ item, i, desktop }) {
 
           {/* name */}
           <span
-            className={`mt-3 font-display font-semibold tracking-tight text-white/85 transition-colors duration-300 group-hover:text-white ${textSize}`}
+            className={`mt-1.5 px-1 text-center leading-tight md:mt-3 font-display font-semibold tracking-tight text-white/85 transition-colors duration-300 group-hover:text-white ${textSize}`}
           >
             {item.name}
           </span>
 
-          {/* tiny category badge (only on featured) */}
+          {/* tiny category badge (only on featured, desktop only) */}
           {isBig && (
-            <span className="mt-1.5 text-[9px] uppercase tracking-[0.3em] text-white/55">
+            <span className="mt-1.5 hidden text-[9px] uppercase tracking-[0.3em] text-white/55 md:block">
               {item.cat}
             </span>
           )}
@@ -249,7 +254,7 @@ export default function Skills() {
         {/* ── The constellation wall — single flowing arrangement, no dividers ── */}
         <motion.div
           style={{ rotateX: wallTilt, transformPerspective: 1600 }}
-          className="flex flex-wrap items-center justify-center gap-x-6 gap-y-10 md:gap-x-16 md:gap-y-20"
+          className="grid grid-cols-4 gap-2.5 sm:gap-3 md:flex md:flex-wrap md:items-center md:justify-center md:gap-x-16 md:gap-y-20"
         >
           {WALL.map((item, i) => (
             <TechTile key={item.name} item={item} i={i} desktop={desktop} />
