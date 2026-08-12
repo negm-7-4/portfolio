@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import { profile, resume } from "../../data/content";
+import useOverlayScrollLock from "../../hooks/useOverlayScrollLock";
 
 /**
  * CV MODAL — a cinematic, in-page résumé.
@@ -21,7 +22,7 @@ const EASE = [0.16, 1, 0.3, 1];
 /* A titled block whose children fade+rise in a stagger. */
 function Block({ label, index, children }) {
   return (
-    <motion.section
+    <motion.div
       initial={{ opacity: 0, y: 22 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.55, ease: EASE, delay: 0.18 + index * 0.07 }}
@@ -32,32 +33,80 @@ function Block({ label, index, children }) {
         {label}
       </h3>
       {children}
-    </motion.section>
+    </motion.div>
   );
 }
 
 export default function CvModal() {
   const [open, setOpen] = useState(false);
   const reduce = useReducedMotion();
+  const panelRef = useRef(null);
+  const lastFocused = useRef(null);
 
   useEffect(() => {
-    const onOpen = () => setOpen(true);
+    const onOpen = () => {
+      lastFocused.current = document.activeElement;
+      setOpen(true);
+    };
     window.addEventListener("open-cv", onOpen);
     return () => window.removeEventListener("open-cv", onOpen);
   }, []);
 
-  // ESC to close + lock the page scroll (and freeze Lenis) while open.
+  useOverlayScrollLock(open);
+
+  // ESC to close, trap focus inside the dialog and restore it on close.
   useEffect(() => {
     if (!open) return;
-    const onKey = (e) => e.key === "Escape" && setOpen(false);
+
+    const panel = panelRef.current;
+    const focusTimer = window.setTimeout(() => {
+      panel?.focus({ preventScroll: true });
+    }, 0);
+
+    const onKey = (e) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        setOpen(false);
+        return;
+      }
+
+      if (e.key !== "Tab" || !panel) return;
+
+      const focusable = Array.from(
+        panel.querySelectorAll(
+          'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )
+      ).filter((element) => !element.hasAttribute("hidden"));
+
+      if (focusable.length === 0) {
+        e.preventDefault();
+        panel.focus({ preventScroll: true });
+        return;
+      }
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const activeElement = document.activeElement;
+      if (
+        e.shiftKey &&
+        (activeElement === panel || activeElement === first || !panel.contains(activeElement))
+      ) {
+        e.preventDefault();
+        last.focus();
+      } else if (
+        !e.shiftKey &&
+        (activeElement === last || !panel.contains(activeElement))
+      ) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+
     window.addEventListener("keydown", onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    window.__lenis?.stop?.();
     return () => {
+      window.clearTimeout(focusTimer);
       window.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prev;
-      window.__lenis?.start?.();
+      if (lastFocused.current?.isConnected) lastFocused.current.focus();
     };
   }, [open]);
 
@@ -65,7 +114,7 @@ export default function CvModal() {
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-[9800] flex items-start justify-center overflow-y-auto p-4 py-10 sm:py-16"
+          className="fixed inset-0 z-[9800] flex items-center justify-center overflow-hidden p-4 sm:p-6"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -83,13 +132,16 @@ export default function CvModal() {
 
           {/* Panel */}
           <motion.div
+            ref={panelRef}
             onClick={(e) => e.stopPropagation()}
             initial={reduce ? { opacity: 0 } : { opacity: 0, y: 40, scale: 0.96, clipPath: "inset(0 0 100% 0 round 24px)" }}
             animate={reduce ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1, clipPath: "inset(0 0 0% 0 round 24px)" }}
             exit={reduce ? { opacity: 0 } : { opacity: 0, y: 30, scale: 0.97 }}
             transition={{ duration: 0.6, ease: EASE }}
-            className="relative z-10 w-full max-w-3xl overflow-hidden rounded-3xl border border-white/12 bg-[rgba(13,16,22,0.92)] shadow-[0_40px_120px_-20px_rgba(0,0,0,0.8)]"
+            className="relative z-10 flex max-h-[calc(100dvh-2rem)] w-full max-w-3xl flex-col overflow-hidden rounded-3xl border border-white/12 bg-[rgba(13,16,22,0.92)] shadow-[0_40px_120px_-20px_rgba(0,0,0,0.8)] sm:max-h-[calc(100dvh-3rem)]"
             style={{ backdropFilter: "blur(12px)" }}
+            tabIndex={-1}
+            role="document"
           >
             {/* accent glow bleed at the top */}
             <div
@@ -108,7 +160,10 @@ export default function CvModal() {
               <span key={i} className={`pointer-events-none absolute ${c} h-4 w-4 border-white/15`} aria-hidden />
             ))}
 
-            <div className="relative max-h-[82vh] overflow-y-auto px-6 py-8 sm:px-10 sm:py-10">
+            <div
+              data-lenis-prevent
+              className="relative min-h-0 flex-1 overflow-y-auto overscroll-contain px-6 py-8 sm:px-10 sm:py-10"
+            >
               {/* ── Header ── */}
               <motion.div
                 initial={{ opacity: 0, y: 16 }}
@@ -119,7 +174,7 @@ export default function CvModal() {
                 <div>
                   <p className="mb-1 text-[10px] uppercase tracking-[0.4em] text-white/55">Curriculum Vitae</p>
                   <h2 className="font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
-                    {profile.name}
+                    {resume.name}
                   </h2>
                   <p className="mt-1.5 text-sm font-medium text-[#aab4c4]">
                     {resume.headline}
@@ -163,10 +218,9 @@ export default function CvModal() {
                 {resume.summary}
               </motion.p>
 
-              <div className="mt-6 grid gap-6 md:grid-cols-2">
-                {/* ── Skills ── */}
+              <div className="mt-6">
                 <Block label="Technical Skills" index={0}>
-                  <div className="flex flex-col gap-3">
+                  <div className="grid gap-3 sm:grid-cols-2">
                     {resume.skillGroups.map((g) => (
                       <div key={g.label}>
                         <p className="mb-1.5 text-[11px] font-semibold text-white/70">{g.label}</p>
@@ -184,58 +238,72 @@ export default function CvModal() {
                     ))}
                   </div>
                 </Block>
-
-                {/* ── Education + Languages + Soft skills ── */}
-                <div className="flex flex-col gap-6">
-                  <Block label="Education" index={1}>
-                    <p className="text-[12px] font-semibold text-white/80">{resume.education.degree}</p>
-                    <p className="mt-1 text-[11px] text-white/50">{resume.education.school}</p>
-                    <p className="text-[11px] text-white/60">{resume.education.location}</p>
-                    <p className="mt-1 text-[11px] text-[#aab4c4]">{resume.education.detail}</p>
-                  </Block>
-
-                  <Block label="Languages" index={2}>
-                    <div className="flex flex-col gap-1.5">
-                      {resume.languages.map((l) => (
-                        <div key={l.name} className="flex items-center justify-between text-[11px]">
-                          <span className="text-white/70">{l.name}</span>
-                          <span className="text-white/60">{l.level}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </Block>
-                </div>
               </div>
 
               {/* ── Projects ── */}
               <div className="mt-6">
-                <Block label="Projects" index={3}>
+                <Block label="Selected Projects" index={1}>
                   <div className="flex flex-col gap-4">
                     {resume.projects.map((p) => (
                       <div key={p.name} className="group/pr rounded-xl border border-white/8 bg-white/[0.02] p-4 transition-colors hover:border-white/20">
-                        <div className="flex items-baseline justify-between gap-3">
+                        <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-3">
                           <h4 className="font-display text-sm font-bold text-white">{p.name}</h4>
-                          <span className="shrink-0 text-[10px] text-white/55">{p.kind}</span>
+                          <span className="text-[10px] text-white/55">{p.kind}</span>
                         </div>
-                        <p className="mt-1.5 text-[12px] leading-relaxed text-white/55">{p.desc}</p>
-                        <p className="mt-2 text-[10px] uppercase tracking-[0.15em] text-[#aab4c4]/80">{p.stack}</p>
+                        <ul className="mt-2 space-y-1.5 pl-4 text-[11px] leading-relaxed text-white/55">
+                          {p.bullets.map((bullet) => (
+                            <li key={bullet} className="list-disc marker:text-[#aab4c4]/70">{bullet}</li>
+                          ))}
+                        </ul>
+                        <div className="mt-3 flex flex-wrap items-center gap-2">
+                          <p className="text-[10px] uppercase tracking-[0.12em] text-[#aab4c4]/80">
+                            {p.tech.join(" · ")}
+                          </p>
+                          {p.github && (
+                            <a
+                              href={p.github}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="ml-auto text-[10px] font-semibold uppercase tracking-wider text-white/65 underline decoration-white/20 underline-offset-4 transition-colors hover:text-white"
+                            >
+                              GitHub ↗
+                            </a>
+                          )}
+                        </div>
                       </div>
                     ))}
                   </div>
                 </Block>
               </div>
 
-              {/* ── Soft skills ── */}
               <div className="mt-6">
-                <Block label="Soft Skills" index={4}>
-                  <div className="flex flex-wrap gap-1.5">
-                    {resume.softSkills.map((s) => (
-                      <span
-                        key={s}
-                        className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[11px] text-white/60"
-                      >
-                        {s}
+                <Block label="Certifications" index={2}>
+                  <p className="text-[11px] font-semibold text-white/75">{resume.certifications.provider}</p>
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    {resume.certifications.items.map((item) => (
+                      <span key={item} className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[10px] text-white/60">
+                        {item}
                       </span>
+                    ))}
+                  </div>
+                </Block>
+              </div>
+
+              <div className="mt-6 grid gap-6 md:grid-cols-2">
+                <Block label="Education" index={3}>
+                  <p className="text-[12px] font-semibold text-white/80">{resume.education.degree}</p>
+                  <p className="mt-1 text-[11px] text-white/50">{resume.education.school}</p>
+                  <p className="text-[11px] text-white/60">{resume.education.location}</p>
+                  <p className="mt-1 text-[11px] text-[#aab4c4]">{resume.education.detail}</p>
+                </Block>
+
+                <Block label="Languages" index={4}>
+                  <div className="flex flex-col gap-1.5">
+                    {resume.languages.map((l) => (
+                      <div key={l.name} className="flex items-center justify-between text-[11px]">
+                        <span className="text-white/70">{l.name}</span>
+                        <span className="text-white/60">{l.level}</span>
+                      </div>
                     ))}
                   </div>
                 </Block>

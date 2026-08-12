@@ -3,9 +3,9 @@ import { AnimatePresence, motion, useScroll, useTransform } from "motion/react";
 import BrowserFrame from "../ui/BrowserFrame";
 import ScrubReveal from "../ui/ScrubReveal";
 import WebGLImage from "../ui/WebGLImage";
-import { celebrate } from "../../lib/confetti";
 import { projects } from "../../data/content";
 import useWorldDye from "./useWorldDye";
+import ShowcaseCta from "./ShowcaseCta";
 
 /**
  * The original Projects presentation, preserved verbatim: a two-column
@@ -16,7 +16,7 @@ import useWorldDye from "./useWorldDye";
 
 /* ─── Sticky left column — number + info that changes with active project ─── */
 function StickyInfo({ p, idx, total }) {
-  const url = (p.github || "").replace(/https?:\/\//, "");
+  const url = (p.live || p.github || p.caseStudy || "Private build").replace(/https?:\/\//, "");
 
   return (
     <AnimatePresence mode="wait">
@@ -88,25 +88,9 @@ function StickyInfo({ p, idx, total }) {
             ))}
           </motion.ul>
 
-          <motion.a
-            href={p.github}
-            target="_blank"
-            rel="noopener noreferrer"
-            data-cursor="hover"
-            data-cursor-text="Open"
-            onClick={(e) => celebrate(e.clientX, e.clientY, p.color)}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.42, duration: 0.45 }}
-            whileHover={{ x: 4 }}
-            className="group/cta mt-7 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-widest text-white"
-          >
-            <span>View on GitHub</span>
-            <span className="relative block h-[1px] w-12 overflow-hidden bg-white/30">
-              <span className="absolute inset-0 origin-left scale-x-0 bg-white transition-transform duration-500 group-hover/cta:scale-x-100" />
-            </span>
-            <span>↗</span>
-          </motion.a>
+          <div className="mt-7">
+            <ShowcaseCta project={p} delay={0.42} />
+          </div>
 
           <motion.p
             initial={{ opacity: 0 }}
@@ -223,7 +207,7 @@ export default function ClassicShowcase() {
         {/* RIGHT: stack of browser-framed previews — this scrolls */}
         <div className="mt-12 flex flex-col gap-24 md:col-span-7 md:col-start-6 md:mt-0 md:gap-40">
           {projects.map((p, i) => {
-            const url = (p.github || "").replace(/https?:\/\//, "");
+            const url = (p.live || p.github || p.caseStudy || "Private build").replace(/https?:\/\//, "");
             return (
               <div
                 key={p.title}

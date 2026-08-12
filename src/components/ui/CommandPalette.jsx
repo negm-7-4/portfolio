@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { sections } from "../../data/sections";
 import { profile } from "../../data/content";
+import useOverlayScrollLock from "../../hooks/useOverlayScrollLock";
 
 /**
  * Cmd/Ctrl-K command palette. Searchable list of sections + quick
@@ -15,6 +16,8 @@ export default function CommandPalette() {
   const inputRef = useRef(null);
   const listRef = useRef(null);
   const lastFocused = useRef(null);
+
+  useOverlayScrollLock(open);
 
   // build the searchable command list
   const commands = useMemo(() => {
@@ -191,7 +194,8 @@ export default function CommandPalette() {
               id="cmd-listbox"
               role="listbox"
               aria-label="Commands"
-              className="max-h-[55vh] overflow-y-auto py-2"
+              data-lenis-prevent
+              className="max-h-[55vh] overflow-y-auto overscroll-contain py-2"
             >
               {filtered.length === 0 ? (
                 <div className="px-5 py-8 text-center text-sm text-white/60">

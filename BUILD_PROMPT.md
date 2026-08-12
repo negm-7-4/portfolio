@@ -58,7 +58,7 @@ inline SVG — no icon-font libraries. Output must be a static build (zero-confi
 - **Education:** B.Sc Computer Science & AI — 2nd Year, Al-Ryada University (RST)
 - **Status:** Open to opportunities
 - **Socials:** GitHub https://github.com/negm-7-4 ·
-  LinkedIn https://www.linkedin.com/in/mohammed-e-negm-a45624335 ·
+  LinkedIn https://www.linkedin.com/in/mohammed-negm-a45624335/ ·
   Facebook https://www.facebook.com/share/1HwyZgZLtQ/ ·
   Instagram https://www.instagram.com/mohamednegm_74
 - **Résumé/CV:** link + download a PDF (`/Mohamed_Negm_CV.pdf`).

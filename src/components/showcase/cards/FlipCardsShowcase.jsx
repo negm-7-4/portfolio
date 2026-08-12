@@ -164,7 +164,10 @@ function Card({ p, i, onFocus }) {
             <h3 className="mt-2 font-display text-xl font-bold tracking-tight text-white md:text-2xl">
               {p.title}
             </h3>
-            <p className="mt-3 flex-1 overflow-y-auto text-[13px] leading-[1.7] text-white/55">
+            <p
+              tabIndex={flipped ? 0 : -1}
+              className="mt-3 flex-1 overflow-y-auto text-[13px] leading-[1.7] text-white/55 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/70"
+            >
               {p.desc}
             </p>
 

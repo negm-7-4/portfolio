@@ -66,6 +66,10 @@ export default defineConfig({ // This is now the only default export
     rollupOptions: {
       output: {
         manualChunks: (id) => {
+          // Keep Vite's dynamic-import helper on the eager vendor path. If it
+          // drifts into the Three chunk, the entry bundle must download all of
+          // Three.js just to call `import()` for unrelated lazy sections.
+          if (id.includes("vite/preload-helper"))       return "vendor";
           if (!id.includes("node_modules")) return undefined;
 
           // Spline — biggest contributor by far.

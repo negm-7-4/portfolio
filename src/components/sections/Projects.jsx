@@ -128,8 +128,8 @@ function ShowcasePlaceholder() {
 }
 
 export default function Projects() {
-  const { tier, reducedMotion } = useDeviceProfile();
-  const lowPower = tier === "low" || reducedMotion;
+  const { tier, reducedMotion, touch } = useDeviceProfile();
+  const lowPower = tier !== "high" || reducedMotion || touch;
 
   const [selected, setSelected] = useState(() => {
     if (typeof window === "undefined") return SHOWCASE_MODE;

@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0b0d11" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="robots" content="noindex, follow" />
+    <title>404 — Lost in space · Mohamed Negm</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+      :root {
+        --bg: #0b0d11;
+        --steel: #8a93a6;
+        --accent: #aab4c4;
+        --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      html, body { height: 100%; }
+
+      /* the rotated beams extend past the viewport — clip them so the page
+         never scrolls sideways on any device */
+      html { overflow-x: clip; }
+
+      body {
+        display: grid;
+        place-items: center;
+        background:
+          radial-gradient(70% 60% at 78% 18%, rgba(58, 96, 158, 0.22), transparent 62%),
+          radial-gradient(60% 60% at 12% 86%, rgba(96, 74, 166, 0.16), transparent 64%),
+          linear-gradient(140deg, #0a1120 0%, #0c1526 46%, #0b1424 100%);
+        color: #e6e9ee;
+        font-family: Inter, system-ui, sans-serif;
+        overflow: hidden;
+        position: relative;
+      }
+
+      /* drifting starfield */
+      .stars, .stars::after {
+        position: absolute;
+        inset: 0;
+        background-image:
+          radial-gradient(1.4px 1.4px at 12% 22%, rgba(255,255,255,0.75), transparent),
+          radial-gradient(1.2px 1.2px at 68% 14%, rgba(200,215,255,0.65), transparent),
+          radial-gradient(1.6px 1.6px at 34% 72%, rgba(255,255,255,0.55), transparent),
+          radial-gradient(1.1px 1.1px at 84% 62%, rgba(200,215,255,0.6), transparent),
+          radial-gradient(1.3px 1.3px at 52% 42%, rgba(255,255,255,0.5), transparent),
+          radial-gradient(1px 1px at 22% 88%, rgba(255,255,255,0.45), transparent);
+        background-size: 100% 100%;
+        animation: drift 90s linear infinite;
+      }
+      .stars::after { content: ""; transform: scale(1.6) rotate(12deg); opacity: 0.5; }
+      @keyframes drift { to { transform: translate3d(-3%, 2%, 0); } }
+
+      /* raking light streaks — same language as the site cover */
+      .beam {
+        position: absolute;
+        height: 2px;
+        width: 60%;
+        left: -40%;
+        filter: blur(1px);
+        background: linear-gradient(90deg, transparent, rgba(165,190,240,0.9), transparent);
+        transform: rotate(-20deg);
+        animation: sweep var(--dur, 14s) ease-in-out infinite;
+        animation-delay: var(--delay, 0s);
+        opacity: 0.1;
+      }
+      @keyframes sweep {
+        0%   { transform: translate3d(0, 0, 0) rotate(-20deg); }
+        100% { transform: translate3d(190%, 14px, 0) rotate(-20deg); }
+      }
+
+      .wrap {
+        position: relative;
+        z-index: 2;
+        width: min(90%, 42rem);
+        text-align: center;
+        padding: 2rem 0;
+      }
+
+      .code {
+        font-family: "Space Grotesk", sans-serif;
+        font-weight: 700;
+        font-size: clamp(6rem, 26vw, 15rem);
+        line-height: 0.85;
+        letter-spacing: -0.04em;
+        background: linear-gradient(150deg, #ffffff 0%, #c8d2dd 42%, #6f7c8c 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        animation: rise 1s var(--ease-out) both;
+      }
+
+      .kicker {
+        margin-top: 1.5rem;
+        font-size: 0.68rem;
+        font-weight: 600;
+        letter-spacing: 0.34em;
+        text-transform: uppercase;
+        color: var(--steel);
+        animation: rise 1s var(--ease-out) 0.12s both;
+      }
+
+      h1 {
+        margin-top: 0.9rem;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: clamp(1.35rem, 4.6vw, 2.1rem);
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        animation: rise 1s var(--ease-out) 0.2s both;
+      }
+
+      p {
+        margin: 1rem auto 0;
+        max-width: 34rem;
+        font-size: 0.98rem;
+        line-height: 1.75;
+        color: rgba(230, 233, 238, 0.62);
+        animation: rise 1s var(--ease-out) 0.3s both;
+      }
+
+      .actions {
+        margin-top: 2.4rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        justify-content: center;
+        animation: rise 1s var(--ease-out) 0.42s both;
+      }
+
+      a.btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        min-height: 44px;
+        padding: 0.85rem 1.6rem;
+        border-radius: 0.85rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: transform 0.24s var(--ease-out), background 0.24s, border-color 0.24s;
+      }
+      a.primary {
+        background: #fff;
+        color: #0b0d11;
+        box-shadow: 0 18px 36px -12px rgba(255, 255, 255, 0.3);
+      }
+      a.ghost {
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        background: rgba(255, 255, 255, 0.04);
+        color: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(10px);
+      }
+      a.btn:hover { transform: translateY(-2px); }
+      a.ghost:hover { border-color: rgba(255, 255, 255, 0.4); color: #fff; }
+      a.btn:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+
+      .sig {
+        margin-top: 3rem;
+        font-size: 0.62rem;
+        letter-spacing: 0.32em;
+        text-transform: uppercase;
+        color: rgba(230, 233, 238, 0.32);
+        animation: rise 1s var(--ease-out) 0.55s both;
+      }
+
+      @keyframes rise {
+        from { opacity: 0; transform: translateY(22px); filter: blur(6px); }
+        to   { opacity: 1; transform: none; filter: blur(0); }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { animation: none !important; transition: none !important; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="stars" aria-hidden="true"></div>
+    <div class="beam" style="top: 16%; --dur: 13s; --delay: 0s"   aria-hidden="true"></div>
+    <div class="beam" style="top: 44%; --dur: 17s; --delay: 2.5s" aria-hidden="true"></div>
+    <div class="beam" style="top: 74%; --dur: 15s; --delay: 4s"   aria-hidden="true"></div>
+
+    <main class="wrap">
+      <div class="code">404</div>
+      <div class="kicker">Signal lost</div>
+      <h1>This page drifted out of orbit.</h1>
+      <p>
+        The link you followed doesn&rsquo;t exist &mdash; it may have been moved or
+        never launched at all. Everything worth seeing is back on the main page.
+      </p>
+
+      <div class="actions">
+        <a class="btn primary" href="/">Back to the portfolio</a>
+        <a class="btn ghost" href="/#projects">See the projects</a>
+        <a class="btn ghost" href="mailto:mohammednegm11234@gmail.com">Get in touch</a>
+      </div>
+
+      <div class="sig">&#10022; Mohamed Negm &middot; Software Engineer</div>
+    </main>
+  </body>
+</html>

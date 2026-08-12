@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { AnimatePresence, MotionConfig } from "motion/react";
 
 import useLenis from "./hooks/useLenis";
@@ -8,7 +8,6 @@ import { ActiveSectionProvider } from "./hooks/useActiveSection";
 
 import Preloader from "./components/Preloader";
 import DeferredMount from "./components/DeferredMount";
-import PrefetchSections from "./components/PrefetchSections";
 import CustomCursor from "./components/CustomCursor";
 import KeyboardNavBridge from "./components/AppInner";
 import ScrollProgress from "./components/ScrollProgress";
@@ -38,8 +37,8 @@ const Skills        = lazy(() => import("./components/sections/Skills"));
 const Experience    = lazy(() => import("./components/sections/Experience"));
 const Process       = lazy(() => import("./components/sections/Process"));
 const Projects      = lazy(() => import("./components/sections/Projects"));
+const SamsCaseStudy = lazy(() => import("./components/sections/SamsCaseStudy"));
 const CapabilitiesGallery = lazy(() => import("./components/sections/CapabilitiesGallery"));
-const Testimonials  = lazy(() => import("./components/sections/Testimonials"));
 const Socials       = lazy(() => import("./components/sections/Socials"));
 const Contact       = lazy(() => import("./components/sections/Contact"));
 const Footer        = lazy(() => import("./components/sections/Footer"));
@@ -56,14 +55,48 @@ function SectionPlaceholder({ id }) {
       aria-hidden
       className="relative flex items-center justify-center"
     >
-      <div className="flex flex-col items-center gap-3 opacity-30">
-        <div className="relative h-8 w-8">
+      <div className="flex flex-col items-center gap-3">
+        <div className="relative h-8 w-8 opacity-40">
           <span className="absolute inset-0 animate-spin rounded-full border border-white/15 border-t-white/45" style={{ animationDuration: "2.4s" }} />
           <span className="absolute inset-2 rounded-full bg-white/20" />
         </div>
-        <span className="text-[9px] uppercase tracking-[0.35em] text-white/60">Loading</span>
+        <span className="text-[9px] uppercase tracking-[0.35em] text-white/70">Loading</span>
       </div>
     </section>
+  );
+}
+
+/* React.lazy only becomes a real performance win when the component itself
+   is not rendered on the first pass. This gate starts each below-fold import
+   shortly before its placeholder reaches the viewport. */
+function ViewportSection({ id, children, minHeight = "70vh", rootMargin = "1200px 0px" }) {
+  const markerRef = useRef(null);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    if (ready) return undefined;
+    const marker = markerRef.current;
+    if (!marker || typeof IntersectionObserver === "undefined") {
+      setReady(true);
+      return undefined;
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        setReady(true);
+        observer.disconnect();
+      },
+      { rootMargin }
+    );
+    observer.observe(marker);
+    return () => observer.disconnect();
+  }, [ready, rootMargin]);
+
+  if (ready) return children;
+  return (
+    <div ref={markerRef} style={{ minHeight }}>
+      <SectionPlaceholder id={id} />
+    </div>
   );
 }
 
@@ -92,16 +125,35 @@ const SoundToggle       = lazy(() => import("./components/ui/SoundToggle"));
 const CvModal           = lazy(() => import("./components/ui/CvModal"));
 
 export default function App() {
-  const [loaded, setLoaded] = useState(false);
   const { tier, touch } = useDeviceProfile();
+  const [loaded, setLoaded] = useState(() => tier === "low" || touch);
+  const [worldEnabled, setWorldEnabled] = useState(false);
   useLenis();
 
   const isLow = tier === "low";
+  const useLite = isLow || touch;
+
+  /* The opening portrait is fully opaque, so downloading and executing the
+     3D world behind it only burns the critical path. Warm it when the visitor
+     starts leaving the cover, with a long idle fallback for stationary tabs. */
+  useEffect(() => {
+    if (useLite || worldEnabled) return undefined;
+    const enable = () => {
+      if (window.scrollY < window.innerHeight * 0.35) return;
+      setWorldEnabled(true);
+    };
+    const idleFallback = window.setTimeout(() => setWorldEnabled(true), 30000);
+    window.addEventListener("scroll", enable, { passive: true });
+    return () => {
+      window.clearTimeout(idleFallback);
+      window.removeEventListener("scroll", enable);
+    };
+  }, [useLite, worldEnabled]);
 
   return (
     // reducedMotion="user" — every <motion> element automatically drops
     // transform/layout animation when the OS "reduce motion" pref is on.
-    <MotionConfig reducedMotion="user">
+    <MotionConfig reducedMotion={useLite ? "always" : "user"}>
     <CursorProvider>
       <ActiveSectionProvider>
         <ToastProvider>
@@ -117,7 +169,9 @@ export default function App() {
               Mid/high devices travel through the persistent cinematic R3F
               world (its own fog/stars own the backdrop). Low-tier / reduced-
               motion stays on the cheap GLSL aurora + CSS starfield.        */}
-          {isLow ? (
+          {useLite ? (
+            <Suspense fallback={null}><SpaceBackground /></Suspense>
+          ) : !worldEnabled ? (
             <WebGLBackground />
           ) : (
             <Suspense fallback={null}>
@@ -130,7 +184,7 @@ export default function App() {
               copy directly over the full-width 3D world, so dim it to an
               ambient backdrop so text always stays crisp. Most visitors are on
               phones, so legibility wins over spectacle here. Desktop: none. */}
-          {!isLow && (
+          {!useLite && (
             <div
               aria-hidden
               className="pointer-events-none fixed inset-0 md:hidden"
@@ -146,12 +200,11 @@ export default function App() {
               Touched-down tiers skip the heaviest extras to stay smooth. */}
           <Suspense fallback={null}>
             <DeferredMount>
-              {isLow && <SpaceBackground />}
               <ChapterBackdrop />
-              {!isLow && <AmbientField />}
-              {!isLow && !touch && <CursorSpotlight />}
-              {!isLow && <VelocityVignette />}
-              {!isLow && <GrainOverlay />}
+              {!useLite && <AmbientField />}
+              {!useLite && <CursorSpotlight />}
+              {!useLite && <VelocityVignette />}
+              {!useLite && <GrainOverlay />}
             </DeferredMount>
           </Suspense>
 
@@ -174,19 +227,19 @@ export default function App() {
             <Hero />
             <Stats />
             <About />
-            <Suspense fallback={<SectionPlaceholder id="services" />}><Services /></Suspense>
+            <ViewportSection id="services"><Suspense fallback={<SectionPlaceholder id="services" />}><Services /></Suspense></ViewportSection>
             <VelocityMarquee text="REACT · NEXT.JS · THREE.JS · GSAP · FRAMER MOTION · LOTTIE · WEBGL · D3 · TAILWIND" baseVelocity={2.5} />
-            <Suspense fallback={<SectionPlaceholder id="skills" />}><Skills /></Suspense>
-            <Suspense fallback={<SectionPlaceholder id="experience" />}><Experience /></Suspense>
-            <Suspense fallback={<SectionPlaceholder id="process" />}><Process /></Suspense>
+            <ViewportSection id="skills"><Suspense fallback={<SectionPlaceholder id="skills" />}><Skills /></Suspense></ViewportSection>
+            <ViewportSection id="experience"><Suspense fallback={<SectionPlaceholder id="experience" />}><Experience /></Suspense></ViewportSection>
+            <ViewportSection id="process"><Suspense fallback={<SectionPlaceholder id="process" />}><Process /></Suspense></ViewportSection>
             <Manifesto />
             <VelocityMarquee text="LET'S BUILD SOMETHING GREAT" baseVelocity={3} />
-            <Suspense fallback={<SectionPlaceholder id="projects" />}><Projects /></Suspense>
-            <Suspense fallback={null}><CapabilitiesGallery /></Suspense>
-            <Suspense fallback={<SectionPlaceholder id="testimonials" />}><Testimonials /></Suspense>
-            <Suspense fallback={<SectionPlaceholder id="socials" />}><Socials /></Suspense>
-            <Suspense fallback={<SectionPlaceholder id="contact" />}><Contact /></Suspense>
-            <Suspense fallback={null}><Footer /></Suspense>
+            <ViewportSection id="projects" minHeight="90vh"><Suspense fallback={<SectionPlaceholder id="projects" />}><Projects /></Suspense></ViewportSection>
+            <ViewportSection id="sams-case-study" minHeight="90vh"><Suspense fallback={<SectionPlaceholder id="sams-case-study" />}><SamsCaseStudy /></Suspense></ViewportSection>
+            <ViewportSection id="capabilities" minHeight="80vh"><Suspense fallback={<SectionPlaceholder id="capabilities" />}><CapabilitiesGallery /></Suspense></ViewportSection>
+            <ViewportSection id="socials"><Suspense fallback={<SectionPlaceholder id="socials" />}><Socials /></Suspense></ViewportSection>
+            <ViewportSection id="contact" minHeight="90vh"><Suspense fallback={<SectionPlaceholder id="contact" />}><Contact /></Suspense></ViewportSection>
+            <ViewportSection id="footer"><Suspense fallback={<SectionPlaceholder id="footer" />}><Footer /></Suspense></ViewportSection>
           </main>
 
           {/* ── Cursor + interactive layer — deferred, all lazy.
@@ -213,8 +266,6 @@ export default function App() {
               {!isLow && <SoundToggle />}
             </DeferredMount>
           </Suspense>
-
-          <PrefetchSections />
 
           {/* CV modal — mounted early (no delay) so the "My CV" button always
               has a live listener; renders nothing until the open-cv event. */}

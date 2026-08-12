@@ -31,14 +31,19 @@ export default function Manifesto() {
     if (still) return;
     let ctx;
     let canceled = false;
-    (async () => {
+    let started = false;
+    let observer;
+
+    const start = async () => {
+      if (started) return;
+      started = true;
       const { gsap } = await loadScrollSync();
       if (canceled || !wrapRef.current) return;
 
       ctx = gsap.context(() => {
         // Initial state is set here (not inline) so if GSAP ever fails to
         // arrive the statement simply stays fully visible.
-        gsap.set(".mf-word", { opacity: 0.08, filter: "blur(7px)", y: 26 });
+        gsap.set(".mf-word", { opacity: 0.4, filter: "blur(5px)", y: 26 });
         gsap.set(".mf-sig", { opacity: 0, y: 16 });
 
         gsap
@@ -60,9 +65,25 @@ export default function Manifesto() {
           })
           .to(".mf-sig", { opacity: 1, y: 0, duration: 1.4 }, ">-0.3");
       }, wrapRef);
-    })();
+    };
+
+    if (typeof IntersectionObserver === "undefined") {
+      start();
+    } else if (wrapRef.current) {
+      observer = new IntersectionObserver(
+        ([entry]) => {
+          if (!entry.isIntersecting) return;
+          observer.disconnect();
+          start();
+        },
+        { rootMargin: "700px 0px" }
+      );
+      observer.observe(wrapRef.current);
+    }
+
     return () => {
       canceled = true;
+      observer?.disconnect();
       ctx?.revert();
     };
   }, [still]);

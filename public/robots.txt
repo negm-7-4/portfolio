@@ -2,5 +2,4 @@
 User-agent: *
 Allow: /
 
-# TODO: replace with your real deployed URL
-Sitemap: https://mohamednegm.com/sitemap.xml
+Sitemap: https://mohamed-negm.vercel.app/sitemap.xml

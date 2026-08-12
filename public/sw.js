@@ -1,7 +1,7 @@
 /* Tiny service worker — cache-first for static assets, network-first for HTML.
    Makes repeat visits instant. */
 
-const VERSION = "v2";
+const VERSION = "v4";
 const STATIC_CACHE = `static-${VERSION}`;
 const RUNTIME_CACHE = `runtime-${VERSION}`;
 
@@ -45,6 +45,21 @@ self.addEventListener("fetch", (e) => {
 
   if (!sameOrigin && !isFontFile && !isSpline) return;
 
+  // CVs change without a content-hashed filename. Always ask the network first
+  // so returning visitors do not see a stale résumé after an update.
+  if (sameOrigin && url.pathname.toLowerCase().endsWith(".pdf")) {
+    e.respondWith(
+      fetch(request)
+        .then((res) => {
+          const copy = res.clone();
+          caches.open(RUNTIME_CACHE).then((c) => c.put(request, copy));
+          return res;
+        })
+        .catch(() => caches.match(request))
+    );
+    return;
+  }
+
   // Network-first for navigations (HTML) so we always get fresh content
   if (request.mode === "navigate") {
     e.respondWith(
@@ -65,7 +80,10 @@ self.addEventListener("fetch", (e) => {
     caches.match(request).then((cached) => {
       const fetchPromise = fetch(request)
         .then((res) => {
-          if (res.ok) {
+          const contentType = res.headers.get("content-type") || "";
+          const hasExpectedType =
+            request.destination !== "image" || contentType.startsWith("image/");
+          if (res.ok && hasExpectedType) {
             const copy = res.clone();
             caches.open(RUNTIME_CACHE).then((c) => c.put(request, copy));
           }

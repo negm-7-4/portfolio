@@ -13,6 +13,7 @@ import { EASE_OUT } from "../../lib/motion";
 function RippleLink({ href, accent, primary = false, children, label }) {
   const innerRef = useRef(null);
   const [ripple, setRipple] = useState(null);
+  const external = /^https?:\/\//i.test(href);
 
   const onEnter = (e) => {
     const r = innerRef.current?.getBoundingClientRect();
@@ -24,13 +25,21 @@ function RippleLink({ href, accent, primary = false, children, label }) {
     <MagneticButton
       as="a"
       href={href}
-      target="_blank"
-      rel="noopener noreferrer"
+      target={external ? "_blank" : undefined}
+      rel={external ? "noopener noreferrer" : undefined}
       aria-label={label}
       data-cursor="hover"
       data-cursor-text="Open"
       strength={0.32}
-      onClick={(e) => celebrate(e.clientX, e.clientY, accent)}
+      onClick={(e) => {
+        celebrate(e.clientX, e.clientY, accent);
+        if (!external && href.startsWith("#")) {
+          e.preventDefault();
+          const target = document.querySelector(href);
+          if (window.__lenis && target) window.__lenis.scrollTo(target, { offset: -24 });
+          else target?.scrollIntoView({ behavior: "smooth" });
+        }
+      }}
       className="group/cta relative inline-block rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/70"
     >
       <span
@@ -85,6 +94,27 @@ function RippleLink({ href, accent, primary = false, children, label }) {
 }
 
 export default function ShowcaseCta({ project, delay = 0 }) {
+  const actions = [
+    project.live && {
+      href: project.live,
+      label: `Open live demo of ${project.title}`,
+      text: "Live Demo",
+      primary: true,
+    },
+    project.github && {
+      href: project.github,
+      label: `View ${project.title} on GitHub`,
+      text: "View on GitHub",
+      primary: !project.live,
+    },
+    project.caseStudy && {
+      href: project.caseStudy,
+      label: `Read the ${project.title} case study`,
+      text: "Read Case Study",
+      primary: !project.live && !project.github,
+    },
+  ].filter(Boolean);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 14 }}
@@ -93,23 +123,17 @@ export default function ShowcaseCta({ project, delay = 0 }) {
       transition={{ duration: 0.55, ease: EASE_OUT, delay }}
       className="flex flex-wrap items-center gap-3"
     >
-      <RippleLink
-        href={project.github}
-        accent={project.color}
-        primary
-        label={`View ${project.title} on GitHub`}
-      >
-        View on GitHub
-      </RippleLink>
-      {project.live && (
+      {actions.map((action) => (
         <RippleLink
-          href={project.live}
+          key={action.href}
+          href={action.href}
           accent={project.color}
-          label={`Open live demo of ${project.title}`}
+          primary={action.primary}
+          label={action.label}
         >
-          Live Demo
+          {action.text}
         </RippleLink>
-      )}
+      ))}
     </motion.div>
   );
 }

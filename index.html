@@ -3,8 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
+    <link rel="preload" as="image" href="/portrait-negm-cut.webp" type="image/webp" fetchpriority="high" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -12,44 +13,43 @@
     <meta name="theme-color" content="#0b0d11" />
     <meta name="color-scheme" content="dark" />
 
-    <title>Mohamed Negm — Front-End Developer · Egypt</title>
+    <title>Mohamed Negm — Software Engineer &amp; 3D Web · Egypt</title>
     <meta
       name="description"
-      content="Mohamed Negm — Front-End Developer based in Sadat City, Egypt. CS & AI student building fast, immersive web experiences with React, Three.js and motion design."
+      content="Mohamed Negm — Front-End Developer and Software Engineering student in Egypt, building fast 3D web experiences, AI systems and full-stack products."
     />
     <meta name="author" content="Mohamed Negm" />
-    <meta name="keywords" content="Mohamed Negm, Front-End Developer, React, Three.js, Framer Motion, Egypt, Portfolio, Web Developer" />
+    <meta name="keywords" content="Mohamed Negm, Software Engineer, Front-End Developer, React, Three.js, Framer Motion, Egypt, Portfolio, Web Developer" />
     <meta name="robots" content="index, follow, max-image-preview:large" />
 
-    <!-- TODO: replace https://mohamednegm.com with your real deployed URL
-         in this file AND in public/robots.txt + public/sitemap.xml -->
-    <link rel="canonical" href="https://mohamednegm.com/" />
+    <link rel="canonical" href="https://mohamed-negm.vercel.app/" />
 
     <!-- Open Graph (Facebook, LinkedIn, WhatsApp) -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://mohamednegm.com/" />
-    <meta property="og:title" content="Mohamed Negm — Front-End Developer · Egypt" />
+    <meta property="og:url" content="https://mohamed-negm.vercel.app/" />
+    <meta property="og:title" content="Mohamed Negm — Software Engineer &amp; 3D Web" />
     <meta
       property="og:description"
-      content="CS & AI student crafting fast, immersive web experiences with React, Three.js and motion design."
+      content="Software Engineering student crafting fast 3D web experiences, AI systems and full-stack products."
     />
     <meta property="og:site_name" content="Mohamed Negm" />
     <meta property="og:locale" content="en_US" />
-    <meta property="og:image" content="/og-image.png" />
+    <meta property="og:image" content="https://mohamed-negm.vercel.app/og-mohamed-negm-2026.png" />
+    <meta property="og:image:secure_url" content="https://mohamed-negm.vercel.app/og-mohamed-negm-2026.png" />
     <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Mohamed Negm — Front-End Developer portfolio" />
+    <meta property="og:image:alt" content="Mohamed Negm — Software Engineer portfolio" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Mohamed Negm — Front-End Developer" />
+    <meta name="twitter:title" content="Mohamed Negm — Software Engineer &amp; 3D Web" />
     <meta
       name="twitter:description"
-      content="CS & AI student crafting fast, immersive web experiences with React, Three.js and motion design."
+      content="Software Engineering student crafting fast 3D web experiences, AI systems and full-stack products."
     />
-    <meta name="twitter:image" content="/og-image.png" />
-    <meta name="twitter:image:alt" content="Mohamed Negm — Front-End Developer portfolio" />
+    <meta name="twitter:image" content="https://mohamed-negm.vercel.app/og-mohamed-negm-2026.png" />
+    <meta name="twitter:image:alt" content="Mohamed Negm — Software Engineer portfolio" />
 
     <!-- Fonts — early preconnect + preload the CSS so the swap-in is faster -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -78,10 +78,11 @@
         "@context": "https://schema.org",
         "@type": "Person",
         "name": "Mohamed Negm",
-        "url": "https://mohamednegm.com/",
-        "jobTitle": "Front-End Developer",
+        "url": "https://mohamed-negm.vercel.app/",
+        "image": "https://mohamed-negm.vercel.app/og-mohamed-negm-2026.png",
+        "jobTitle": "Software Engineer",
         "email": "mailto:mohammednegm11234@gmail.com",
-        "description": "CS & AI student crafting fast, immersive web experiences with React, Three.js and motion design.",
+        "description": "Software Engineering student crafting fast 3D web experiences, AI systems and full-stack products.",
         "knowsAbout": ["React", "Next.js", "Three.js", "Framer Motion", "Tailwind CSS", "GSAP", "JavaScript", "TypeScript"],
         "address": {
           "@type": "PostalAddress",
@@ -89,14 +90,13 @@
           "addressRegion": "Monufia",
           "addressCountry": "EG"
         },
-        "alumniOf": {
+        "affiliation": {
           "@type": "CollegeOrUniversity",
           "name": "Al-Ryada University (RST)"
         },
         "sameAs": [
           "https://github.com/negm-7-4",
-          "https://www.linkedin.com/in/mohammed-e-negm-a45624335",
-          "https://www.facebook.com/share/1HwyZgZLtQ/",
+          "https://www.linkedin.com/in/mohammed-negm-a45624335/",
           "https://www.instagram.com/mohamednegm_74"
         ]
       }
@@ -106,7 +106,7 @@
         "@context": "https://schema.org",
         "@type": "WebSite",
         "name": "Mohamed Negm — Portfolio",
-        "url": "https://mohamednegm.com/",
+        "url": "https://mohamed-negm.vercel.app/",
         "inLanguage": "en",
         "author": { "@type": "Person", "name": "Mohamed Negm" }
       }
@@ -116,7 +116,7 @@
     <script>
       // eslint-disable-next-line
       console.log(
-        "%c\n  ✦  Mohamed Negm — Front-End Developer  ✦\n",
+        "%c\n  ✦  Mohamed Negm — Software Engineer  ✦\n",
         "color:#aab4c4;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;letter-spacing:0.18em;"
       );
       console.log(
@@ -130,7 +130,7 @@
     <div id="root"></div>
     <noscript>
       <div style="max-width:42rem;margin:18vh auto;padding:0 1.5rem;font-family:system-ui,sans-serif;color:#dfe3ea;text-align:center;">
-        <h1 style="font-size:1.6rem;font-weight:700;margin-bottom:0.75rem;">Mohamed Negm — Front-End Developer</h1>
+        <h1 style="font-size:1.6rem;font-weight:700;margin-bottom:0.75rem;">Mohamed Negm — Software Engineer</h1>
         <p style="color:#8a93a6;line-height:1.7;">
           This portfolio uses JavaScript for its interactive 3D experience.
           Please enable JavaScript to view it, or reach me directly at

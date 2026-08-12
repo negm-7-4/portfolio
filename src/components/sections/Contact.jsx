@@ -5,11 +5,9 @@ import MagneticButton from "../ui/MagneticButton";
 import { celebrate } from "../../lib/confetti";
 import { profile } from "../../data/content";
 
-/* Paste a form backend URL here to receive real submissions
-   (e.g. Formspree: "https://formspree.io/f/xxxxxx").
-   Left empty, the form gracefully falls back to opening the visitor's
-   mail client pre-filled with their message. */
-const FORM_ENDPOINT = "";
+// Same-origin Vercel Function. If Resend is not configured in an environment,
+// the API returns a typed 503 and the UI honestly falls back to the mail app.
+const FORM_ENDPOINT = "/api/contact";
 
 /* Inline icon components — replaces lucide-react to drop ~12KB of dep. */
 const stroke = {
@@ -173,7 +171,7 @@ export default function Contact() {
   const bgY = useTransform(scrollYProgress, [0, 1], [80, -80]);
   const titleY = useTransform(scrollYProgress, [0, 1], [40, -40]);
 
-  const [status, setStatus] = useState("idle"); // idle | sending | sent | error
+  const [status, setStatus] = useState("idle"); // idle | sending | sent | email-opened | error
   const [error, setError] = useState("");
   const [fields, setFields] = useState({});
   const set = (k) => (e) => setFields((f) => ({ ...f, [k]: e.target.value }));
@@ -195,39 +193,46 @@ export default function Contact() {
       return;
     }
 
-    const rect = e.target.getBoundingClientRect();
+    const rect = e.currentTarget.getBoundingClientRect();
     const succeed = () => {
       setStatus("sent");
       celebrate(rect.left + rect.width / 2, rect.top + 80);
       setTimeout(() => {
         setStatus("idle");
         setFields({});
-      }, 3500);
+      }, 4500);
     };
 
-    // No backend wired yet → open the user's mail client (graceful fallback).
-    if (!FORM_ENDPOINT) {
+    const openMailApp = () => {
       const body = encodeURIComponent(
-        `${message}\n\n— ${name}${fields.phone ? `\nPhone: ${fields.phone}` : ""}`
+        `${message}\n\n— ${name}${fields.phone ? `\nPhone: ${fields.phone}` : ""}\nEmail: ${email}`
       );
       const subject = encodeURIComponent(fields.subject || `Portfolio enquiry from ${name}`);
       window.location.href = `mailto:${profile.email}?subject=${subject}&body=${body}`;
-      succeed();
-      return;
-    }
+      setStatus("email-opened");
+      setTimeout(() => setStatus("idle"), 4500);
+    };
 
     try {
       setStatus("sending");
       const res = await fetch(FORM_ENDPOINT, {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify(fields),
+        body: JSON.stringify({
+          ...fields,
+          submissionId: globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`,
+        }),
       });
-      if (!res.ok) throw new Error("Request failed");
+      const payload = await res.json().catch(() => ({}));
+      if (res.status === 503 && payload.code === "CONTACT_NOT_CONFIGURED") {
+        openMailApp();
+        return;
+      }
+      if (!res.ok || payload.ok !== true) throw new Error(payload.message || "Request failed");
       succeed();
     } catch {
       setStatus("error");
-      setError("Something went wrong — please email me directly instead.");
+      setError("The message could not be delivered. Please use the email link below instead.");
     }
   };
 
@@ -381,6 +386,17 @@ export default function Contact() {
             transition={{ delay: 0.2, duration: 0.7 }}
             className="gradient-border relative rounded-3xl glass p-7 md:p-10"
           >
+            <div className="pointer-events-none absolute -left-[10000px] h-px w-px overflow-hidden" aria-hidden="true">
+              <label htmlFor="contact-company">Company website</label>
+              <input
+                id="contact-company"
+                name="company"
+                value={fields.company || ""}
+                onChange={set("company")}
+                tabIndex={-1}
+                autoComplete="off"
+              />
+            </div>
             {/* corner brackets */}
             <span className="pointer-events-none absolute left-4 top-4 h-3 w-3 border-l border-t border-white/25" />
             <span className="pointer-events-none absolute right-4 top-4 h-3 w-3 border-r border-t border-white/25" />
@@ -450,6 +466,11 @@ export default function Contact() {
                     ✓
                   </motion.span>
                 </span>
+              ) : status === "email-opened" ? (
+                <span className="flex items-center gap-2">
+                  Email app opened
+                  <span aria-hidden>↗</span>
+                </span>
               ) : (
                 <>
                   Send message
@@ -464,17 +485,28 @@ export default function Contact() {
               )}
             </MagneticButton>
 
-            <p className="mt-4 text-center text-[10px] uppercase tracking-[0.3em] text-white/50">
-              Or DM on{" "}
-              <a
-                href={profile.socials.find((s) => s.label === "LinkedIn")?.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                data-cursor="hover"
-                className="text-white/60 underline underline-offset-4 hover:text-white"
-              >
-                LinkedIn
-              </a>
+            <p className="mt-4 text-center text-[10px] uppercase tracking-[0.24em] text-white/50" aria-live="polite">
+              {status === "sent" ? "Delivered to my inbox." : (
+                <>
+                  Or email me directly / DM on{" "}
+                  <a
+                    href={`mailto:${profile.email}`}
+                    className="text-white/60 underline underline-offset-4 hover:text-white"
+                  >
+                    Email
+                  </a>{" "}
+                  ·{" "}
+                  <a
+                    href={profile.socials.find((s) => s.label === "LinkedIn")?.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    data-cursor="hover"
+                    className="text-white/60 underline underline-offset-4 hover:text-white"
+                  >
+                    LinkedIn
+                  </a>
+                </>
+              )}
             </p>
           </motion.form>
         </div>

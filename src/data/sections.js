@@ -11,7 +11,7 @@ export const sections = [
   { id: "experience",   num: "04", label: "Journey",    color: "#4fb3e8", accent: "#a0d8f5", hue: 202 },
   { id: "process",      num: "05", label: "Process",    color: "#9a7bff", accent: "#c3b0ff", hue: 256 },
   { id: "projects",     num: "06", label: "Projects",   color: "#ff8a5b", accent: "#ffb89a", hue: 18  },
-  { id: "testimonials", num: "07", label: "Reviews",    color: "#ff6f9c", accent: "#ffaac6", hue: 338 },
+  { id: "sams-case-study", num: "07", label: "Case Study", color: "#9a8ac8", accent: "#c7bdf0", hue: 258 },
   { id: "socials",      num: "08", label: "Socials",    color: "#6db0ff", accent: "#a9d2ff", hue: 210 },
   { id: "contact",      num: "09", label: "Contact",    color: "#3fd6c2", accent: "#92ecdd", hue: 168 },
 ];

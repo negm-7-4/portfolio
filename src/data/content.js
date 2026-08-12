@@ -4,14 +4,14 @@ export const profile = {
   name:       "Mohamed Negm",
   firstName:  "Mohamed",
   lastName:   "Negm",
-  role:       "Front-End Developer",
+  role:       "Software Engineer",
   tagline:
     "CS & AI student crafting fast, immersive web experiences with React, Three.js and cutting-edge motion design.",
   location:   "Sadat City, Monufia, Egypt",
   email:      "mohammednegm11234@gmail.com",
   phone:      "+20 10 1227 9297",
-  education:  "B.Sc Computer Science & AI",
-  year:       "2nd Year",
+  education:  "B.Sc. Software Engineering",
+  year:       "Third Year",
   university: "Al-Ryada University (RST)",
   status:     "Open to opportunities",
   resumeUrl:  "/Mohamed_Negm_CV.pdf",
@@ -20,7 +20,7 @@ export const profile = {
     { label: "GitHub",    url: "https://github.com/negm-7-4" },
     {
       label: "LinkedIn",
-      url: "https://www.linkedin.com/in/mohammed-e-negm-a45624335?utm_source=share_via&utm_content=profile&utm_medium=member_android",
+      url: "https://www.linkedin.com/in/mohammed-negm-a45624335/",
     },
     { label: "Facebook",  url: "https://www.facebook.com/share/1HwyZgZLtQ/" },
     { label: "Instagram", url: "https://www.instagram.com/mohamednegm_74?igsh=N2hodW1zcGtuOHk4" },
@@ -31,42 +31,76 @@ export const heroTags = ["React", "Next.js", "Framer Motion", "Three.js", "Tailw
 
 /* ── Résumé — mirrors the downloadable PDF, rendered live in the CV modal ── */
 export const resume = {
-  headline: "Junior Front-End Developer",
-  subhead:  "React • JavaScript • TypeScript",
+  name:     "Mohammed Emad Negm",
+  headline: "Software Engineer",
+  subhead:  "React • TypeScript • 3D Web",
   summary:
-    "Motivated junior front-end developer with a solid foundation in modern web technologies — HTML, CSS, JavaScript and TypeScript — alongside hands-on experience building real applications with React and Node.js. A fast, self-driven learner seeking a front-end role to contribute to real products while continuing to grow technically.",
+    "Junior front-end developer and Software Engineering student with hands-on experience building responsive web applications, interactive 3D product experiences, multi-agent AI systems, and full-stack business platforms. Skilled in React, TypeScript, JavaScript, WebGL animation, REST APIs, state management, and testing. Builds mobile-first interfaces with attention to performance, usability, and maintainable code.",
   contact: [
     { label: "Email",    value: "mohammednegm11234@gmail.com", href: "mailto:mohammednegm11234@gmail.com" },
     { label: "Phone",    value: "+20 10 1227 9297",           href: "tel:+201012279297" },
     { label: "Location", value: "Sadat City, Menoufia, Egypt", href: null },
     { label: "GitHub",   value: "github.com/negm-7-4",         href: "https://github.com/negm-7-4" },
+    { label: "LinkedIn", value: "linkedin.com/in/mohammed-negm-a45624335", href: "https://www.linkedin.com/in/mohammed-negm-a45624335/" },
+    { label: "Portfolio", value: "mohamed-negm.vercel.app", href: "https://mohamed-negm.vercel.app/" },
   ],
   skillGroups: [
-    { label: "Front-End",  items: ["HTML5", "CSS3", "JavaScript (ES6+)", "Responsive Web Design"] },
-    { label: "Frameworks", items: ["React", "TypeScript"] },
-    { label: "Back-End",   items: ["Node.js", "REST APIs"] },
-    { label: "Other",      items: ["Networking Fundamentals", "AI Integration", "Git & GitHub"] },
+    { label: "Front-End", items: ["HTML5", "CSS3", "JavaScript (ES6+)", "TypeScript", "React", "Responsive Web Design"] },
+    { label: "3D & Animation", items: ["React Three Fiber", "Drei", "GSAP", "ScrollTrigger", "Framer Motion", "Lenis"] },
+    { label: "Back-End & Data", items: ["Node.js", "Express", "REST APIs", "SQLite", "MongoDB", "Firebase"] },
+    { label: "AI & Real-Time", items: ["LangGraph", "Multi-Agent Orchestration", "AI Model Routing", "WebSockets"] },
+    { label: "Tools & Other", items: ["Vite", "Tailwind CSS", "Zustand", "Git", "GitHub", "Vitest", "Docker", "Flutter", "Python", "C++"] },
   ],
   projects: [
     {
-      name:  "Nexora ERP",
-      kind:  "Accounting & Business Management Application",
-      desc:  "Designed and built a complete ERP / accounting application covering core bookkeeping and business-management workflows, with a clean, user-friendly interface.",
-      stack: "JavaScript · HTML · CSS · React",
+      name: "VÉRA Fragrances",
+      kind: "Luxury 3D E-Commerce Experience",
+      bullets: [
+        "Built a mobile-first perfume storefront with a scroll-driven 3D bottle film, a 13-product collection, interactive product pages, cart, cash-on-delivery checkout, and an owner dashboard.",
+        "Optimized rendering to no more than three WebGL contexts with device-tier quality scaling and API fallback.",
+        "Load-tested the backend at 50 concurrent users with 2,650 requests/second, 0 errors, and p99 around 46 ms.",
+      ],
+      tech: ["React", "TypeScript", "React Three Fiber", "GSAP", "Framer Motion", "Node.js", "Express", "SQLite", "Vitest", "Docker"],
+      github: "https://github.com/negm-7-4/vera-fragrances",
     },
     {
-      name:  "AI-Powered To-Do List",
-      kind:  "Smart Task Manager",
-      desc:  "An advanced task-management app enhanced with AI to help users organise and prioritise their work — responsive, intuitive and modern.",
-      stack: "JavaScript · React · AI Integration",
+      name: "SAMS",
+      kind: "Multi-Agent Virtual AI Office",
+      bullets: [
+        "Orchestrated Claude for implementation, GPT for planning, and Gemini for testing. Agents discuss requirements, divide projects by expertise, exchange context, review outputs, and resolve blockers as one delivery team.",
+        "Designed an interactive virtual company with dedicated workstations, meeting rooms, a shared whiteboard, agent movement, coffee breaks, and real-time collaboration so each AI behaves like a digital employee.",
+      ],
+      tech: ["React", "Three.js", "FastAPI", "LangGraph", "WebSockets", "Multi-Model AI Routing"],
     },
     {
-      name:  "Weighbridge System",
-      kind:  "Vehicle Weighing & Records Management",
-      desc:  "A weighbridge (truck-scale) application to weigh vehicles and maintain an organised log of weighing entries for daily operations.",
-      stack: "JavaScript · HTML · CSS",
+      name: "Acoustic Room Mapper",
+      kind: "Real-Time Acoustic Geometry Detection",
+      bullets: [
+        "Built a cross-platform system that analyzes acoustic responses and generates live 2D room floor plans with sub-50 ms processing latency.",
+        "Connected a Flutter Material 3 interface to a Python Flask REST API and C++17 DSP engine using FFT and cross-correlation, with four visualization modes, Arabic RTL support, live metrics, and JSON export.",
+      ],
+      tech: ["Flutter", "Dart", "Python", "Flask", "C++17", "CMake", "FFT", "REST APIs"],
+      github: "https://github.com/negm-7-4/Acoustic-Room-Mapper",
+    },
+    {
+      name: "Nexora ERP",
+      kind: "Multi-Tenant Business Management Platform",
+      bullets: [
+        "Built an ERP and SaaS platform covering sales, purchases, inventory, manufacturing, HR, CRM, logistics, treasury, finance reports, billing, and AI-assisted actions.",
+        "Implemented tenant isolation, role-based permissions, JWT authentication, offline-first storage, cloud sync, printable invoices, analytics, and Android packaging through Capacitor.",
+      ],
+      tech: ["React", "Vite", "Node.js", "Express", "MongoDB", "Firebase", "IndexedDB", "JWT", "Docker", "Capacitor"],
+      github: "https://github.com/negm-7-4/nexora-erp",
     },
   ],
+  certifications: {
+    provider: "Meta · Coursera",
+    items: [
+      "Introduction to Front-End Development",
+      "Programming with JavaScript",
+      "Version Control",
+    ],
+  },
   education: {
     degree:      "B.Sc. in Computers & Information — Software Engineering",
     school:      "Al-Ryada University for Science and Technology (RST)",
@@ -77,7 +111,6 @@ export const resume = {
     { name: "Arabic",  level: "Native" },
     { name: "English", level: "B1 (Intermediate)" },
   ],
-  softSkills: ["Communication", "Teamwork", "Problem-solving", "Fast self-learning", "Adaptability"],
 };
 
 export const aboutCards = [
@@ -208,9 +241,9 @@ export const experience = [
   },
   {
     period: "2023 — Present",
-    role: "B.Sc Computer Science & AI",
+    role: "B.Sc. Software Engineering",
     company: "Al-Ryada University (RST)",
-    desc: "2nd year — specialising in AI algorithms, data structures, software engineering and full-stack development.",
+    desc: "Third year — studying software engineering, AI algorithms, data structures and full-stack development.",
   },
 ];
 
@@ -222,26 +255,27 @@ export const projects = [
     category: "Multi-Agent AI Platform",
     tagline:  "An AI Company That Runs Itself",
     desc:     "A virtual AI office where autonomous agents each own a role — they collaborate peer-to-peer, negotiate, hold meetings and deliver real work end-to-end. Live model brains, QA agents that read real files, and a day/night office you can actually watch working.",
-    tech:     ["React", "Node.js", "Multi-Agent AI", "WebSockets", "OpenAI / DeepSeek"],
+    tech:     ["React", "Three.js", "FastAPI", "LangGraph", "WebSockets", "Multi-Model AI"],
     color:    "#9a8ac8",
-    github:   "https://github.com/negm-7-4",
+    github:   null,
     live:     null,
+    caseStudy: "#sams-case-study",
     image:    "/projects/sams-1.jpg",
     images:   ["/projects/sams-1.jpg"],
     status:   "Flagship",
   },
   {
-    title:    "Vera",
+    title:    "VÉRA",
     category: "3D E-Commerce",
     tagline:  "A Perfume House Told in Scroll",
     desc:     "Complete store experience for a perfume brand — cinematic 3D bottles, scroll-driven camera storytelling and motion on every surface, backed by a full owner dashboard for products, orders and analytics.",
-    tech:     ["React", "Three.js", "GSAP", "Scroll Camera", "Dashboard"],
+    tech:     ["React", "TypeScript", "React Three Fiber", "GSAP", "Node.js"],
     color:    "#b89a6e",
-    github:   "https://github.com/negm-7-4",
-    live:     null,
+    github:   "https://github.com/negm-7-4/vera-fragrances",
+    live:     "https://vera-fragrances.vercel.app/",
     image:    "/projects/vera-1.jpg",
     images:   ["/projects/vera-1.jpg", "/projects/vera-2.jpg", "/projects/vera-3.jpg"],
-    status:   "Completed",
+    status:   "Live",
   },
   {
     title:    "Nexora ERP",
@@ -250,7 +284,7 @@ export const projects = [
     desc:     "Enterprise resource planning platform with an AI copilot you literally speak to — voice commands drive inventory, sales and purchasing, on top of invoicing, financial reporting, multi-user access and a SaaS tier.",
     tech:     ["React", "Node.js", "MongoDB", "Voice AI", "SaaS"],
     color:    "#8a93a6",
-    github:   "https://github.com/negm-7-4",
+    github:   "https://github.com/negm-7-4/nexora-erp",
     live:     null,
     image:    "/projects/nexora.jpg",
     images:   ["/projects/nexora.jpg", "/projects/nexora-2.jpg", "/projects/nexora-3.jpg"],
@@ -263,7 +297,7 @@ export const projects = [
     desc:     "Full automation platform with a growing connector library — wire services together into visual workflows, run them on schedules or triggers, and manage it all under a multi-tenant SaaS.",
     tech:     ["NestJS", "React", "Workflow Engine", "PostgreSQL", "SaaS"],
     color:    "#7aa89e",
-    github:   "https://github.com/negm-7-4",
+    github:   null,
     live:     null,
     image:    "/projects/automation-1.jpg",
     images:   ["/projects/automation-1.jpg"],
@@ -289,7 +323,7 @@ export const projects = [
     desc:     "Maps and visualises social network connections, identifies key influencers and detects community clusters using graph theory and network analysis algorithms.",
     tech:     ["Python", "NetworkX", "React", "D3.js"],
     color:    "#7e93a8",
-    github:   "https://github.com/negm-7-4",
+    github:   null,
     live:     null,
     image:    "/projects/social.jpg",
     images:   ["/projects/social.jpg"],
@@ -302,7 +336,7 @@ export const projects = [
     desc:     "Scalar and matrix computation engine with expression parsing, complex mathematical operations and real-time visualisation of scalar transformations.",
     tech:     ["React", "Math.js", "Canvas API", "Tailwind CSS"],
     color:    "#a8978c",
-    github:   "https://github.com/negm-7-4",
+    github:   null,
     live:     null,
     image:    "/projects/bascalscalar.png",
     images:   ["/projects/bascalscalar.png"],
@@ -315,7 +349,7 @@ export const projects = [
     desc:     "Feature-rich task manager with categories, priorities, due dates, drag-and-drop reordering and local persistence — designed for clarity and speed.",
     tech:     ["React", "Framer Motion", "LocalStorage", "Tailwind CSS"],
     color:    "#8fa394",
-    github:   "https://github.com/negm-7-4",
+    github:   null,
     live:     null,
     image:    "/projects/todo.jpg",
     images:   ["/projects/todo.jpg"],
@@ -354,26 +388,6 @@ export const process = [
   },
 ];
 
-export const testimonials = [
-  {
-    quote:    "Mohamed delivered a landing page that made our investors stop scrolling. The animations felt like nothing I'd seen from a freelancer before.",
-    name:     "Sarah K.",
-    role:     "Startup Founder",
-    initials: "SK",
-    rating:   5,
-  },
-  {
-    quote:    "Clean code, razor-sharp design instincts and always ahead of deadline. He's the rare developer who actually understands both craft and UX.",
-    name:     "Ahmed R.",
-    role:     "Product Manager",
-    initials: "AR",
-    rating:   5,
-  },
-  {
-    quote:    "The 3D interactions he built for our product demo tripled our session duration. Rare to find someone who lives at the intersection of code and art.",
-    name:     "Lena M.",
-    role:     "UX Lead",
-    initials: "LM",
-    rating:   5,
-  },
-];
+// Testimonials are intentionally unpublished until references can be
+// attributed and verified. Credibility beats decorative social proof.
+export const testimonials = [];

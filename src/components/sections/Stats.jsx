@@ -23,7 +23,12 @@ export default function Stats() {
     // saves ~115 KB on initial paint and pushes it to a lazy chunk.
     let ctx;
     let canceled = false;
-    (async () => {
+    let started = false;
+    let observer;
+
+    const start = async () => {
+      if (started) return;
+      started = true;
       const { gsap } = await loadScrollSync();
       if (canceled) return;
 
@@ -45,8 +50,23 @@ export default function Stats() {
           });
         });
       }, root);
-    })();
-    return () => { canceled = true; ctx?.revert(); };
+    };
+
+    observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        observer.disconnect();
+        start();
+      },
+      { rootMargin: "600px 0px" }
+    );
+    if (root.current) observer.observe(root.current);
+
+    return () => {
+      canceled = true;
+      observer?.disconnect();
+      ctx?.revert();
+    };
   }, []);
 
   return (

@@ -95,7 +95,7 @@ const HEADLINE = [
   { text: "ALIVE.", accent: true },
 ];
 
-const CUT = "/portrait-negm-cut.png";
+const CUT = "/portrait-negm-cut.webp";
 
 function DuotonePhoto({ lite, reduce }) {
   // Parallax (whole figure drifts opposite the cursor).
@@ -139,7 +139,7 @@ function DuotonePhoto({ lite, reduce }) {
 
   return (
     <motion.div
-      className="absolute bottom-0 right-0 aspect-[4/5] h-[74%] sm:h-[86%] md:right-[3%] md:h-[94%]
+      className="photo-intro-portrait absolute -bottom-[9%] right-0 aspect-[4/5] h-[58%] sm:-bottom-[6%] sm:h-[64%] md:bottom-0 md:right-[3%] md:h-[94%]
                  left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0"
       onPointerMove={onMove}
       onPointerLeave={onLeave}
@@ -216,6 +216,7 @@ export default function PhotoIntro() {
   const { tier, touch } = useDeviceProfile();
   const reduce = useReducedMotion();
   const lite = touch || tier === "low";
+  const instant = reduce || lite;
 
   // Scroll hand-off: as the cover leaves, the photo drifts up + fades, the
   // copy lifts — so it dissolves into the Hero rather than cutting.
@@ -249,12 +250,18 @@ export default function PhotoIntro() {
       }}
     >
       {/* animated diagonal light streaks */}
-      <LightStreaks reduce={reduce} />
+      <LightStreaks reduce={instant} />
 
       {/* the graded portrait */}
       <motion.div style={{ y: photoY, opacity: photoOpacity }} className="absolute inset-0">
-        <DuotonePhoto lite={lite} reduce={reduce} />
+        <DuotonePhoto lite={lite} reduce={instant} />
       </motion.div>
+
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 h-[58%] md:hidden"
+        style={{ background: `linear-gradient(180deg, ${BG} 0%, rgba(12,22,42,0.92) 62%, transparent 100%)` }}
+      />
 
       {/* film grain + vignette over the whole frame */}
       <div
@@ -275,14 +282,14 @@ export default function PhotoIntro() {
       {/* ── Copy (left) ── */}
       <motion.div
         style={{ y: copyY, opacity: copyOpacity }}
-        className="relative z-10 mx-auto flex h-full w-[90%] max-w-7xl flex-col justify-center"
+        className="photo-intro-copy relative z-10 mx-auto flex h-full w-[90%] max-w-7xl flex-col justify-start pt-[10svh] sm:pt-[11svh] md:justify-center md:pt-0"
       >
         {/* kicker */}
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
+          initial={instant ? false : { opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.7, ease: EASE_OUT }}
-          className="mb-6 flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.34em] text-white/60"
+          className="mb-4 flex items-center gap-3 text-[9px] font-semibold uppercase tracking-[0.3em] text-white/60 md:mb-6 md:text-[11px] md:tracking-[0.34em]"
         >
           <span className="h-px w-10 bg-gradient-to-r from-[#aab4c4] to-transparent" />
           {profile.name} — Software Engineer
@@ -290,14 +297,13 @@ export default function PhotoIntro() {
 
         {/* statement headline */}
         <h1
-          className="font-display font-bold uppercase leading-[0.92] tracking-[-0.02em]"
-          style={{ fontSize: "clamp(2.6rem, 8vw, 7.5rem)" }}
+          className="photo-intro-headline font-display text-[clamp(2.15rem,10.8vw,3.5rem)] font-bold uppercase leading-[0.92] tracking-[-0.02em] md:text-[clamp(3.4rem,8vw,7.5rem)]"
         >
           {HEADLINE.map((l, i) => (
             <span key={i} className="block overflow-hidden">
               <motion.span
                 className={`block ${l.accent ? "text-gradient" : "text-white"}`}
-                {...(reduce ? {} : line(i))}
+                {...(instant ? {} : line(i))}
               >
                 {l.text}
               </motion.span>
@@ -307,10 +313,10 @@ export default function PhotoIntro() {
 
         {/* tagline */}
         <motion.p
-          initial={{ opacity: 0, y: 16 }}
+          initial={instant ? false : { opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.95, duration: 0.7, ease: EASE_OUT }}
-          className="mt-7 max-w-md text-base leading-relaxed text-white/60 md:text-lg"
+          className="photo-intro-tagline mt-5 max-w-md text-sm leading-relaxed text-white/60 md:mt-7 md:text-lg"
         >
           {profile.tagline}
         </motion.p>
@@ -324,7 +330,7 @@ export default function PhotoIntro() {
           else el?.scrollIntoView({ behavior: "smooth" });
         }}
         data-cursor="hover"
-        initial={{ opacity: 0 }}
+        initial={instant ? false : { opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.4, duration: 0.8 }}
         style={{ opacity: copyOpacity }}

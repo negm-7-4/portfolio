@@ -6,8 +6,8 @@ import useDeviceProfile from "../hooks/useDeviceProfile";
 
 const greetings = ["Hello", "مرحبا", "Bonjour", "こんにちは", "Hola", "Ciao", "Hallo"];
 const PANELS    = 8;
-const NAME_HOLD = 2800;
-const MAX_DURATION = 11000;
+const NAME_HOLD = 700;
+const MAX_DURATION = 3500;
 
 /* Golden-angle scatter — each character starts at a unique orbital position */
 function scatterPos(idx) {
@@ -76,11 +76,10 @@ export default function Preloader({ onDone }) {
   const rawProgress = useMotionValue(0);
 
   /* ── Readiness ─────────────────────────────────────────────
-     Synced to the cinematic world's first painted frame, so the curtain
-     lifts exactly as the 3D scene is alive. Low tier never mounts the world,
-     so a short 1.5s baseline reveals promptly there; capable tiers wait for
-     the real first frame, with a long safety net so a stalled chunk can
-     never trap the user. (`robotReady` kept as the internal flag name.) */
+     The cinematic world now warms after the visitor leaves the opaque cover,
+     so this sequence uses a short readiness baseline. It still adopts a real
+     ready signal if one already exists. (`robotReady` stays as the internal
+     flag name to keep the animation state decoupled from the loader.) */
   useEffect(() => {
     if (experience.getState().ready) {
       setRobotReady(true);
@@ -90,7 +89,7 @@ export default function Preloader({ onDone }) {
       (s) => s.ready,
       (ready) => ready && setRobotReady(true)
     );
-    const baseline = setTimeout(() => setRobotReady(true), tier === "low" ? 1500 : 9000);
+    const baseline = setTimeout(() => setRobotReady(true), tier === "low" ? 450 : 700);
     return () => {
       unsub();
       clearTimeout(baseline);
@@ -99,7 +98,7 @@ export default function Preloader({ onDone }) {
 
   /* ── Skip affordance — never trap anyone in an intro ── */
   useEffect(() => {
-    const id = setTimeout(() => setShowSkip(true), 3500);
+    const id = setTimeout(() => setShowSkip(true), 1200);
     return () => clearTimeout(id);
   }, []);
 
@@ -107,7 +106,7 @@ export default function Preloader({ onDone }) {
     if (finishedRef.current) return;
     finishedRef.current = true;
     setPhase("done");
-    setTimeout(onDone, 1100);
+    setTimeout(onDone, 650);
   };
 
   /* ── Counter / progress ───────────────────────────────────────────
@@ -130,24 +129,26 @@ export default function Preloader({ onDone }) {
       setCount((c) => {
         // Ease toward the target, clamped so a sudden asset finish reads as a
         // confident acceleration rather than a teleport.
-        const step = Math.min(9, Math.max(target >= 100 ? 2.5 : 1, (target - c) * 0.22));
+        const step = target >= 100
+          ? Math.min(14, Math.max(5, (target - c) * 0.38))
+          : Math.min(9, Math.max(1, (target - c) * 0.22));
         const n = Math.min(c + step, target, 100);
         rawProgress.set(n / 100);
         if (n >= 100 && !done) {
           done = true;
           clearInterval(id);
-          setTimeout(() => setPhase("name"), 450);
+          setTimeout(() => setPhase("name"), 150);
         }
         return Math.floor(n);
       });
-    }, 110);
+    }, 70);
     return () => clearInterval(id);
   }, [phase, robotReady, rawProgress]);
 
   /* ── Greeting cycle ───────────────────────────────────── */
   useEffect(() => {
     if (phase !== "loading") return;
-    const id = setInterval(() => setGreetIndex((i) => (i + 1) % greetings.length), 750);
+    const id = setInterval(() => setGreetIndex((i) => (i + 1) % greetings.length), 420);
     return () => clearInterval(id);
   }, [phase]);
 
@@ -159,7 +160,7 @@ export default function Preloader({ onDone }) {
       if (finishedRef.current) return;
       finishedRef.current = true;
       setPhase("done");
-      setTimeout(onDone, 1100);
+      setTimeout(onDone, 650);
     };
     const poll = setInterval(() => {
       if (Date.now() - nameStart >= NAME_HOLD && robotReady) finish();

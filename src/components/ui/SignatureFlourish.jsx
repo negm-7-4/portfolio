@@ -19,8 +19,12 @@ export default function SignatureFlourish({ className = "" }) {
     if (reducedMotion) return;
     let ctx;
     let canceled = false;
+    let started = false;
+    let observer;
 
-    (async () => {
+    const start = async () => {
+      if (started) return;
+      started = true;
       const { gsap } = await loadGsap();
       if (canceled || !ref.current) return;
 
@@ -56,10 +60,21 @@ export default function SignatureFlourish({ className = "" }) {
             ">"
           );
       }, ref);
-    })();
+    };
+
+    observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        observer.disconnect();
+        start();
+      },
+      { rootMargin: "600px 0px" }
+    );
+    if (ref.current) observer.observe(ref.current);
 
     return () => {
       canceled = true;
+      observer?.disconnect();
       ctx?.revert();
     };
   }, [reducedMotion]);

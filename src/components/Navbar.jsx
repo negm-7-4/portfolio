@@ -120,7 +120,7 @@ export default function Navbar() {
           whileTap={{ scale: 0.96 }}
           transition={{ type: "spring", stiffness: 320, damping: 20 }}
           className="group flex items-center gap-2 font-display text-lg font-bold tracking-tight text-white"
-          aria-label="Back to top"
+          aria-label="ME — back to top"
         >
           {/* Two-layer asterisk — outer slow, inner fast, with a pulsing glow */}
           <span className="relative inline-flex h-5 w-5 items-center justify-center">
