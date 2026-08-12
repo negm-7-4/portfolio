@@ -70,34 +70,26 @@ function TechTile({ item, i, desktop }) {
           style={{ background: `radial-gradient(circle, ${item.color}99 0%, transparent 60%)` }}
         />
 
-        {/* rotating dashed ring — CSS compositor (was a framer loop per tile) */}
+        {/* rotating dashed ring on hover — the only frame there is, and it
+            only appears while you point at the tool */}
         <span
-          className="spin-slow pointer-events-none absolute inset-0 rounded-3xl opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-          style={{ border: `1px dashed ${item.color}65` }}
+          className="spin-slow pointer-events-none absolute inset-0 rounded-full opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+          style={{ border: `1px dashed ${item.color}55` }}
         />
 
-        {/* tile body */}
+        {/* tile body — FULLY TRANSPARENT: the logos float in the space of the
+            3D world instead of sitting in glass cards, so the constellation
+            reads as one field of marks rather than a grid of boxes. */}
         <motion.div
-          className={`relative z-10 flex flex-col items-center justify-center rounded-3xl ${size} ${isBig ? "gradient-border" : ""}`}
-          style={{
-            background: "rgba(255,255,255,0.04)",
-            border: "1px solid rgba(255,255,255,0.1)",
-            boxShadow:
-              "inset 0 1px 0 rgba(255,255,255,0.1), 0 24px 50px rgba(0,0,0,0.45)",
-            backdropFilter: "blur(16px)",
-            WebkitBackdropFilter: "blur(16px)",
-          }}
+          className={`relative z-10 flex flex-col items-center justify-center ${size}`}
         >
-          {/* tiny corner brackets — subtle premium detail */}
-          <span className="pointer-events-none absolute left-2 top-2 h-2 w-2 border-l border-t border-white/20" />
-          <span className="pointer-events-none absolute right-2 top-2 h-2 w-2 border-r border-t border-white/20" />
-          <span className="pointer-events-none absolute left-2 bottom-2 h-2 w-2 border-l border-b border-white/20" />
-          <span className="pointer-events-none absolute right-2 bottom-2 h-2 w-2 border-r border-b border-white/20" />
 
-          {/* icon */}
+          {/* icon — with no card behind it, a soft drop shadow is what keeps
+              the logo readable over the moving 3D world */}
           <motion.div
             whileHover={{ rotate: [0, -10, 10, -5, 0] }}
             transition={{ duration: 0.55 }}
+            style={{ filter: "drop-shadow(0 6px 14px rgba(0,0,0,0.65))" }}
           >
             <TechIcon name={item.icon} color={item.color} size={iconSize} />
           </motion.div>
@@ -105,6 +97,7 @@ function TechTile({ item, i, desktop }) {
           {/* name */}
           <span
             className={`mt-1.5 px-1 text-center leading-tight md:mt-3 font-display font-semibold tracking-tight text-white/85 transition-colors duration-300 group-hover:text-white ${textSize}`}
+            style={{ textShadow: "0 2px 10px rgba(0,0,0,0.85), 0 0 24px rgba(0,0,0,0.6)" }}
           >
             {item.name}
           </span>

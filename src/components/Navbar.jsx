@@ -13,8 +13,13 @@ const links = [
   { label: "Contact",  id: "contact"  },
 ];
 
-/* ─── Magnetic nav link — gently leans toward the cursor ─── */
-function NavLink({ link, isActive, onClick }) {
+/* ─── A star on the constellation trail ───────────────────────────────
+   Each section is a star. The node sits ON the hairline that runs through
+   the whole nav; the label hangs beneath it and stays permanently visible
+   (a nav that hides its labels is a puzzle, not a menu). Visited stars are
+   lit, the current one blooms into the site's four-point glyph, and the
+   button still leans toward the cursor. */
+function NavLink({ link, isActive, isPassed, onClick }) {
   const ref = useRef(null);
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
@@ -27,8 +32,8 @@ function NavLink({ link, isActive, onClick }) {
     const r = el.getBoundingClientRect();
     const cx = r.left + r.width / 2;
     const cy = r.top + r.height / 2;
-    mx.set((e.clientX - cx) * 0.35);
-    my.set((e.clientY - cy) * 0.35);
+    mx.set((e.clientX - cx) * 0.28);
+    my.set((e.clientY - cy) * 0.28);
   };
   const onLeave = () => { mx.set(0); my.set(0); };
 
@@ -41,37 +46,46 @@ function NavLink({ link, isActive, onClick }) {
         onMouseLeave={onLeave}
         style={{ x: sx, y: sy }}
         data-cursor="hover"
-        className={`group relative rounded-lg px-3.5 py-2 text-[11px] font-medium uppercase tracking-[0.16em] transition-colors ${
-          isActive ? "text-white" : "text-white/55 hover:text-white"
+        aria-current={isActive ? "true" : undefined}
+        className={`group relative flex flex-col items-center gap-2 px-3 pb-1 pt-0.5 text-[10.5px] font-medium uppercase tracking-[0.16em] transition-colors ${
+          isActive ? "text-white" : isPassed ? "text-white/70 hover:text-white" : "text-white/55 hover:text-white"
         }`}
       >
-        {/* sliding shared-layout highlight — glides between links as the
-            active section changes while you scroll */}
-        {isActive && (
-          <motion.span
-            layoutId="nav-active-pill"
-            className="absolute inset-0 rounded-lg bg-white/[0.06]"
-            style={{ boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.07)" }}
-            transition={{ type: "spring", stiffness: 400, damping: 34 }}
-          />
-        )}
-        <span className="relative z-10">
+        {/* the star node, sitting on the trail (the nav measures the lit
+            trail to this element's centre) */}
+        <span
+          data-nav-active={isActive ? "true" : undefined}
+          className="relative flex h-3 w-3 items-center justify-center"
+        >
+          {isActive && (
+            <motion.span
+              layoutId="nav-star-halo"
+              className="absolute h-3.5 w-3.5 rounded-full bg-[#aab4c4]/30 blur-[3px]"
+              transition={{ type: "spring", stiffness: 380, damping: 30 }}
+            />
+          )}
+          {isActive ? (
+            /* the current star blooms into the site's own glyph */
+            <svg viewBox="0 0 24 24" className="relative h-3 w-3 drop-shadow-[0_0_5px_rgba(170,180,196,0.9)]" aria-hidden>
+              <path
+                d="M12 0 C12.7 7.3 16.7 11.3 24 12 C16.7 12.7 12.7 16.7 12 24 C11.3 16.7 7.3 12.7 0 12 C7.3 11.3 11.3 7.3 12 0 Z"
+                fill="#ffffff"
+              />
+            </svg>
+          ) : (
+            <span
+              className={`relative block rounded-full transition-all duration-300 ${
+                isPassed
+                  ? "h-[5px] w-[5px] bg-[#aab4c4] group-hover:h-2 group-hover:w-2"
+                  : "h-[4px] w-[4px] bg-white/30 group-hover:h-2 group-hover:w-2 group-hover:bg-[#aab4c4]"
+              }`}
+            />
+          )}
+        </span>
+
+        <span className="relative z-10 leading-none">
           <ScrambleText text={link.label} />
         </span>
-        {/* underline */}
-        <span
-          className={`absolute bottom-1 left-3.5 z-10 h-px bg-gradient-to-r from-[#aab4c4] to-white/40 transition-all duration-300 ${
-            isActive ? "w-[calc(100%-1.75rem)]" : "w-0 group-hover:w-[calc(100%-1.75rem)]"
-          }`}
-        />
-        {/* active dot */}
-        {isActive && (
-          <motion.span
-            layoutId="nav-active-dot"
-            className="absolute -top-0.5 left-1/2 z-10 h-1 w-1 -translate-x-1/2 rounded-full bg-[#aab4c4]"
-            transition={{ type: "spring", stiffness: 380, damping: 30 }}
-          />
-        )}
       </motion.button>
     </li>
   );
@@ -100,6 +114,36 @@ export default function Navbar() {
   // Detect mac for showing the right keycap (⌘ vs Ctrl)
   const isMac = typeof navigator !== "undefined" && /Mac|iP(hone|ad)/.test(navigator.platform);
 
+  /* How far along the constellation the visitor has travelled.
+     The stars are not evenly spaced (labels differ in width), so the lit
+     trail is MEASURED to the active star's real centre rather than derived
+     from its index — an index-based percentage would drift off the nodes. */
+  const listRef = useRef(null);
+  const [trailW, setTrailW] = useState(0);
+
+  // Sections the nav doesn't list (Hero, Skills, Journey…) keep the last
+  // resolved star so the trail never snaps back to zero mid-journey.
+  const navIndexRef = useRef(0);
+  const exactIndex = links.findIndex((l) => l.id === active.id);
+  if (exactIndex !== -1) navIndexRef.current = exactIndex;
+  const activeIndex = navIndexRef.current;
+
+  useEffect(() => {
+    const ul = listRef.current;
+    if (!ul) return undefined;
+    const measure = () => {
+      const star = ul.querySelector('[data-nav-active="true"]');
+      if (!star) return; // not a listed section — hold the current trail
+      const u = ul.getBoundingClientRect();
+      const s = star.getBoundingClientRect();
+      setTrailW(Math.max(0, s.left + s.width / 2 - u.left));
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(ul);
+    return () => ro.disconnect();
+  }, [active.id]);
+
   return (
     <motion.header
       initial={{ y: -80, opacity: 0 }}
@@ -119,24 +163,44 @@ export default function Navbar() {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.96 }}
           transition={{ type: "spring", stiffness: 320, damping: 20 }}
-          className="group flex items-center gap-2 font-display text-lg font-bold tracking-tight text-white"
-          aria-label="ME — back to top"
+          className="group flex items-center gap-2.5 font-display text-lg font-bold tracking-tight text-white"
+          aria-label="Negm — back to top"
         >
-          {/* Two-layer asterisk — outer slow, inner fast, with a pulsing glow */}
-          <span className="relative inline-flex h-5 w-5 items-center justify-center">
-            {/* CSS-driven (compositor) so the fixed navbar costs nothing idle */}
+          {/* ── The mark: NEGM means "star" (نجم) in Arabic, so the logo IS a
+                star — the same four-point glyph the particle field resolves
+                into at the end of the journey. Drawn as SVG (not a font
+                glyph) so it stays razor-sharp and can animate its stroke. */}
+          <span className="relative inline-flex h-6 w-6 items-center justify-center">
             <span
               aria-hidden
-              className="glow-pulse absolute inset-0 rounded-full bg-[#aab4c4]/20 blur-md"
+              className="glow-pulse absolute inset-0 rounded-full bg-[#aab4c4]/25 blur-md transition-all duration-500 group-hover:bg-[#aab4c4]/40"
             />
-            <span className="spin-slow relative inline-block text-[#aab4c4] transition-colors duration-300 group-hover:text-white">
-              ✦
-            </span>
+            <svg
+              viewBox="0 0 24 24"
+              className="spin-slow relative h-5 w-5 overflow-visible"
+              aria-hidden
+            >
+              {/* sharp four-point star: peaks on the axes, pinched diagonals */}
+              <path
+                d="M12 0 C12.7 7.3 16.7 11.3 24 12 C16.7 12.7 12.7 16.7 12 24 C11.3 16.7 7.3 12.7 0 12 C7.3 11.3 11.3 7.3 12 0 Z"
+                className="fill-[#aab4c4] transition-colors duration-300 group-hover:fill-white"
+              />
+              {/* orbit ring that draws itself on hover (dash offset is
+                  animated via the .logo-orbit rule in index.css) */}
+              <circle
+                cx="12" cy="12" r="10.5" fill="none"
+                stroke="rgba(170,180,196,0.55)"
+                strokeWidth="0.8"
+                className="logo-orbit"
+              />
+            </svg>
           </span>
 
-          <span className="transition-colors duration-300">
-            <span className="text-white/60 transition-colors duration-300 group-hover:text-white/70">&lt;</span>
-            <span className="bar-shimmer"
+          {/* Wordmark — the name itself, with the Arabic reading revealed on
+              hover so the meaning behind the star lands. */}
+          <span className="flex items-baseline gap-1.5">
+            <span
+              className="bar-shimmer tracking-[0.08em]"
               style={{
                 backgroundImage:
                   "linear-gradient(110deg, #ffffff 0%, #aab4c4 50%, #ffffff 100%)",
@@ -145,18 +209,48 @@ export default function Navbar() {
                 WebkitTextFillColor: "transparent",
                 backgroundClip: "text",
               }}
-            >ME</span>
-            <span className="text-white/60 transition-colors duration-300 group-hover:text-white/70"> /&gt;</span>
+            >
+              NEGM
+            </span>
+            <span
+              dir="rtl"
+              lang="ar"
+              aria-hidden
+              className="max-w-0 overflow-hidden whitespace-nowrap text-sm font-semibold text-[#aab4c4]/0 transition-all duration-500 ease-out group-hover:max-w-[3rem] group-hover:text-[#aab4c4]/90"
+            >
+              نجم
+            </span>
           </span>
         </motion.button>
 
-        {/* desktop links */}
-        <ul className="hidden items-center gap-2 md:flex lg:gap-3">
-          {links.map((l) => (
+        {/* ── The constellation trail ────────────────────────────────
+            The sections are stars on one continuous line, and the line
+            LIGHTS UP behind you as you travel the page — so the nav
+            doubles as a progress map: where you are, how far you've come,
+            and what's still ahead, without adding a single new control. */}
+        <ul ref={listRef} className="relative hidden items-center gap-2 md:flex lg:gap-3">
+          {/* the unlit trail */}
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 top-[7px] h-px bg-white/12"
+          />
+          {/* the travelled portion, lit up to the current star */}
+          <motion.span
+            aria-hidden
+            className="pointer-events-none absolute left-0 top-[7px] h-px"
+            style={{
+              background: "linear-gradient(90deg, rgba(170,180,196,0.15), rgba(170,180,196,0.85) 65%, #ffffff)",
+            }}
+            initial={false}
+            animate={{ width: trailW }}
+            transition={{ type: "spring", stiffness: 120, damping: 26, mass: 0.7 }}
+          />
+          {links.map((l, i) => (
             <NavLink
               key={l.id}
               link={l}
               isActive={active.id === l.id}
+              isPassed={i < activeIndex}
               onClick={() => go(l.id)}
             />
           ))}
@@ -169,11 +263,17 @@ export default function Navbar() {
             onClick={() => window.dispatchEvent(new KeyboardEvent("keydown", { key: "k", metaKey: !isMac ? false : true, ctrlKey: !isMac }))}
             data-cursor="hover"
             data-cursor-text="Search"
-            className="gradient-border hidden items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-white/55 transition-colors hover:bg-white/[0.06] hover:text-white sm:flex"
+            className="gradient-border flex h-9 items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-2.5 py-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-white/55 transition-colors hover:bg-white/[0.06] hover:text-white sm:px-3"
             aria-label="Open command palette"
           >
-            <span>Search</span>
-            <span className="flex items-center gap-1">
+            {/* Narrow screens keep the control — it just drops to the icon
+                instead of disappearing (it used to vanish under `sm`). */}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="h-4 w-4 lg:hidden" aria-hidden>
+              <circle cx="11" cy="11" r="7" />
+              <path d="m20 20-3.5-3.5" />
+            </svg>
+            <span className="hidden lg:inline">Search</span>
+            <span className="hidden items-center gap-1 lg:flex">
               <kbd className="rounded border border-white/15 bg-white/[0.04] px-1.5 py-0.5 font-display">
                 {isMac ? "⌘" : "Ctrl"}
               </kbd>
@@ -187,7 +287,7 @@ export default function Navbar() {
             data-cursor="hover"
             data-cursor-text="View CV"
             aria-label="View my CV"
-            className="group/cv relative hidden items-center gap-2 overflow-hidden rounded-xl bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-black transition-all duration-300 hover:bg-white/95 sm:flex"
+            className="group/cv relative flex h-9 items-center gap-2 overflow-hidden rounded-xl bg-white px-3 py-2 text-xs font-semibold uppercase tracking-widest text-black transition-all duration-300 hover:bg-white/95 sm:px-4"
             style={{ boxShadow: "0 4px 12px -2px rgba(255,255,255,0.2)" }}
           >
             {/* hover shimmer sweep */}
@@ -197,9 +297,10 @@ export default function Navbar() {
             />
             {/* little document glyph so it reads unmistakably as a CV */}
             <span aria-hidden className="relative text-[13px] leading-none">▤</span>
-            <span className="relative">My CV</span>
+            {/* label collapses on narrow screens, but the button stays */}
+            <span className="relative hidden lg:inline">My CV</span>
             <motion.span
-              className="relative inline-block text-[10px]"
+              className="relative hidden text-[10px] lg:inline-block"
               animate={{ y: [0, 2, 0] }}
               transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
               aria-hidden

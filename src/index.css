@@ -466,3 +466,20 @@ dialog::backdrop {
     transition-duration: 0.001ms !important;
   }
 }
+
+/* ── Logo orbit ring ──────────────────────────────────────────────────
+   The circle around the star mark draws itself when the logo is hovered
+   or focused. Stroke-dash animation is compositor-cheap and reverses
+   cleanly on leave. */
+.logo-orbit {
+  stroke-dasharray: 66;
+  stroke-dashoffset: 66;
+  transition: stroke-dashoffset 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.group:hover .logo-orbit,
+.group:focus-visible .logo-orbit {
+  stroke-dashoffset: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .logo-orbit { transition: none; }
+}

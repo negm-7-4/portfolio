@@ -144,14 +144,31 @@ function GlobeScene({ compact }) {
     () => new THREE.Vector3(compact ? 0 : -1.15, compact ? 0.35 : 0, 0),
     [compact]
   );
-  // On a tall/narrow phone the horizontal FOV is the tight one, so pull the
-  // camera well back to keep the WHOLE globe in frame instead of cropping it.
-  const camZ = compact ? 10.8 : CAM_Z;
-  // …and aim the camera below the globe so it renders in the upper part of
-  // the screen, fully clear of the bottom project sheet.
+
+  // FIT THE SPHERE TO THE VIEWPORT, don't guess a distance.
+  // On a tall/narrow phone the HORIZONTAL field of view is the tight one
+  // (hFov = 2·atan(tan(vFov/2)·aspect)), so a fixed camZ crops the globe's
+  // left and right edges. Derive the distance from the actual aspect ratio
+  // and take whichever axis needs more room, plus margin for the atmosphere.
+  const { size, camera } = useThree();
+  const camZ = useMemo(() => {
+    if (!compact) return CAM_Z;
+    const aspect = size.width / Math.max(1, size.height);
+    const vFov = THREE.MathUtils.degToRad(camera.fov || 44);
+    const need = R * 1.22; // sphere radius + atmosphere shell + breathing room
+    const distV = need / Math.tan(vFov / 2);
+    const hFov = 2 * Math.atan(Math.tan(vFov / 2) * aspect);
+    const distH = need / Math.tan(hFov / 2);
+    // clamp so an extreme aspect can't push the globe to a speck or too close
+    return THREE.MathUtils.clamp(Math.max(distV, distH), 7.5, 16);
+  }, [compact, size.width, size.height, camera.fov]);
+
+  // Aim slightly below the globe so it sits in the upper part of the screen,
+  // clear of the bottom project sheet. Scaled to the distance so the offset
+  // stays proportional instead of throwing the sphere off-frame.
   const lookTarget = useMemo(
-    () => (compact ? center.clone().setY(center.y - 1.9) : center),
-    [compact, center]
+    () => (compact ? center.clone().setY(center.y - camZ * 0.16) : center),
+    [compact, center, camZ]
   );
 
   const maps = useTexture({
@@ -535,7 +552,9 @@ export default function GlobeShowcase() {
             <Canvas
               frameloop={inView ? "always" : "never"}
               dpr={[1, 1.6]}
-              camera={{ position: [0, 0, isDesktop ? CAM_Z : 10.8], fov: isDesktop ? 42 : 44, near: 0.1, far: 60 }}
+              // Initial pose only — GlobeScene fits the exact distance to the
+              // live viewport aspect each frame (see camZ there).
+              camera={{ position: [0, 0, isDesktop ? CAM_Z : 12], fov: isDesktop ? 42 : 44, near: 0.1, far: 60 }}
               gl={{
                 antialias: true,
                 alpha: true,

@@ -131,7 +131,11 @@ export default function App() {
   useLenis();
 
   const isLow = tier === "low";
-  const useLite = isLow || touch;
+  // The 3D world runs on capable PHONES too (tier "mid"): touch alone is not
+  // weakness, and dropping every phone to the flat backdrop meant most
+  // visitors never saw the hero at all. Only genuinely weak hardware and
+  // reduced-motion/data-saver users get the lightweight path.
+  const useLite = isLow;
 
   /* The opening portrait is fully opaque, so downloading and executing the
      3D world behind it only burns the critical path. Warm it when the visitor

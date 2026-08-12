@@ -113,7 +113,7 @@ export default function WhatsAppButton() {
             initial={{ y: 0 }}
             animate={{ y: [0, -6, 0, -3, 0] }}
             transition={{ duration: 1.4, delay: 0.4, times: [0, 0.25, 0.5, 0.75, 1] }}
-            className="group/wa relative flex h-14 w-14 items-center justify-center rounded-full text-white md:h-16 md:w-16"
+            className="group/wa relative flex h-14 w-14 items-center justify-center overflow-hidden rounded-full text-white md:h-16 md:w-16"
             style={{
               background: "linear-gradient(135deg, #25d366 0%, #128c7e 100%)",
               border: "1px solid rgba(255,255,255,0.18)",
@@ -121,10 +121,13 @@ export default function WhatsAppButton() {
                 "0 18px 36px -8px rgba(37,211,102,0.55), inset 0 1px 0 rgba(255,255,255,0.28), inset 0 -2px 6px rgba(0,0,0,0.15)",
             }}
           >
-            {/* shimmer sweep on hover */}
+            {/* Shimmer sweep on hover. The CLIPPING must live on the parent:
+                this span is parked a full width to the left, so without
+                overflow-hidden above it rendered as a visible disc beside
+                the button instead of being hidden until it sweeps. */}
             <span
               aria-hidden
-              className="pointer-events-none absolute inset-0 -translate-x-full overflow-hidden rounded-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-500 ease-out group-hover/wa:translate-x-full"
+              className="pointer-events-none absolute inset-0 -translate-x-full rounded-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-500 ease-out group-hover/wa:translate-x-full"
             />
 
             <span className="relative">

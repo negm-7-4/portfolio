@@ -136,6 +136,18 @@ function CameraRig() {
     tmpLook.current.y += py * 0.3;
     tmpLook.current.z = 0;
 
+    // PORTRAIT-ASPECT CORRECTION. The shots above are composed for a wide
+    // desktop frame; on a tall phone the same camera throws the subject off
+    // the side and clips it. Below ~1:1, ease the lateral offset toward the
+    // centre and pull back proportionally, so every shot stays framed.
+    const aspect = camera.aspect || 1;
+    if (aspect < 1) {
+      const narrow = Math.min(1, (1 - aspect) / 0.5); // 0 at 1:1 → 1 at 0.5:1
+      tmpPos.current.x *= 1 - 0.55 * narrow;
+      tmpLook.current.x *= 1 - 0.55 * narrow;
+      tmpPos.current.z += 3.4 * narrow;
+    }
+
     // Handheld micro-drift — strongest when the scroll is at rest, so a held
     // shot still breathes like a camera on a shoulder rig instead of a tripod.
     const idle = 1 - speed;

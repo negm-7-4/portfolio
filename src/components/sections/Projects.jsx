@@ -128,8 +128,11 @@ function ShowcasePlaceholder() {
 }
 
 export default function Projects() {
-  const { tier, reducedMotion, touch } = useDeviceProfile();
-  const lowPower = tier !== "high" || reducedMotion || touch;
+  const { tier, reducedMotion } = useDeviceProfile();
+  // Capable phones (tier "mid") get the globe too — it is one small Canvas
+  // that pauses off-screen. Excluding all touch devices meant mobile silently
+  // fell back to the plain list and the switcher only offered two modes.
+  const lowPower = tier === "low" || reducedMotion;
 
   const [selected, setSelected] = useState(() => {
     if (typeof window === "undefined") return SHOWCASE_MODE;

@@ -12,10 +12,10 @@ import { EASE_OUT, EASE_BACK } from "../../lib/motion";
 const TAG_SPRING = { type: "spring", stiffness: 200, damping: 15, mass: 0.7 };
 
 const ROLES = [
+  "Software Engineer",
   "Front-End Developer",
   "React Specialist",
   "Motion Designer",
-  "CS & AI Student",
 ];
 
 /* ─── Cycling typewriter for the role line ─── */
@@ -104,7 +104,11 @@ function HeroFocus({ lite }) {
   }
 
   return (
-    <div className="pointer-events-none relative h-full w-full" style={{ overflow: "visible" }} aria-hidden>
+    // The lens framing is a DESKTOP affordance: it frames the sculpture in its
+    // own column beside the copy. In the single-column phone layout its rings
+    // drift into the corners and collide with the floating action buttons, so
+    // it is hidden there — the 3D world itself still renders.
+    <div className="pointer-events-none relative hidden h-full w-full md:block" style={{ overflow: "visible" }} aria-hidden>
       {/* focal glow — makes the sculpture behind read as a lit subject */}
       <div
         className="glow-pulse absolute left-1/2 top-1/2 h-[62%] w-[62%] -translate-x-1/2 -translate-y-1/2 rounded-full"
@@ -155,8 +159,11 @@ function HeroFocus({ lite }) {
 
 export default function Hero() {
   const ref = useRef(null);
-  const { tier, touch } = useDeviceProfile();
-  const lite = touch || tier === "low";
+  const { tier } = useDeviceProfile();
+  // Must match App's world gating: the fallback mark is only correct when the
+  // 3D world is genuinely off. While both rendered on phones, the fallback's
+  // floating card sat over the hero and collided with the WhatsApp button.
+  const lite = tier === "low";
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
