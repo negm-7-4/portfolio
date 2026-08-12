@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Personal portfolio of Mohamed Negm — Front-End Developer. Built with React, Three.js, Spline and motion design.",
+  "description": "Personal portfolio of Mohamed Negm — Software Engineer. Built with React, Three.js and motion design.",
   "author": "Mohamed Negm <mohammednegm11234@gmail.com>",
   "license": "UNLICENSED",
   "keywords": [
@@ -11,7 +11,6 @@
     "react",
     "vite",
     "threejs",
-    "spline",
     "framer-motion",
     "front-end"
   ],
@@ -21,12 +20,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@gsap/react": "^2.1.2",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.6.1",
     "@react-three/postprocessing": "^3.0.4",
-    "@splinetool/react-spline": "^4.1.0",
-    "@splinetool/runtime": "^1.12.95",
     "canvas-confetti": "^1.9.4",
     "gsap": "^3.15.0",
     "lenis": "^1.1.20",

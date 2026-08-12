@@ -26,10 +26,66 @@ import { EASE_OUT } from "../../lib/motion";
  * parallax hand-off. Honours reduced motion.
  */
 
-// The cover's base tone. The subject cutout (transparent background) sits on
-// this, so the two are seamless — no wall, no visible photo edge. To swap to
-// the warm/red look, retint the cutout's `filter` hue-rotate on the <img>.
-const BG = "#080b12";
+// The cover's base tone — a steel-blue navy the cutout melts into (used for
+// the bottom fade so figure + background are one surface).
+const BG = "#0c1526";
+
+/* ── Animated diagonal light streaks ──────────────────────────────────
+   Thin bright rays raking across the frame on a slight angle, each drifting
+   with its own gentle vertical wave — atmosphere + motion behind the copy.
+   Screen-blended, low opacity; skipped under reduced motion. */
+const BEAMS = [
+  { top: "8%",  w: "62%", dur: 11, delay: 0.0, op: 0.12 },
+  { top: "26%", w: "78%", dur: 15, delay: 2.0, op: 0.08 },
+  { top: "48%", w: "54%", dur: 12, delay: 3.4, op: 0.14 },
+  { top: "66%", w: "70%", dur: 17, delay: 1.2, op: 0.07 },
+  { top: "84%", w: "58%", dur: 13, delay: 4.0, op: 0.10 },
+];
+
+function LightStreaks({ reduce }) {
+  return (
+    <div
+      aria-hidden
+      className="pointer-events-none absolute inset-0 overflow-hidden"
+      style={{ mixBlendMode: "screen" }}
+    >
+      {/* two soft, wide light shafts for depth */}
+      <div
+        className="absolute -left-[10%] top-[-20%] h-[160%] w-[38%] -rotate-[20deg]"
+        style={{ background: "linear-gradient(90deg, transparent, rgba(120,160,230,0.10), transparent)", filter: "blur(30px)" }}
+      />
+      <div
+        className="absolute right-[6%] top-[-25%] h-[170%] w-[30%] -rotate-[20deg]"
+        style={{ background: "linear-gradient(90deg, transparent, rgba(150,130,220,0.09), transparent)", filter: "blur(34px)" }}
+      />
+      {/* the raking streaks */}
+      {BEAMS.map((b, i) => (
+        <motion.div
+          key={i}
+          className="absolute h-[2px]"
+          style={{
+            top: b.top,
+            width: b.w,
+            rotate: "-20deg",
+            opacity: b.op,
+            filter: "blur(1px)",
+            background: "linear-gradient(90deg, transparent, rgba(165,190,240,0.95) 45%, rgba(200,215,255,1) 55%, transparent)",
+          }}
+          initial={{ x: "-40%" }}
+          animate={reduce ? { x: "40%" } : { x: ["-40%", "150%"], y: [0, 16, 0] }}
+          transition={
+            reduce
+              ? { duration: 0 }
+              : {
+                  x: { duration: b.dur, repeat: Infinity, ease: "easeInOut", delay: b.delay },
+                  y: { duration: b.dur * 0.55, repeat: Infinity, ease: "easeInOut" },
+                }
+          }
+        />
+      ))}
+    </div>
+  );
+}
 
 // Big statement headline — last word carries the accent.
 const HEADLINE = [
@@ -98,27 +154,34 @@ function DuotonePhoto({ lite, reduce }) {
         animate={reduce ? undefined : { scale: [1, 1.03, 1], y: [0, -7, 0] }}
         transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
       >
-        {/* soft cool glow behind the figure so it reads against the dark */}
+        {/* steel-blue back-light halo behind the figure so it reads and its
+            edges bleed into the coloured background (no hard cut) */}
         <div
           aria-hidden
           className="absolute inset-0"
-          style={{ background: "radial-gradient(58% 52% at 52% 36%, rgba(120,140,175,0.24), transparent 68%)" }}
+          style={{ background: "radial-gradient(56% 50% at 52% 34%, rgba(96,132,196,0.34), transparent 66%)" }}
         />
 
-        {/* the cutout — REAL colours, lightly graded, melting into the page */}
+        {/* the cutout — REAL colours, lightly graded; the drop-shadow is in
+            the background hue so the silhouette dissolves rather than cuts */}
         <img
           src={CUT}
           alt="Mohamed Negm — software engineer"
           className="absolute inset-0 h-full w-full object-contain object-bottom"
-          style={{ filter: "contrast(1.04) saturate(1.06) brightness(1.02) drop-shadow(0 26px 55px rgba(0,0,0,0.55))" }}
+          style={{
+            filter:
+              "contrast(1.05) saturate(1.08) brightness(1.02) drop-shadow(0 0 26px rgba(20,32,58,0.9)) drop-shadow(0 30px 60px rgba(0,0,0,0.5))",
+          }}
           decoding="async"
           fetchPriority="high"
         />
 
-        {/* a faint cool wash tying the colours to the site palette (kept low
-            so the real colours stay), masked to the figure only */}
+        {/* a faint steel wash tying the colours to the palette (kept low so
+            the real colours stay), masked to the figure only */}
         <div aria-hidden className="absolute inset-0" style={cutMask}>
-          <div className="absolute inset-0" style={{ background: "#5a76a8", mixBlendMode: "soft-light", opacity: 0.35 }} />
+          <div className="absolute inset-0" style={{ background: "#4d6ba6", mixBlendMode: "soft-light", opacity: 0.4 }} />
+          {/* cool shadow lift so the darks match the blue background */}
+          <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, transparent 40%, rgba(18,30,56,0.55) 100%)", mixBlendMode: "multiply" }} />
         </div>
 
         {/* ✨ cursor spotlight — a warm light that follows the mouse and lifts
@@ -176,10 +239,18 @@ export default function PhotoIntro() {
       style={{
         height: "100svh",
         // Opaque cover so the fixed 3D world stays hidden on this first screen.
-        // Base tone == the photo's shadow tone, so the two are seamless.
-        background: `linear-gradient(90deg, #070a10 0%, ${BG} 52%, #0b1119 100%)`,
+        // Steel-blue base graded with a complementary violet — the cutout
+        // melts into it.
+        background: `
+          radial-gradient(70% 60% at 82% 12%, rgba(58,96,158,0.30), transparent 60%),
+          radial-gradient(60% 60% at 10% 88%, rgba(96,74,166,0.22), transparent 62%),
+          linear-gradient(120deg, #0a1120 0%, ${BG} 45%, #101a30 72%, #0b1424 100%)
+        `,
       }}
     >
+      {/* animated diagonal light streaks */}
+      <LightStreaks reduce={reduce} />
+
       {/* the graded portrait */}
       <motion.div style={{ y: photoY, opacity: photoOpacity }} className="absolute inset-0">
         <DuotonePhoto lite={lite} reduce={reduce} />
