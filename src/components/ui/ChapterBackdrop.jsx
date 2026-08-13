@@ -28,7 +28,9 @@ export default function ChapterBackdrop() {
 
   useEffect(() => {
     const [rr, gg, bb] = hexToRgb(active.color);
-    r.set(rr); g.set(gg); b.set(bb);
+    r.set(rr);
+    g.set(gg);
+    b.set(bb);
   }, [active, r, g, b]);
 
   const bg = useMotionTemplate`

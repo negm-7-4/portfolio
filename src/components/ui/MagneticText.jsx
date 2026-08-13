@@ -49,7 +49,10 @@ export default function MagneticText({ text, className = "", radius = 140, stren
   const rectsRef = useRef([]);
 
   const registerChar = (i, entry) => {
-    if (!entry) { charsRef.current[i] = null; return; }
+    if (!entry) {
+      charsRef.current[i] = null;
+      return;
+    }
     charsRef.current[i] = entry;
   };
 
@@ -77,7 +80,8 @@ export default function MagneticText({ text, className = "", radius = 140, stren
   useEffect(() => {
     if (!c) return;
     let raf = 0;
-    let prevMx = -1, prevMy = -1;
+    let prevMx = -1,
+      prevMy = -1;
 
     const tick = () => {
       const mx = c.mx.get();
@@ -88,7 +92,8 @@ export default function MagneticText({ text, className = "", radius = 140, stren
         raf = requestAnimationFrame(tick);
         return;
       }
-      prevMx = mx; prevMy = my;
+      prevMx = mx;
+      prevMy = my;
 
       const entries = charsRef.current;
       const rects = rectsRef.current;
@@ -131,7 +136,14 @@ export default function MagneticText({ text, className = "", radius = 140, stren
       <span className="sr-only">{text}</span>
       <span aria-hidden="true" style={{ display: "inline-block" }}>
         {text.split("").map((ch, i) => (
-          <Char key={i} ch={ch} idx={i} radius={radius} strength={strength} registerChar={registerChar} />
+          <Char
+            key={i}
+            ch={ch}
+            idx={i}
+            radius={radius}
+            strength={strength}
+            registerChar={registerChar}
+          />
         ))}
       </span>
     </span>

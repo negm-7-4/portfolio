@@ -40,11 +40,7 @@ export function CursorProvider({ children }) {
     return () => window.removeEventListener("pointermove", onMove);
   }, [mx, my, vx, vy]);
 
-  return (
-    <CursorCtx.Provider value={{ mx, my, vx, vy }}>
-      {children}
-    </CursorCtx.Provider>
-  );
+  return <CursorCtx.Provider value={{ mx, my, vx, vy }}>{children}</CursorCtx.Provider>;
 }
 
 export function useCursor() {

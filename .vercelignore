@@ -4,7 +4,7 @@ dist
 .git
 .claude
 .vscode
-studio
+.github
 
 # Raw local asset originals (optimized copies live in public/)
 /image.png

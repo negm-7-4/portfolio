@@ -45,8 +45,10 @@ export default function ClickRipple() {
             transition={{ duration: 0.95, ease: [0.16, 1, 0.3, 1] }}
             className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full"
             style={{
-              left: 0, top: 0,
-              width: 14, height: 14,
+              left: 0,
+              top: 0,
+              width: 14,
+              height: 14,
               border: "1.5px solid rgba(190,200,215,0.6)",
               boxShadow: "0 0 16px rgba(170,180,196,0.4)",
             }}
@@ -61,8 +63,10 @@ export default function ClickRipple() {
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.04 }}
             className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full"
             style={{
-              left: 0, top: 0,
-              width: 12, height: 12,
+              left: 0,
+              top: 0,
+              width: 12,
+              height: 12,
               border: "1px solid rgba(255,255,255,0.45)",
             }}
           />
@@ -76,8 +80,10 @@ export default function ClickRipple() {
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.08 }}
             className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full"
             style={{
-              left: 0, top: 0,
-              width: 14, height: 14,
+              left: 0,
+              top: 0,
+              width: 14,
+              height: 14,
               background: "radial-gradient(circle, rgba(170,180,196,0.5), transparent 70%)",
             }}
           />

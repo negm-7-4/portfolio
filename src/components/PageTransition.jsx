@@ -94,8 +94,7 @@ export default function PageTransition() {
           key={i}
           className="h-full flex-1"
           style={{
-            background:
-              "linear-gradient(180deg, #1c2028 0%, #0f1218 60%, #0b0d11 100%)",
+            background: "linear-gradient(180deg, #1c2028 0%, #0f1218 60%, #0b0d11 100%)",
             borderRight: i < PANELS - 1 ? "1px solid rgba(255,255,255,0.02)" : "none",
           }}
           initial={{ y: "100%" }}
@@ -153,7 +152,11 @@ export default function PageTransition() {
                 opacity: stage === "in" ? 1 : 0,
                 y: stage === "in" ? 0 : 12,
               }}
-              transition={{ duration: 0.48, delay: stage === "in" ? 0.4 : 0, ease: [0.16, 1, 0.3, 1] }}
+              transition={{
+                duration: 0.48,
+                delay: stage === "in" ? 0.4 : 0,
+                ease: [0.16, 1, 0.3, 1],
+              }}
               className="font-display text-base font-medium tracking-[0.18em]"
               style={{ color: target?.color || "#aab4c4" }}
             >
@@ -171,7 +174,11 @@ export default function PageTransition() {
               y: stage === "in" ? 0 : 18,
               filter: stage === "in" ? "blur(0px)" : "blur(8px)",
             }}
-            transition={{ duration: 0.52, delay: stage === "in" ? 0.44 : 0, ease: [0.16, 1, 0.3, 1] }}
+            transition={{
+              duration: 0.52,
+              delay: stage === "in" ? 0.44 : 0,
+              ease: [0.16, 1, 0.3, 1],
+            }}
             className="font-display text-5xl font-bold tracking-tight text-white md:text-7xl"
           >
             {target?.label || ""}
@@ -181,7 +188,11 @@ export default function PageTransition() {
           <motion.span
             initial={{ scaleX: 0 }}
             animate={{ scaleX: stage === "in" ? 1 : 0 }}
-            transition={{ duration: 0.55, delay: stage === "in" ? 0.56 : 0, ease: [0.16, 1, 0.3, 1] }}
+            transition={{
+              duration: 0.55,
+              delay: stage === "in" ? 0.56 : 0,
+              ease: [0.16, 1, 0.3, 1],
+            }}
             className="mt-3 block h-px w-16 origin-left bg-gradient-to-r from-transparent via-white/60 to-transparent"
           />
         </div>

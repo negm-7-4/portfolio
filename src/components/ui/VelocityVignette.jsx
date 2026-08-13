@@ -1,4 +1,11 @@
-import { motion, useMotionTemplate, useScroll, useSpring, useTransform, useVelocity } from "motion/react";
+import {
+  motion,
+  useMotionTemplate,
+  useScroll,
+  useSpring,
+  useTransform,
+  useVelocity,
+} from "motion/react";
 
 /**
  * A subtle radial vignette that softly intensifies when the user is

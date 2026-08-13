@@ -36,16 +36,16 @@ function detect() {
   }
   const reducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
   const touch = window.matchMedia?.("(pointer: coarse)").matches ?? false;
-  const memory = navigator.deviceMemory ?? 8;          // assume mid-range if unknown
-  const cores  = navigator.hardwareConcurrency ?? 8;
+  const memory = navigator.deviceMemory ?? 8; // assume mid-range if unknown
+  const cores = navigator.hardwareConcurrency ?? 8;
   // Honour the user's data-saver preference — drop straight to the fast path.
   const conn = navigator.connection || {};
   const saveData = conn.saveData ?? false;
-  const slowNet  = /(^|-)2g$/.test(conn.effectiveType || "");
+  const slowNet = /(^|-)2g$/.test(conn.effectiveType || "");
 
   let tier = "high";
   if (reducedMotion || saveData || slowNet || memory <= 2 || cores <= 2) tier = "low";
-  else if (memory <= 4 || cores <= 4 || touch)                           tier = "mid";
+  else if (memory <= 4 || cores <= 4 || touch) tier = "mid";
 
   return { tier, reducedMotion, touch, saveData };
 }

@@ -38,9 +38,11 @@ export default function CustomCursor() {
 
   // Continuous idle rotation on the inner dot
   useEffect(() => {
-    let raf, last = performance.now();
+    let raf,
+      last = performance.now();
     const spin = (t) => {
-      const dt = t - last; last = t;
+      const dt = t - last;
+      last = t;
       rotate.set(rotate.get() + dt * 0.04);
       raf = requestAnimationFrame(spin);
     };
@@ -99,8 +101,14 @@ export default function CustomCursor() {
         requestAnimationFrame(detectHover);
       }
     };
-    const down = () => { setPressing(true); ringScale.set(0.82); };
-    const up = () => { setPressing(false); ringScale.set(1); };
+    const down = () => {
+      setPressing(true);
+      ringScale.set(0.82);
+    };
+    const up = () => {
+      setPressing(false);
+      ringScale.set(1);
+    };
     const leave = () => setHidden(true);
     const enter = () => setHidden(false);
 
@@ -125,20 +133,69 @@ export default function CustomCursor() {
   return (
     <>
       {/* trailing echoes (4 layers, increasing softness) */}
-      <motion.div className={trailBase} style={{ x: t4x, y: t4y, width: 80, height: 80, translateX: "-50%", translateY: "-50%", background: "radial-gradient(circle, rgba(180,200,230,0.10), transparent 70%)", filter: "blur(6px)" }} />
-      <motion.div className={trailBase} style={{ x: t3x, y: t3y, width: 56, height: 56, translateX: "-50%", translateY: "-50%", background: "radial-gradient(circle, rgba(200,215,235,0.14), transparent 70%)", filter: "blur(3px)" }} />
-      <motion.div className={trailBase} style={{ x: t2x, y: t2y, width: 28, height: 28, translateX: "-50%", translateY: "-50%", border: "1px solid rgba(255,255,255,0.18)" }} />
-      <motion.div className={trailBase} style={{ x: t1x, y: t1y, width: 16, height: 16, translateX: "-50%", translateY: "-50%", border: "1px solid rgba(255,255,255,0.32)" }} />
+      <motion.div
+        className={trailBase}
+        style={{
+          x: t4x,
+          y: t4y,
+          width: 80,
+          height: 80,
+          translateX: "-50%",
+          translateY: "-50%",
+          background: "radial-gradient(circle, rgba(180,200,230,0.10), transparent 70%)",
+          filter: "blur(6px)",
+        }}
+      />
+      <motion.div
+        className={trailBase}
+        style={{
+          x: t3x,
+          y: t3y,
+          width: 56,
+          height: 56,
+          translateX: "-50%",
+          translateY: "-50%",
+          background: "radial-gradient(circle, rgba(200,215,235,0.14), transparent 70%)",
+          filter: "blur(3px)",
+        }}
+      />
+      <motion.div
+        className={trailBase}
+        style={{
+          x: t2x,
+          y: t2y,
+          width: 28,
+          height: 28,
+          translateX: "-50%",
+          translateY: "-50%",
+          border: "1px solid rgba(255,255,255,0.18)",
+        }}
+      />
+      <motion.div
+        className={trailBase}
+        style={{
+          x: t1x,
+          y: t1y,
+          width: 16,
+          height: 16,
+          translateX: "-50%",
+          translateY: "-50%",
+          border: "1px solid rgba(255,255,255,0.32)",
+        }}
+      />
 
       {/* main magnetic ring */}
       <motion.div
         className="pointer-events-none fixed left-0 top-0 z-[9999] flex items-center justify-center rounded-full"
         style={{
-          x: t1x, y: t1y,
-          width: size, height: size,
+          x: t1x,
+          y: t1y,
+          width: size,
+          height: size,
           scale: ringScale,
           opacity,
-          translateX: "-50%", translateY: "-50%",
+          translateX: "-50%",
+          translateY: "-50%",
           border: hovering ? "1px solid rgba(255,255,255,0.95)" : "1px solid rgba(255,255,255,0.4)",
           background: hovering
             ? "radial-gradient(circle, rgba(255,255,255,0.10) 0%, rgba(170,180,196,0.05) 70%)"
@@ -164,12 +221,26 @@ export default function CustomCursor() {
       {/* instant inner dot — flips to small rotating cross when pressing */}
       <motion.div
         className="pointer-events-none fixed left-0 top-0 z-[9999] flex items-center justify-center"
-        style={{ x, y, scale: dotScale, rotate, translateX: "-50%", translateY: "-50%", willChange: "transform" }}
+        style={{
+          x,
+          y,
+          scale: dotScale,
+          rotate,
+          translateX: "-50%",
+          translateY: "-50%",
+          willChange: "transform",
+        }}
       >
         {pressing ? (
           <div className="h-3 w-3 relative">
-            <span className="absolute inset-0 m-auto h-3 w-px bg-white" style={{ boxShadow: "0 0 4px rgba(255,255,255,0.6)" }} />
-            <span className="absolute inset-0 m-auto h-px w-3 bg-white" style={{ boxShadow: "0 0 4px rgba(255,255,255,0.6)" }} />
+            <span
+              className="absolute inset-0 m-auto h-3 w-px bg-white"
+              style={{ boxShadow: "0 0 4px rgba(255,255,255,0.6)" }}
+            />
+            <span
+              className="absolute inset-0 m-auto h-px w-3 bg-white"
+              style={{ boxShadow: "0 0 4px rgba(255,255,255,0.6)" }}
+            />
           </div>
         ) : (
           <div className="h-2 w-2 rounded-full bg-white mix-blend-difference" />

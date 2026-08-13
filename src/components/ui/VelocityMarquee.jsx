@@ -19,10 +19,7 @@ const wrap = (min, max, v) => {
  * Awwwards-style velocity text: scrolls continuously, and speeds up / reverses
  * direction based on the page scroll velocity. Skews slightly while moving.
  */
-export default function VelocityMarquee({
-  text = "FRONT-END DEVELOPER",
-  baseVelocity = 3,
-}) {
+export default function VelocityMarquee({ text = "FRONT-END DEVELOPER", baseVelocity = 3 }) {
   const baseX = useMotionValue(0);
   const { scrollY } = useScroll();
   const scrollVelocity = useVelocity(scrollY);
@@ -59,7 +56,10 @@ export default function VelocityMarquee({
         }}
       />
 
-      <motion.div style={{ x, skewX: skew, willChange: "transform" }} className="flex whitespace-nowrap">
+      <motion.div
+        style={{ x, skewX: skew, willChange: "transform" }}
+        className="flex whitespace-nowrap"
+      >
         {items.map((_, i) => (
           <span
             key={i}

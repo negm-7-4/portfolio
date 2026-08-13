@@ -14,7 +14,12 @@ import { useScroll, useVelocity, useSpring, useTransform } from "motion/react";
  * `clampAt` is the velocity (px/s) that counts as "full tilt"; anything faster
  * is capped so a flick of the wheel never throws the layout around.
  */
-export default function useScrollVelocity({ max = 3, clampAt = 1600, stiffness = 250, damping = 40 } = {}) {
+export default function useScrollVelocity({
+  max = 3,
+  clampAt = 1600,
+  stiffness = 250,
+  damping = 40,
+} = {}) {
   const { scrollY } = useScroll();
   const velocity = useVelocity(scrollY);
   const smooth = useSpring(velocity, { stiffness, damping, mass: 0.4 });

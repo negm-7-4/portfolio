@@ -7,7 +7,7 @@ import { process as steps } from "../../data/content";
 function StepRow({ step, i, total }) {
   const last = i === total - 1;
   const flip = i % 2 === 1;
-  const num  = step.num;
+  const num = step.num;
 
   return (
     <motion.div
@@ -69,7 +69,7 @@ function StepRow({ step, i, total }) {
           className="block font-display text-[11px] font-semibold uppercase tracking-[0.32em]"
           style={{ color: `${step.accent}cc` }}
         >
-          ( {num} / {String(total).padStart(2, "0")} )  ·  Phase
+          ( {num} / {String(total).padStart(2, "0")} ) · Phase
         </motion.span>
 
         <motion.h3
@@ -129,11 +129,7 @@ export default function Process() {
   const bgY2 = useTransform(scrollYProgress, [0, 1], [-50, 50]);
 
   return (
-    <section
-      id="process"
-      ref={ref}
-      className="relative w-full py-32 md:py-44"
-    >
+    <section id="process" ref={ref} className="relative w-full py-32 md:py-44">
       {/* ambient backgrounds */}
       <motion.div
         style={{ y: bgY1 }}

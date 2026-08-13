@@ -12,12 +12,7 @@ import { EASE_OUT, EASE_BACK } from "../../lib/motion";
 // A spring with a hint of life used for the hero tag pills.
 const TAG_SPRING = { type: "spring", stiffness: 200, damping: 15, mass: 0.7 };
 
-const ROLES = [
-  "Software Engineer",
-  "Front-End Developer",
-  "React Specialist",
-  "Motion Designer",
-];
+const ROLES = ["Software Engineer", "Front-End Developer", "React Specialist", "Motion Designer"];
 
 /* ─── Cycling typewriter for the role line ─── */
 function TypewriterRole() {
@@ -73,7 +68,11 @@ function ArrowCycle() {
     const t = setInterval(() => setI((n) => (n + 1) % ARROW_FRAMES.length), 900);
     return () => clearInterval(t);
   }, []);
-  return <span key={i} style={{ display: "inline-block", minWidth: "0.7em" }}>{ARROW_FRAMES[i]}</span>;
+  return (
+    <span key={i} style={{ display: "inline-block", minWidth: "0.7em" }}>
+      {ARROW_FRAMES[i]}
+    </span>
+  );
 }
 
 /* ─── Hero focal frame ───
@@ -109,7 +108,11 @@ function HeroFocus({ lite }) {
     // own column beside the copy. In the single-column phone layout its rings
     // drift into the corners and collide with the floating action buttons, so
     // it is hidden there — the 3D world itself still renders.
-    <div className="pointer-events-none relative hidden h-full w-full md:block" style={{ overflow: "visible" }} aria-hidden>
+    <div
+      className="pointer-events-none relative hidden h-full w-full md:block"
+      style={{ overflow: "visible" }}
+      aria-hidden
+    >
       {/* focal glow — makes the sculpture behind read as a lit subject */}
       <div
         className="glow-pulse absolute left-1/2 top-1/2 h-[62%] w-[62%] -translate-x-1/2 -translate-y-1/2 rounded-full"
@@ -135,7 +138,10 @@ function HeroFocus({ lite }) {
       ))}
       {/* live-render caption */}
       <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-2 text-[9px] uppercase tracking-[0.3em] text-white/55">
-        <span className="h-1 w-1 animate-pulse rounded-full bg-[#aab4c4]" style={{ boxShadow: "0 0 6px rgba(170,180,196,0.7)" }} />
+        <span
+          className="h-1 w-1 animate-pulse rounded-full bg-[#aab4c4]"
+          style={{ boxShadow: "0 0 6px rgba(170,180,196,0.7)" }}
+        />
         Real-time · WebGL
       </div>
 
@@ -177,13 +183,13 @@ export default function Hero() {
 
   // Multi-layer parallax — spring-smoothed so it doesn't feel jittery on Lenis
   const sScroll = useSpring(scrollYProgress, { stiffness: 80, damping: 22 });
-  const yText  = useTransform(sScroll, [0, 1], [0, -180]);
-  const yDecor = useTransform(sScroll, [0, 1], [0,  -90]);
-  const yRobot = useTransform(sScroll, [0, 1], [0,   60]);
+  const yText = useTransform(sScroll, [0, 1], [0, -180]);
+  const yDecor = useTransform(sScroll, [0, 1], [0, -90]);
+  const yRobot = useTransform(sScroll, [0, 1], [0, 60]);
   const opacity = useTransform(sScroll, [0, 0.7], [1, 0]);
-  const scale   = useTransform(sScroll, [0, 0.6], [1, 0.92]);
+  const scale = useTransform(sScroll, [0, 0.6], [1, 0.92]);
   const robotRotate = useTransform(sScroll, [0, 1], [0, -8]);
-  const robotScale  = useTransform(sScroll, [0, 1], [1, 0.88]);
+  const robotScale = useTransform(sScroll, [0, 1], [1, 0.88]);
 
   const scrollDown = () => goToSection("about");
 
@@ -209,11 +215,17 @@ export default function Hero() {
         />
         <div
           className="animate-aurora absolute -left-16 bottom-[18%] h-72 w-72 rounded-full opacity-[0.07]"
-          style={{ background: "radial-gradient(circle, #6f7c8c 0%, transparent 70%)", animationDelay: "-9s" }}
+          style={{
+            background: "radial-gradient(circle, #6f7c8c 0%, transparent 70%)",
+            animationDelay: "-9s",
+          }}
         />
         {/* spinning ring top-left */}
         <div className="spin-slower absolute left-[6%] top-[26%] h-24 w-24 rounded-full border border-white/[0.08]">
-          <span className="absolute top-0 left-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#aab4c4]/70" style={{ boxShadow: "0 0 8px rgba(170,180,196,0.6)" }} />
+          <span
+            className="absolute top-0 left-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#aab4c4]/70"
+            style={{ boxShadow: "0 0 8px rgba(170,180,196,0.6)" }}
+          />
         </div>
         {/* small cross */}
         <div className="spin-slower absolute right-[20%] bottom-[28%] opacity-20">
@@ -224,7 +236,6 @@ export default function Hero() {
 
       {/* ── Main content grid ───────────────────────────────────── */}
       <div className="mx-auto grid w-[90%] sm:w-[88%] max-w-7xl items-center gap-8 md:grid-cols-[1.05fr_0.95fr] md:gap-4">
-
         {/* LEFT: copy */}
         <motion.div style={{ y: yText, opacity, scale }} className="z-10">
           {/* Available status pill */}
@@ -294,7 +305,11 @@ export default function Hero() {
               <motion.span
                 className="block whitespace-nowrap"
                 style={{ transformOrigin: "0% 100%" }}
-                initial={{ y: "118%", rotateX: 48, filter: "blur(10px) drop-shadow(0 0 0px rgba(170,180,196,0))" }}
+                initial={{
+                  y: "118%",
+                  rotateX: 48,
+                  filter: "blur(10px) drop-shadow(0 0 0px rgba(170,180,196,0))",
+                }}
                 animate={{
                   y: 0,
                   rotateX: 0,
@@ -319,7 +334,12 @@ export default function Hero() {
                 style={{ transformOrigin: "0% 100%" }}
                 initial={{ y: "118%", rotateX: 48, filter: "blur(10px)" }}
                 animate={{ y: 0, rotateX: 0, filter: "blur(0px)" }}
-                transition={{ duration: 1.1, delay: 0.72, ease: EASE_OUT, filter: { duration: 0.7, delay: 0.72 } }}
+                transition={{
+                  duration: 1.1,
+                  delay: 0.72,
+                  ease: EASE_OUT,
+                  filter: { duration: 0.7, delay: 0.72 },
+                }}
               >
                 <MagneticText text={profile.lastName} radius={180} strength={24} />
               </motion.span>
@@ -390,7 +410,9 @@ export default function Hero() {
                 className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/12 to-transparent transition-transform duration-500 ease-out group-hover:translate-x-full"
               />
               <span className="relative">Get In Touch</span>
-              <span className="relative text-white/55 transition-colors group-hover:text-white">↗</span>
+              <span className="relative text-white/55 transition-colors group-hover:text-white">
+                ↗
+              </span>
             </MagneticButton>
           </motion.div>
 
@@ -415,7 +437,9 @@ export default function Hero() {
                   data-cursor="hover"
                   className="gradient-border group/tag relative inline-flex items-center gap-1.5 rounded-lg glass px-3 py-1.5 text-xs text-white/65 transition-colors hover:text-white"
                 >
-                  <span className="text-[#aab4c4] transition-transform duration-300 group-hover/tag:rotate-90">◇</span>
+                  <span className="text-[#aab4c4] transition-transform duration-300 group-hover/tag:rotate-90">
+                    ◇
+                  </span>
                   {t}
                 </motion.li>
               ))}
@@ -481,7 +505,6 @@ export default function Hero() {
           ▾
         </motion.span>
       </motion.button>
-
     </section>
   );
 }

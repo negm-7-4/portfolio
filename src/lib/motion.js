@@ -30,21 +30,21 @@ export const EASE_CURTAIN = [0.83, 0, 0.17, 1];
 
 /* ─────────────────────────  DURATIONS  ─────────────────────── */
 
-export const DUR_INTRO   = 1.0;   // page-load hero entrances — long, generous
-export const DUR_REVEAL  = 0.6;   // standard scroll reveals — snappy but cinematic
-export const DUR_MICRO   = 0.24;  // hover / focus / toggles
-export const DUR_CURTAIN = 0.6;   // heavy curtain transitions
+export const DUR_INTRO = 1.0; // page-load hero entrances — long, generous
+export const DUR_REVEAL = 0.6; // standard scroll reveals — snappy but cinematic
+export const DUR_MICRO = 0.24; // hover / focus / toggles
+export const DUR_CURTAIN = 0.6; // heavy curtain transitions
 
 /* ─────────────────────────  SPRINGS  ───────────────────────── */
 
 // Magnetic pulls / cursor-followers — light + responsive, near-critically damped.
 export const SPRING_MAGNET = { type: "spring", stiffness: 260, damping: 20, mass: 0.5 };
 // UI snap — buttons springing back, tap release.
-export const SPRING_SNAP   = { type: "spring", stiffness: 420, damping: 30, mass: 0.6 };
+export const SPRING_SNAP = { type: "spring", stiffness: 420, damping: 30, mass: 0.6 };
 // Soft settle — cards, panels easing into place with a whisper of life.
-export const SPRING_SOFT   = { type: "spring", stiffness: 200, damping: 26, mass: 0.9 };
+export const SPRING_SOFT = { type: "spring", stiffness: 200, damping: 26, mass: 0.9 };
 // Text fold-up — slight overshoot so words "land" with character.
-export const SPRING_TEXT   = { type: "spring", stiffness: 180, damping: 20, mass: 1 };
+export const SPRING_TEXT = { type: "spring", stiffness: 180, damping: 20, mass: 1 };
 // Lenis-paired scroll smoothing — slow, heavy, silky parallax.
 export const SPRING_SCROLL = { stiffness: 90, damping: 26, mass: 0.7 };
 
@@ -54,11 +54,11 @@ export const VIEWPORT = { once: false, margin: "-12% 0px -12% 0px" };
 /* ─────────────────────  VARIANT FACTORIES  ─────────────────── */
 
 const OFFSETS = {
-  up:    { y: 56,  x: 0  },
-  down:  { y: -56, x: 0  },
-  left:  { x: 56,  y: 0  },
-  right: { x: -56, y: 0  },
-  none:  { x: 0,   y: 0  },
+  up: { y: 56, x: 0 },
+  down: { y: -56, x: 0 },
+  left: { x: 56, y: 0 },
+  right: { x: -56, y: 0 },
+  none: { x: 0, y: 0 },
 };
 
 /**
@@ -67,9 +67,13 @@ const OFFSETS = {
  */
 export function revealVariants({ dir = "up", distance, blur = false, depth = false } = {}) {
   const base = OFFSETS[dir] || OFFSETS.up;
-  const off = distance != null
-    ? { x: base.x === 0 ? 0 : Math.sign(base.x) * distance, y: base.y === 0 ? 0 : Math.sign(base.y) * distance }
-    : base;
+  const off =
+    distance != null
+      ? {
+          x: base.x === 0 ? 0 : Math.sign(base.x) * distance,
+          y: base.y === 0 ? 0 : Math.sign(base.y) * distance,
+        }
+      : base;
 
   return {
     hidden: {

@@ -20,7 +20,8 @@ import { useCursor } from "./useCursor";
 const sharedLoop = (() => {
   const subscribers = new Set();
   let raf = 0;
-  let lastMx = -1, lastMy = -1;
+  let lastMx = -1,
+    lastMy = -1;
   let cursor = null;
 
   const start = (c) => {
@@ -30,7 +31,8 @@ const sharedLoop = (() => {
       const mx = cursor?.mx.get() ?? -9999;
       const my = cursor?.my.get() ?? -9999;
       if (mx !== lastMx || my !== lastMy) {
-        lastMx = mx; lastMy = my;
+        lastMx = mx;
+        lastMy = my;
         for (const sub of subscribers) sub(mx, my);
       }
       raf = subscribers.size ? requestAnimationFrame(tick) : 0;
@@ -44,7 +46,10 @@ const sharedLoop = (() => {
       start(c);
       return () => {
         subscribers.delete(fn);
-        if (!subscribers.size && raf) { cancelAnimationFrame(raf); raf = 0; }
+        if (!subscribers.size && raf) {
+          cancelAnimationFrame(raf);
+          raf = 0;
+        }
       };
     },
   };
@@ -65,8 +70,8 @@ export default function useMagneticPull({
   const ly = useMotionValue(0);
   const rx = useMotionValue(0);
   const ry = useMotionValue(0);
-  const sx  = useSpring(lx, { stiffness: springStiffness, damping: springDamping, mass: 0.6 });
-  const sy  = useSpring(ly, { stiffness: springStiffness, damping: springDamping, mass: 0.6 });
+  const sx = useSpring(lx, { stiffness: springStiffness, damping: springDamping, mass: 0.6 });
+  const sy = useSpring(ly, { stiffness: springStiffness, damping: springDamping, mass: 0.6 });
   const srx = useSpring(rx, { stiffness: springStiffness, damping: springDamping, mass: 0.6 });
   const sry = useSpring(ry, { stiffness: springStiffness, damping: springDamping, mass: 0.6 });
 
@@ -74,7 +79,10 @@ export default function useMagneticPull({
   useLayoutEffect(() => {
     const measure = () => {
       const el = ref.current;
-      if (!el) { rectRef.current = null; return; }
+      if (!el) {
+        rectRef.current = null;
+        return;
+      }
       const r = el.getBoundingClientRect();
       rectRef.current = { cx: r.left + r.width / 2, cy: r.top + r.height / 2 };
     };
@@ -110,12 +118,15 @@ export default function useMagneticPull({
         ly.set((dy / d) * strength * f);
         if (tiltStrength) {
           rx.set(-(dy / radius) * tiltStrength * f);
-          ry.set( (dx / radius) * tiltStrength * f);
+          ry.set((dx / radius) * tiltStrength * f);
         }
       } else if (lx.get() !== 0) {
         lx.set(0);
         ly.set(0);
-        if (tiltStrength) { rx.set(0); ry.set(0); }
+        if (tiltStrength) {
+          rx.set(0);
+          ry.set(0);
+        }
       }
     };
     return sharedLoop.subscribe(onTick, c);

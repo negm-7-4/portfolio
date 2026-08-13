@@ -36,11 +36,11 @@ const BG = "#0c1526";
    with its own gentle vertical wave — atmosphere + motion behind the copy.
    Screen-blended, low opacity; skipped under reduced motion. */
 const BEAMS = [
-  { top: "8%",  w: "62%", dur: 11, delay: 0.0, op: 0.12 },
+  { top: "8%", w: "62%", dur: 11, delay: 0.0, op: 0.12 },
   { top: "26%", w: "78%", dur: 15, delay: 2.0, op: 0.08 },
   { top: "48%", w: "54%", dur: 12, delay: 3.4, op: 0.14 },
   { top: "66%", w: "70%", dur: 17, delay: 1.2, op: 0.07 },
-  { top: "84%", w: "58%", dur: 13, delay: 4.0, op: 0.10 },
+  { top: "84%", w: "58%", dur: 13, delay: 4.0, op: 0.1 },
 ];
 
 function LightStreaks({ reduce }) {
@@ -53,11 +53,17 @@ function LightStreaks({ reduce }) {
       {/* two soft, wide light shafts for depth */}
       <div
         className="absolute -left-[10%] top-[-20%] h-[160%] w-[38%] -rotate-[20deg]"
-        style={{ background: "linear-gradient(90deg, transparent, rgba(120,160,230,0.10), transparent)", filter: "blur(30px)" }}
+        style={{
+          background: "linear-gradient(90deg, transparent, rgba(120,160,230,0.10), transparent)",
+          filter: "blur(30px)",
+        }}
       />
       <div
         className="absolute right-[6%] top-[-25%] h-[170%] w-[30%] -rotate-[20deg]"
-        style={{ background: "linear-gradient(90deg, transparent, rgba(150,130,220,0.09), transparent)", filter: "blur(34px)" }}
+        style={{
+          background: "linear-gradient(90deg, transparent, rgba(150,130,220,0.09), transparent)",
+          filter: "blur(34px)",
+        }}
       />
       {/* the raking streaks */}
       {BEAMS.map((b, i) => (
@@ -70,7 +76,8 @@ function LightStreaks({ reduce }) {
             rotate: "-20deg",
             opacity: b.op,
             filter: "blur(1px)",
-            background: "linear-gradient(90deg, transparent, rgba(165,190,240,0.95) 45%, rgba(200,215,255,1) 55%, transparent)",
+            background:
+              "linear-gradient(90deg, transparent, rgba(165,190,240,0.95) 45%, rgba(200,215,255,1) 55%, transparent)",
           }}
           initial={{ x: "-40%" }}
           animate={reduce ? { x: "40%" } : { x: ["-40%", "150%"], y: [0, 16, 0] }}
@@ -92,7 +99,7 @@ function LightStreaks({ reduce }) {
 const HEADLINE = [
   { text: "I ENGINEER" },
   { text: "INTERFACES THAT" },
-  { text: "FEEL", },
+  { text: "FEEL" },
   { text: "ALIVE.", accent: true },
 ];
 
@@ -160,7 +167,10 @@ function DuotonePhoto({ lite, reduce }) {
         <div
           aria-hidden
           className="absolute inset-0"
-          style={{ background: "radial-gradient(56% 50% at 52% 34%, rgba(96,132,196,0.34), transparent 66%)" }}
+          style={{
+            background:
+              "radial-gradient(56% 50% at 52% 34%, rgba(96,132,196,0.34), transparent 66%)",
+          }}
         />
 
         {/* the cutout — REAL colours, lightly graded; the drop-shadow is in
@@ -180,21 +190,35 @@ function DuotonePhoto({ lite, reduce }) {
         {/* a faint steel wash tying the colours to the palette (kept low so
             the real colours stay), masked to the figure only */}
         <div aria-hidden className="absolute inset-0" style={cutMask}>
-          <div className="absolute inset-0" style={{ background: "#4d6ba6", mixBlendMode: "soft-light", opacity: 0.4 }} />
+          <div
+            className="absolute inset-0"
+            style={{ background: "#4d6ba6", mixBlendMode: "soft-light", opacity: 0.4 }}
+          />
           {/* cool shadow lift so the darks match the blue background */}
-          <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, transparent 40%, rgba(18,30,56,0.55) 100%)", mixBlendMode: "multiply" }} />
+          <div
+            className="absolute inset-0"
+            style={{
+              background: "linear-gradient(180deg, transparent 40%, rgba(18,30,56,0.55) 100%)",
+              mixBlendMode: "multiply",
+            }}
+          />
         </div>
 
         {/* ✨ cursor spotlight — a warm light that follows the mouse and lifts
             the colour/brightness where you point, on the figure only */}
         {!lite && (
-          <motion.div aria-hidden className="absolute inset-0" style={{ ...cutMask, opacity: glow }}>
+          <motion.div
+            aria-hidden
+            className="absolute inset-0"
+            style={{ ...cutMask, opacity: glow }}
+          >
             <motion.div
               className="absolute h-[46%] w-[46%] -translate-x-1/2 -translate-y-1/2 rounded-full"
               style={{
                 left: gx,
                 top: gy,
-                background: "radial-gradient(circle, rgba(255,246,232,0.9) 0%, rgba(180,205,255,0.35) 40%, transparent 72%)",
+                background:
+                  "radial-gradient(circle, rgba(255,246,232,0.9) 0%, rgba(180,205,255,0.35) 40%, transparent 72%)",
                 mixBlendMode: "soft-light",
               }}
             />
@@ -261,7 +285,9 @@ export default function PhotoIntro() {
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 h-[58%] md:hidden"
-        style={{ background: `linear-gradient(180deg, ${BG} 0%, rgba(12,22,42,0.92) 62%, transparent 100%)` }}
+        style={{
+          background: `linear-gradient(180deg, ${BG} 0%, rgba(12,22,42,0.92) 62%, transparent 100%)`,
+        }}
       />
 
       {/* film grain + vignette over the whole frame */}
@@ -300,10 +326,10 @@ export default function PhotoIntro() {
         {/* The page's one and only <h1>. The visible lines are the statement;
             the visually hidden lead-in gives crawlers and screen readers the
             identity that the decorative eyebrow above carries visually. */}
-        <h1
-          className="photo-intro-headline font-display text-[clamp(2.15rem,10.8vw,3.5rem)] font-bold uppercase leading-[0.92] tracking-[-0.02em] md:text-[clamp(3.4rem,8vw,7.5rem)]"
-        >
-          <span className="sr-only">{profile.name} — {profile.role}. </span>
+        <h1 className="photo-intro-headline font-display text-[clamp(2.15rem,10.8vw,3.5rem)] font-bold uppercase leading-[0.92] tracking-[-0.02em] md:text-[clamp(3.4rem,8vw,7.5rem)]">
+          <span className="sr-only">
+            {profile.name} — {profile.role}.{" "}
+          </span>
           {HEADLINE.map((l, i) => (
             <span key={i} className="block overflow-hidden">
               <motion.span

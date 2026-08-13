@@ -7,12 +7,12 @@ import { goToSection } from "../lib/navigation";
 import { openCv, openCommandPalette } from "../lib/appEvents";
 
 const links = [
-  { label: "About",    id: "about"    },
+  { label: "About", id: "about" },
   { label: "Services", id: "services" },
-  { label: "Process",  id: "process"  },
+  { label: "Process", id: "process" },
   { label: "Projects", id: "projects" },
-  { label: "Socials",  id: "socials"  },
-  { label: "Contact",  id: "contact"  },
+  { label: "Socials", id: "socials" },
+  { label: "Contact", id: "contact" },
 ];
 
 /* ─── A star on the constellation trail ───────────────────────────────
@@ -37,7 +37,10 @@ function NavLink({ link, isActive, isPassed, onClick }) {
     mx.set((e.clientX - cx) * 0.28);
     my.set((e.clientY - cy) * 0.28);
   };
-  const onLeave = () => { mx.set(0); my.set(0); };
+  const onLeave = () => {
+    mx.set(0);
+    my.set(0);
+  };
 
   return (
     <li className="relative">
@@ -50,7 +53,11 @@ function NavLink({ link, isActive, isPassed, onClick }) {
         data-cursor="hover"
         aria-current={isActive ? "true" : undefined}
         className={`group relative flex flex-col items-center gap-2 px-3 pb-1 pt-0.5 text-[10.5px] font-medium uppercase tracking-[0.16em] transition-colors ${
-          isActive ? "text-white" : isPassed ? "text-white/70 hover:text-white" : "text-white/55 hover:text-white"
+          isActive
+            ? "text-white"
+            : isPassed
+              ? "text-white/70 hover:text-white"
+              : "text-white/55 hover:text-white"
         }`}
       >
         {/* the star node, sitting on the trail (the nav measures the lit
@@ -68,7 +75,11 @@ function NavLink({ link, isActive, isPassed, onClick }) {
           )}
           {isActive ? (
             /* the current star blooms into the site's own glyph */
-            <svg viewBox="0 0 24 24" className="relative h-3 w-3 drop-shadow-[0_0_5px_rgba(170,180,196,0.9)]" aria-hidden>
+            <svg
+              viewBox="0 0 24 24"
+              className="relative h-3 w-3 drop-shadow-[0_0_5px_rgba(170,180,196,0.9)]"
+              aria-hidden
+            >
               <path
                 d="M12 0 C12.7 7.3 16.7 11.3 24 12 C16.7 12.7 12.7 16.7 12 24 C11.3 16.7 7.3 12.7 0 12 C7.3 11.3 11.3 7.3 12 0 Z"
                 fill="#ffffff"
@@ -190,7 +201,10 @@ export default function Navbar() {
               {/* orbit ring that draws itself on hover (dash offset is
                   animated via the .logo-orbit rule in index.css) */}
               <circle
-                cx="12" cy="12" r="10.5" fill="none"
+                cx="12"
+                cy="12"
+                r="10.5"
+                fill="none"
                 stroke="rgba(170,180,196,0.55)"
                 strokeWidth="0.8"
                 className="logo-orbit"
@@ -204,8 +218,7 @@ export default function Navbar() {
             <span
               className="bar-shimmer tracking-[0.08em]"
               style={{
-                backgroundImage:
-                  "linear-gradient(110deg, #ffffff 0%, #aab4c4 50%, #ffffff 100%)",
+                backgroundImage: "linear-gradient(110deg, #ffffff 0%, #aab4c4 50%, #ffffff 100%)",
                 backgroundSize: "200% 100%",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
@@ -241,7 +254,8 @@ export default function Navbar() {
             aria-hidden
             className="pointer-events-none absolute left-0 top-[7px] h-px"
             style={{
-              background: "linear-gradient(90deg, rgba(170,180,196,0.15), rgba(170,180,196,0.85) 65%, #ffffff)",
+              background:
+                "linear-gradient(90deg, rgba(170,180,196,0.15), rgba(170,180,196,0.85) 65%, #ffffff)",
             }}
             initial={false}
             animate={{ width: trailW }}
@@ -270,7 +284,15 @@ export default function Navbar() {
           >
             {/* Narrow screens keep the control — it just drops to the icon
                 instead of disappearing (it used to vanish under `sm`). */}
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="h-4 w-4 lg:hidden" aria-hidden>
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              className="h-4 w-4 lg:hidden"
+              aria-hidden
+            >
               <circle cx="11" cy="11" r="7" />
               <path d="m20 20-3.5-3.5" />
             </svg>
@@ -279,7 +301,9 @@ export default function Navbar() {
               <kbd className="rounded border border-white/15 bg-white/[0.04] px-1.5 py-0.5 font-display">
                 {isMac ? "⌘" : "Ctrl"}
               </kbd>
-              <kbd className="rounded border border-white/15 bg-white/[0.04] px-1.5 py-0.5 font-display">K</kbd>
+              <kbd className="rounded border border-white/15 bg-white/[0.04] px-1.5 py-0.5 font-display">
+                K
+              </kbd>
             </span>
           </button>
 
@@ -298,7 +322,9 @@ export default function Navbar() {
               className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-black/8 to-transparent transition-transform duration-500 ease-out group-hover/cv:translate-x-full"
             />
             {/* little document glyph so it reads unmistakably as a CV */}
-            <span aria-hidden className="relative text-[13px] leading-none">▤</span>
+            <span aria-hidden className="relative text-[13px] leading-none">
+              ▤
+            </span>
             {/* label collapses on narrow screens, but the button stays */}
             <span className="relative hidden lg:inline">My CV</span>
             <motion.span
@@ -306,7 +332,9 @@ export default function Navbar() {
               animate={{ y: [0, 2, 0] }}
               transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
               aria-hidden
-            >↓</motion.span>
+            >
+              ↓
+            </motion.span>
           </MagneticButton>
 
           {/* mobile toggle */}
@@ -397,15 +425,24 @@ export default function Navbar() {
 
             {/* mobile CV button */}
             <motion.button
-              onClick={() => { setOpen(false); openCv(); }}
+              onClick={() => {
+                setOpen(false);
+                openCv();
+              }}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 + links.length * 0.05, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+              transition={{
+                delay: 0.1 + links.length * 0.05,
+                duration: 0.4,
+                ease: [0.16, 1, 0.3, 1],
+              }}
               className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg bg-white px-4 py-3 text-xs font-semibold uppercase tracking-widest text-black"
             >
               <span aria-hidden>▤</span>
               View / Download CV
-              <span aria-hidden className="text-[10px]">↓</span>
+              <span aria-hidden className="text-[10px]">
+                ↓
+              </span>
             </motion.button>
           </motion.div>
         )}

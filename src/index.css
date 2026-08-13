@@ -21,9 +21,9 @@
   font-display: swap;
   font-weight: 100 900;
   src: url("/fonts/inter-latin-variable.woff2") format("woff2-variations");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
-    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
-    U+2212, U+2215, U+FEFF, U+FFFD;
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 @font-face {
@@ -32,9 +32,9 @@
   font-display: swap;
   font-weight: 300;
   src: url("/fonts/space-grotesk-latin-300.woff2") format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
-    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
-    U+2212, U+2215, U+FEFF, U+FFFD;
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
   font-family: "Space Grotesk";
@@ -42,9 +42,9 @@
   font-display: swap;
   font-weight: 400;
   src: url("/fonts/space-grotesk-latin-400.woff2") format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
-    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
-    U+2212, U+2215, U+FEFF, U+FFFD;
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
   font-family: "Space Grotesk";
@@ -52,9 +52,9 @@
   font-display: swap;
   font-weight: 500;
   src: url("/fonts/space-grotesk-latin-500.woff2") format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
-    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
-    U+2212, U+2215, U+FEFF, U+FFFD;
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
   font-family: "Space Grotesk";
@@ -62,9 +62,9 @@
   font-display: swap;
   font-weight: 600;
   src: url("/fonts/space-grotesk-latin-600.woff2") format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
-    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
-    U+2212, U+2215, U+FEFF, U+FFFD;
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
   font-family: "Space Grotesk";
@@ -72,9 +72,9 @@
   font-display: swap;
   font-weight: 700;
   src: url("/fonts/space-grotesk-latin-700.woff2") format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
-    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
-    U+2212, U+2215, U+FEFF, U+FFFD;
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 @theme {
@@ -96,7 +96,8 @@
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   width: 100%;
   /* `overflow-x: clip` (not hidden) — hidden breaks position: sticky page-wide.
      clip prevents horizontal scroll without creating a scroll container. */
@@ -117,7 +118,10 @@ body {
 }
 
 /* Display headings get tighter tracking + nicer numerals */
-.font-display, h1, h2, h3 {
+.font-display,
+h1,
+h2,
+h3 {
   font-feature-settings: "ss01", "kern", "calt";
   font-variant-ligatures: common-ligatures;
   letter-spacing: -0.005em;
@@ -180,12 +184,23 @@ section {
 }
 
 /* 2. Keep media inside the screen (but don't force height on svg/canvas). */
-img, video {
+img,
+video {
   max-width: 100%;
   height: auto;
 }
-canvas { max-width: 100%; }
-p, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; }
+canvas {
+  max-width: 100%;
+}
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
 
 /* Slim custom scrollbar */
 ::-webkit-scrollbar {
@@ -227,14 +242,15 @@ p, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; }
   will-change: background-position;
 }
 @keyframes gradientShift {
-  to { background-position: 240% center; }
+  to {
+    background-position: 240% center;
+  }
 }
 
 /* Glassy card surface — refined: subtle gradient fill + inner highlight +
    light blur. Cheaper than full backdrop-filter, reads as frosted glass. */
 .glass {
-  background:
-    linear-gradient(180deg, rgba(28,32,40,0.62) 0%, rgba(15,18,24,0.58) 100%);
+  background: linear-gradient(180deg, rgba(28, 32, 40, 0.62) 0%, rgba(15, 18, 24, 0.58) 100%);
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.06),
@@ -246,8 +262,12 @@ p, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; }
 
 /* Cheap, transform-only starfield drift */
 @keyframes starDrift {
-  from { transform: translateY(0); }
-  to { transform: translateY(-2000px); }
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-2000px);
+  }
 }
 .star-drift {
   animation-name: starDrift;
@@ -257,8 +277,13 @@ p, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; }
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-12px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
 }
 .animate-float {
   animation: float 6s ease-in-out infinite;
@@ -266,8 +291,12 @@ p, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; }
 
 /* ── Shimmer for skill bars ───────────────────────────────── */
 @keyframes shimmer {
-  0%   { background-position: -200% center; }
-  100% { background-position:  200% center; }
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
 }
 .bar-shimmer {
   background-size: 250% 100%;
@@ -276,18 +305,36 @@ p, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; }
 
 /* ── 3D float ─────────────────────────────────────────────── */
 @keyframes float3d {
-  0%,100% { transform: translateY(0)   rotateX(0deg)   rotateZ(0deg); }
-  33%     { transform: translateY(-14px) rotateX(3deg)  rotateZ(.8deg); }
-  66%     { transform: translateY(-7px)  rotateX(-2deg) rotateZ(-.6deg); }
+  0%,
+  100% {
+    transform: translateY(0) rotateX(0deg) rotateZ(0deg);
+  }
+  33% {
+    transform: translateY(-14px) rotateX(3deg) rotateZ(0.8deg);
+  }
+  66% {
+    transform: translateY(-7px) rotateX(-2deg) rotateZ(-0.6deg);
+  }
 }
-.animate-float3d { animation: float3d 9s ease-in-out infinite; will-change: transform; }
+.animate-float3d {
+  animation: float3d 9s ease-in-out infinite;
+  will-change: transform;
+}
 
 /* ── Aurora drift — transform-only ambient blob (GPU/60fps) ─── */
 @keyframes auroraDrift {
-  0%   { transform: translate3d(0, 0, 0) scale(1)    rotate(0deg); }
-  33%  { transform: translate3d(4%, -3%, 0) scale(1.12) rotate(8deg); }
-  66%  { transform: translate3d(-3%, 2%, 0) scale(0.94) rotate(-6deg); }
-  100% { transform: translate3d(0, 0, 0) scale(1)    rotate(0deg); }
+  0% {
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+  }
+  33% {
+    transform: translate3d(4%, -3%, 0) scale(1.12) rotate(8deg);
+  }
+  66% {
+    transform: translate3d(-3%, 2%, 0) scale(0.94) rotate(-6deg);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+  }
 }
 .animate-aurora {
   animation: auroraDrift 18s ease-in-out infinite;
@@ -295,17 +342,27 @@ p, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; }
 }
 
 /* ── Sheen — a one-pass light sweep on hover (transform-only) ── */
-.sheen { position: relative; overflow: hidden; }
+.sheen {
+  position: relative;
+  overflow: hidden;
+}
 .sheen::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.14) 50%, transparent 70%);
+  background: linear-gradient(
+    115deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.14) 50%,
+    transparent 70%
+  );
   transform: translateX(-120%);
   transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   pointer-events: none;
 }
-.sheen:hover::after { transform: translateX(120%); }
+.sheen:hover::after {
+  transform: translateX(120%);
+}
 
 /* ════════════════════════════════════════════════════════════
    ADVANCED ANIMATION LIBRARY — all GPU-friendly (transform/opacity),
@@ -323,7 +380,9 @@ p, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; }
 
 /* Animated conic gradient border — paused until hover, so only the
    card you're pointing at ever repaints. */
-.gradient-border { position: relative; }
+.gradient-border {
+  position: relative;
+}
 .gradient-border::before {
   content: "";
   position: absolute;
@@ -338,9 +397,11 @@ p, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; }
     transparent 38%,
     transparent 100%
   );
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
-          mask-composite: exclude;
+  mask-composite: exclude;
   opacity: 0;
   transition: opacity 0.4s ease;
   animation: bdSpin 4s linear infinite;
@@ -351,66 +412,153 @@ p, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; }
   opacity: 1;
   animation-play-state: running;
 }
-@keyframes bdSpin { to { --bd-angle: 360deg; } }
+@keyframes bdSpin {
+  to {
+    --bd-angle: 360deg;
+  }
+}
 
 /* Soft glow that breathes — for halos behind icons / featured chips */
 @keyframes glowPulse {
-  0%, 100% { opacity: 0.35; transform: scale(1); }
-  50%      { opacity: 0.7;  transform: scale(1.08); }
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.08);
+  }
 }
-.glow-pulse { animation: glowPulse 4.5s ease-in-out infinite; will-change: transform, opacity; }
+.glow-pulse {
+  animation: glowPulse 4.5s ease-in-out infinite;
+  will-change: transform, opacity;
+}
 
 /* Quick badge pulse — used by the "Available" pill progress line and any
    small "live" status dot. Transform + opacity only, runs on the compositor. */
 @keyframes badgePulse {
-  0%, 100% { transform: scale(1);    opacity: 0.85; }
-  50%      { transform: scale(1.18); opacity: 1;    }
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.18);
+    opacity: 1;
+  }
 }
-.badge-pulse { animation: badgePulse 1.6s ease-in-out infinite; will-change: transform, opacity; }
+.badge-pulse {
+  animation: badgePulse 1.6s ease-in-out infinite;
+  will-change: transform, opacity;
+}
 
 /* One-shot wobble-in for tile corner brackets. 0.4s entrance so the bracket
    "lands" into place with a touch of life without lingering. */
 @keyframes wobbleIn {
-  0%   { transform: scale(0.4) rotate(-90deg); opacity: 0; }
-  60%  { transform: scale(1.15) rotate(8deg);  opacity: 1; }
-  100% { transform: scale(1)   rotate(0deg);   opacity: 1; }
+  0% {
+    transform: scale(0.4) rotate(-90deg);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.15) rotate(8deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
 }
-.wobble-in { animation: wobbleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.wobble-in {
+  animation: wobbleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
 
 /* Continuous diamond sparkle — slow 360° rotation paired with a brightness
    pulse so the central ◆ in section headings reads as a living accent. */
 @keyframes sparkle {
-  0%   { transform: rotate(0deg)   scale(1);    opacity: 0.7; }
-  50%  { transform: rotate(180deg) scale(1.18); opacity: 1;   }
-  100% { transform: rotate(360deg) scale(1);    opacity: 0.7; }
+  0% {
+    transform: rotate(0deg) scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: rotate(180deg) scale(1.18);
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+    opacity: 0.7;
+  }
 }
-.sparkle { animation: sparkle 8s ease-in-out infinite; will-change: transform, opacity; }
+.sparkle {
+  animation: sparkle 8s ease-in-out infinite;
+  will-change: transform, opacity;
+}
 
 /* Idle drift for a giant brand wordmark once it has landed. Pure transform —
    ±2px horizontal, 12s loop, no perceived motion sickness at large sizes. */
 @keyframes idleDrift {
-  0%, 100% { transform: translateX(0); }
-  50%      { transform: translateX(2px); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(2px);
+  }
 }
-.idle-drift { animation: idleDrift 12s ease-in-out infinite; will-change: transform; }
+.idle-drift {
+  animation: idleDrift 12s ease-in-out infinite;
+  will-change: transform;
+}
 
 /* Spin utilities (rotate = compositor) */
-@keyframes spin360 { to { transform: rotate(360deg); } }
-.spin-slow   { animation: spin360 14s linear infinite; will-change: transform; }
-.spin-slower { animation: spin360 26s linear infinite; will-change: transform; }
-.spin-rev    { animation: spin360 20s linear infinite reverse; will-change: transform; }
+@keyframes spin360 {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.spin-slow {
+  animation: spin360 14s linear infinite;
+  will-change: transform;
+}
+.spin-slower {
+  animation: spin360 26s linear infinite;
+  will-change: transform;
+}
+.spin-rev {
+  animation: spin360 20s linear infinite reverse;
+  will-change: transform;
+}
 
 /* Float variants */
-@keyframes floatX { 0%,100% { transform: translateX(0); } 50% { transform: translateX(10px); } }
-.float-x    { animation: floatX 7s ease-in-out infinite; will-change: transform; }
-.float-soft { animation: float 8s ease-in-out infinite; will-change: transform; }
+@keyframes floatX {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(10px);
+  }
+}
+.float-x {
+  animation: floatX 7s ease-in-out infinite;
+  will-change: transform;
+}
+.float-soft {
+  animation: float 8s ease-in-out infinite;
+  will-change: transform;
+}
 
 /* Per-element float with variable amplitude/duration via CSS vars — lets a
    whole grid of tiles bob with individual rhythm on the compositor instead of
    one framer rAF loop per tile. */
 @keyframes floatTile {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(var(--amp, -12px)); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(var(--amp, -12px));
+  }
 }
 .float-tile {
   animation: floatTile var(--dur, 6s) ease-in-out infinite;
@@ -424,26 +572,49 @@ p, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; }
   background-size: 220% 100%;
   background-position: 120% center;
   -webkit-background-clip: text;
-          background-clip: text;
+  background-clip: text;
   transition: background-position 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.text-sheen:hover { background-position: -20% center; -webkit-text-fill-color: transparent; }
+.text-sheen:hover {
+  background-position: -20% center;
+  -webkit-text-fill-color: transparent;
+}
 
 /* Animated divider line — a light pulse travels along it */
-@keyframes lineSweep { 0% { transform: translateX(-100%); } 100% { transform: translateX(300%); } }
-.shimmer-line { position: relative; overflow: hidden; }
+@keyframes lineSweep {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(300%);
+  }
+}
+.shimmer-line {
+  position: relative;
+  overflow: hidden;
+}
 .shimmer-line::after {
   content: "";
   position: absolute;
   inset: 0;
   width: 40%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
   animation: lineSweep 3.5s ease-in-out infinite;
 }
 
 /* Live CRT scan beam — a thin bright line sweeps down a screen/frame */
-@keyframes scanBeam { 0% { transform: translateY(-140%); } 100% { transform: translateY(900%); } }
-.scan-beam { animation: scanBeam 4.5s linear infinite; will-change: transform; }
+@keyframes scanBeam {
+  0% {
+    transform: translateY(-140%);
+  }
+  100% {
+    transform: translateY(900%);
+  }
+}
+.scan-beam {
+  animation: scanBeam 4.5s linear infinite;
+  will-change: transform;
+}
 
 /* ── Native scroll-driven reveals (off-main-thread, where supported) ──
    These run on the compositor via the browser's own scroll timeline, so
@@ -451,10 +622,23 @@ p, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; }
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
     @keyframes sdRise {
-      from { opacity: 0; transform: translateY(34px) scale(0.985); }
-      to   { opacity: 1; transform: translateY(0)    scale(1); }
+      from {
+        opacity: 0;
+        transform: translateY(34px) scale(0.985);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
     }
-    @keyframes sdFade { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes sdFade {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
     .sd-rise {
       animation: sdRise linear both;
       animation-timeline: view();
@@ -470,11 +654,10 @@ p, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; }
 
 /* ── Enhanced glass on hover ──────────────────────────────── */
 .glass:hover {
-  background:
-    linear-gradient(180deg, rgba(34,38,48,0.74) 0%, rgba(20,23,30,0.66) 100%);
-  border-color: rgba(255,255,255,0.14);
+  background: linear-gradient(180deg, rgba(34, 38, 48, 0.74) 0%, rgba(20, 23, 30, 0.66) 100%);
+  border-color: rgba(255, 255, 255, 0.14);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
     0 18px 36px -8px rgba(0, 0, 0, 0.55);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
@@ -493,14 +676,19 @@ main section:not(#hero) {
   contain-intrinsic-size: 0 800px;
 }
 /* Default touch optimizations — remove 300ms tap delay, no callout */
-a, button, [role="button"], input, textarea, [data-cursor="hover"] {
+a,
+button,
+[role="button"],
+input,
+textarea,
+[data-cursor="hover"] {
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
 }
 
 /* Subtle dot-grid texture for backgrounds */
 .bg-dots {
-  background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
   background-size: 24px 24px;
 }
 
@@ -518,7 +706,8 @@ a, button, [role="button"], input, textarea, [data-cursor="hover"] {
 
 /* Keyboard focus on inputs gets a softer ring without the dark spacer
    so the label/border underneath stays visible. */
-input:focus-visible, textarea:focus-visible {
+input:focus-visible,
+textarea:focus-visible {
   box-shadow:
     0 0 0 1px rgba(170, 180, 196, 0.45),
     0 0 16px rgba(170, 180, 196, 0.18);
@@ -562,5 +751,7 @@ dialog::backdrop {
   stroke-dashoffset: 0;
 }
 @media (prefers-reduced-motion: reduce) {
-  .logo-orbit { transition: none; }
+  .logo-orbit {
+    transition: none;
+  }
 }

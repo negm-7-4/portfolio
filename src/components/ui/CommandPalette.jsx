@@ -71,9 +71,7 @@ export default function CommandPalette() {
     const term = q.trim().toLowerCase();
     if (!term) return commands;
     return commands.filter(
-      (c) =>
-        c.label.toLowerCase().includes(term) ||
-        c.hint?.toLowerCase().includes(term)
+      (c) => c.label.toLowerCase().includes(term) || c.hint?.toLowerCase().includes(term)
     );
   }, [q, commands]);
 
@@ -177,7 +175,10 @@ export default function CommandPalette() {
               <input
                 ref={inputRef}
                 value={q}
-                onChange={(e) => { setQ(e.target.value); setIdx(0); }}
+                onChange={(e) => {
+                  setQ(e.target.value);
+                  setIdx(0);
+                }}
                 placeholder="Search sections, actions…"
                 aria-label="Search sections and actions"
                 role="combobox"
@@ -214,7 +215,10 @@ export default function CommandPalette() {
                       role="option"
                       aria-selected={active}
                       onMouseEnter={() => setIdx(i)}
-                      onClick={() => { c.run(); setOpen(false); }}
+                      onClick={() => {
+                        c.run();
+                        setOpen(false);
+                      }}
                       className={`group flex w-full items-center gap-4 px-5 py-3 text-left transition-colors ${
                         active ? "bg-white/[0.05]" : "hover:bg-white/[0.03]"
                       }`}
@@ -232,7 +236,9 @@ export default function CommandPalette() {
                       </span>
 
                       <div className="min-w-0 flex-1">
-                        <p className={`truncate font-display text-sm font-semibold ${active ? "text-white" : "text-white/75"}`}>
+                        <p
+                          className={`truncate font-display text-sm font-semibold ${active ? "text-white" : "text-white/75"}`}
+                        >
                           {c.label}
                         </p>
                         <p className="truncate text-[10px] uppercase tracking-[0.25em] text-white/55">
@@ -254,12 +260,18 @@ export default function CommandPalette() {
             {/* footer hint row */}
             <div className="flex items-center justify-between gap-3 border-t border-white/[0.06] px-5 py-3 text-[10px] uppercase tracking-[0.25em] text-white/60">
               <span className="flex items-center gap-2">
-                <kbd className="rounded border border-white/15 bg-white/[0.04] px-1.5 py-0.5">↑</kbd>
-                <kbd className="rounded border border-white/15 bg-white/[0.04] px-1.5 py-0.5">↓</kbd>
+                <kbd className="rounded border border-white/15 bg-white/[0.04] px-1.5 py-0.5">
+                  ↑
+                </kbd>
+                <kbd className="rounded border border-white/15 bg-white/[0.04] px-1.5 py-0.5">
+                  ↓
+                </kbd>
                 navigate
               </span>
               <span className="flex items-center gap-2">
-                <kbd className="rounded border border-white/15 bg-white/[0.04] px-1.5 py-0.5">↵</kbd>
+                <kbd className="rounded border border-white/15 bg-white/[0.04] px-1.5 py-0.5">
+                  ↵
+                </kbd>
                 select
               </span>
               <span className="hidden sm:inline">

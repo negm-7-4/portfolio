@@ -101,7 +101,10 @@ function Card({ p, i, onFocus }) {
             style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden" }}
           >
             <div className="absolute inset-0">
-              <ProjectVisual project={p} imgClassName="transition-transform duration-700 group-hover:scale-[1.05]" />
+              <ProjectVisual
+                project={p}
+                imgClassName="transition-transform duration-700 group-hover:scale-[1.05]"
+              />
             </div>
             {/* glass grade + readability scrim */}
             <div

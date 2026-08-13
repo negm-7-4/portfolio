@@ -46,12 +46,10 @@ export const useExperience = create(
       }),
     setSection: (sectionIndex) =>
       set((s) => (s.sectionIndex === sectionIndex ? {} : { sectionIndex })),
-    setHovered: (hovered) =>
-      set((s) => (s.hovered === hovered ? {} : { hovered })),
+    setHovered: (hovered) => set((s) => (s.hovered === hovered ? {} : { hovered })),
     setAccentOverride: (accentOverride) =>
       set((s) => (s.accentOverride === accentOverride ? {} : { accentOverride })),
-    setGallery: (gallery) =>
-      set((s) => (s.gallery === gallery ? {} : { gallery })),
+    setGallery: (gallery) => set((s) => (s.gallery === gallery ? {} : { gallery })),
     setWarp: (warp) => set({ warp }),
     setShock: (shock) => set({ shock }),
     setQuality: (quality) => set({ quality }),

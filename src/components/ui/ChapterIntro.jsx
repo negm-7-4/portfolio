@@ -48,7 +48,10 @@ export default function ChapterIntro() {
               transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
               className="relative h-3 w-3"
             >
-              <span className="absolute inset-0 rounded-full border" style={{ borderColor: `${shown.color}80` }} />
+              <span
+                className="absolute inset-0 rounded-full border"
+                style={{ borderColor: `${shown.color}80` }}
+              />
               <span
                 className="absolute top-0 left-1/2 h-1 w-1 -translate-x-1/2 -translate-y-1/2 rounded-full"
                 style={{ background: shown.color, boxShadow: `0 0 6px ${shown.color}` }}

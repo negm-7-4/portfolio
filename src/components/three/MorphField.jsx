@@ -477,11 +477,7 @@ export default function MorphField({ quality = "high", interactive = false }) {
     // says the cursor is at any camera angle. Mouse only.
     if (interactive) {
       const cam = state.camera;
-      rayDir.current
-        .set(pointer.x, pointer.y, 0.5)
-        .unproject(cam)
-        .sub(cam.position)
-        .normalize();
+      rayDir.current.set(pointer.x, pointer.y, 0.5).unproject(cam).sub(cam.position).normalize();
       // Plane: passes through the origin (the field's centre), normal =
       // the camera's forward axis. Robust for every shot in the journey,
       // unlike a hard-coded z = 0 plane.
@@ -595,8 +591,7 @@ export default function MorphField({ quality = "high", interactive = false }) {
 
       group.current.rotation.order = "YXZ"; // spin in-plane, then tilt
       group.current.rotation.y = orbit * rm + ry * (1 - rm);
-      group.current.rotation.x =
-        RING_TILT * rm + Math.sin(scroll * Math.PI) * 0.15 * (1 - rm);
+      group.current.rotation.x = RING_TILT * rm + Math.sin(scroll * Math.PI) * 0.15 * (1 - rm);
       group.current.rotation.z = RING_ROLL * rm;
     }
   });

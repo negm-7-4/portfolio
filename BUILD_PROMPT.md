@@ -25,12 +25,14 @@ Awwwards judge AND a senior engineer, and cut anything that doesn't earn its pla
 ## 1. TECH STACK (use exactly this — nothing more)
 
 Core runtime:
+
 - **React 19 + Vite 6** (JavaScript; TypeScript optional)
 - **Tailwind CSS v4** (via `@tailwindcss/vite`) for all styling — no other CSS framework
 - **motion** (Framer Motion v12, `motion/react`) — the primary animation engine
 - **Lenis** — smooth scroll (expose the instance on `window.__lenis`)
 
 Loaded lazily, only where used:
+
 - **GSAP + ScrollTrigger** — one shared lazy import, ONLY for the scrubbed/pinned scroll timelines
   (stats counters, the signature statement beat). Nothing else needs it.
 - **three + @react-three/fiber + @react-three/drei + @react-three/postprocessing** — the ambient 3D
@@ -40,21 +42,21 @@ Loaded lazily, only where used:
 That's the entire dependency list. Deliberately EXCLUDED (do not add): Spline/@splinetool, any UI-kit
 (shadcn, Aceternity, Magic UI), any chart lib (D3, Chart.js, Recharts…), extra animation libs
 (Anime.js, Lottie, Rive, Theatre.js, AOS…), 2D engines (PixiJS, Matter.js, tsParticles…), and XR
-(A-Frame, WebXR). Those are skills to *list* in §7, not dependencies to install. Draw all icons as
+(A-Frame, WebXR). Those are skills to _list_ in §7, not dependencies to install. Draw all icons as
 inline SVG — no icon-font libraries. Output must be a static build (zero-config Vercel/Netlify deploy).
 
 ---
 
 ## 2. THE PERSON
 
-- **Name:** Mohamed Negm  (first: Mohamed · last: Negm)
-- **Role / headline:** Software Engineer  (sub: Front-End & Motion — React · Three.js)
+- **Name:** Mohamed Negm (first: Mohamed · last: Negm)
+- **Role / headline:** Software Engineer (sub: Front-End & Motion — React · Three.js)
 - **Tagline:** CS & AI student crafting fast, immersive web experiences with React, Three.js and
   cutting-edge motion design.
 - **Cycling role words (typewriter):** Software Engineer · Front-End Developer · React Specialist ·
   Motion Designer
 - **Location:** Sadat City, Monufia, Egypt
-- **Email:** mohammednegm11234@gmail.com   ·   **Phone:** +20 10 1227 9297
+- **Email:** mohammednegm11234@gmail.com · **Phone:** +20 10 1227 9297
 - **Education:** B.Sc Computer Science & AI — 2nd Year, Al-Ryada University (RST)
 - **Status:** Open to opportunities
 - **Socials:** GitHub https://github.com/negm-7-4 ·
@@ -72,6 +74,7 @@ From accounting ERPs to 3D web experiences — every pixel, every easing curve, 
 Always learning, always building.
 
 **Skills (grouped — render as the constellation wall):**
+
 - **Frontend:** React, JavaScript, TypeScript, Next.js, Tailwind CSS, HTML & CSS, Vite
 - **Animation & Motion:** Framer Motion, GSAP, Motion One, Lottie, Rive, React Spring
 - **3D & WebGL:** Three.js, React Three Fiber, Drei, Spline
@@ -81,33 +84,34 @@ Always learning, always building.
   (Featured/larger tiles: React, Next.js, Tailwind CSS, Three.js, Framer Motion, GSAP.)
 
 **Projects (8 — each with real screenshots; support multiple images where noted):**
-1. **SAMS** — *Multi-Agent AI Platform* — "An AI Company That Runs Itself." A virtual AI office
+
+1. **SAMS** — _Multi-Agent AI Platform_ — "An AI Company That Runs Itself." A virtual AI office
    where autonomous agents each own a role, collaborate peer-to-peer, negotiate, hold meetings and
    deliver real work end-to-end; live model brains, QA agents that read real files, a day/night
    office you can watch working. Tech: React, Node.js, Multi-Agent AI, WebSockets, OpenAI/DeepSeek.
    GitHub: github.com/negm-7-4. **Flagship.** Images: sams-1.
-2. **Vera** — *3D E-Commerce* — "A Perfume House Told in Scroll." Full store: cinematic 3D bottles,
+2. **Vera** — _3D E-Commerce_ — "A Perfume House Told in Scroll." Full store: cinematic 3D bottles,
    scroll-driven camera storytelling, motion on every surface, plus an owner dashboard for
    products/orders/analytics. Tech: React, Three.js, GSAP, Scroll Camera, Dashboard.
    Images: vera-1, vera-2, vera-3.
-3. **Nexora ERP** — *AI-Powered ERP · SaaS* — "The ERP You Can Talk To." ERP with a voice AI copilot
+3. **Nexora ERP** — _AI-Powered ERP · SaaS_ — "The ERP You Can Talk To." ERP with a voice AI copilot
    driving inventory/sales/purchasing, plus invoicing, reporting, multi-user and a SaaS tier.
    Tech: React, Node.js, MongoDB, Voice AI, SaaS. Images: nexora, nexora-2, nexora-3.
-4. **AutomationHub** — *Automation SaaS* — "Connect Everything, Automate Anything." Automation
+4. **AutomationHub** — _Automation SaaS_ — "Connect Everything, Automate Anything." Automation
    platform with a growing connector library; visual workflows on schedules/triggers, multi-tenant
    SaaS. Tech: NestJS, React, Workflow Engine, PostgreSQL, SaaS. Images: automation-1.
-5. **Acoustic Room Mapper** — *DSP / Signal Processing* — "Real-Time Acoustic Floorplan Mapping."
+5. **Acoustic Room Mapper** — _DSP / Signal Processing_ — "Real-Time Acoustic Floorplan Mapping."
    Builds 2D floorplans of halls from real-time audio, sub-meter precision via FFT cross-correlation
    at 48 kHz; heatmap/wireframe/hybrid views, bilingual RTL. Tech: Flutter, Python/Flask, C++17 DSP,
    FFT, Material 3. GitHub: github.com/negm-7-4/Acoustic-Room-Mapper. **Production-Ready.**
    Images: acoustic-1.
-6. **Social Network Analyzer** — *Data Visualisation* — "Graph-Based Network Intelligence." Maps
+6. **Social Network Analyzer** — _Data Visualisation_ — "Graph-Based Network Intelligence." Maps
    social connections, finds influencers, detects communities via graph theory. Tech: Python,
    NetworkX, React, D3.js. Images: social.
-7. **BASCALSCALAR** — *Utility App* — "Advanced Mathematical Computation." Scalar/matrix engine with
+7. **BASCALSCALAR** — _Utility App_ — "Advanced Mathematical Computation." Scalar/matrix engine with
    expression parsing and real-time visualisation. Tech: React, Math.js, Canvas API, Tailwind.
    Images: bascalscalar.
-8. **To Do List App** — *Productivity* — "Focus Without Friction." Task manager with categories,
+8. **To Do List App** — _Productivity_ — "Focus Without Friction." Task manager with categories,
    priorities, due dates, drag-and-drop, local persistence. Tech: React, Framer Motion,
    LocalStorage, Tailwind. Images: todo.
 
@@ -135,6 +139,7 @@ light from above. 1px low-opacity borders (`rgba(255,255,255,.08)`) for crisp gl
 `backdrop-filter: blur()` glass — sparingly, with a fallback.
 
 **Motion tokens (define once).**
+
 ```
 --dur-instant:100ms  --dur-fast:160ms  --dur-base:240ms  --dur-slow:400ms  --dur-intro:1000ms
 --ease-out: cubic-bezier(.16,1,.3,1)     /* enters — the premium expo-out */
@@ -142,6 +147,7 @@ light from above. 1px low-opacity borders (`rgba(255,255,255,.08)`) for crisp gl
 --ease-curtain: cubic-bezier(.83,0,.17,1) /* overlays / page transitions */
 --ease-back: cubic-bezier(.34,1.4,.5,1)   /* playful pops */
 ```
+
 One easing family + one duration scale = a coherent "voice". Enters use ease-out and are longer;
 exits are faster.
 
@@ -152,6 +158,7 @@ exits are faster.
 **Device tiers.** Detect a `tier` = `low | mid | high` (via `navigator.hardwareConcurrency`,
 `deviceMemory`, `matchMedia('(pointer:coarse)')`, and a WebGL probe). Also read
 `prefers-reduced-motion`. Everything heavy is gated on tier:
+
 - **high**: full 3D world + postprocessing + all micro-interactions
 - **mid** (most phones): 3D world at reduced particle counts / no depth-of-field
 - **low / reduced-motion**: NO 3D — a cheap CSS/GLSL gradient background + fades instead of big
@@ -174,7 +181,7 @@ stable). Target a **locked 60fps**.
 
 ---
 
-## 5. THE HERO — A PHOTO-DRIVEN CINEMATIC OPENING  ⭐ (your signature moment)
+## 5. THE HERO — A PHOTO-DRIVEN CINEMATIC OPENING ⭐ (your signature moment)
 
 > In THIS build the hero centrepiece is **my personal photo**, art-directed into a cinematic
 > reveal — not a stock 3D object. Treat the photo as the star of the first screen. Keep the
@@ -247,6 +254,7 @@ cinematic type, a mask-wipe exit synced to the hero reveal — under ~2.5s, neve
 
 A fixed, full-viewport `@react-three/fiber` `<Canvas>` BEHIND all content (pointer-events: none;
 the DOM keeps every click). It is driven entirely by the store. Include:
+
 - A **scroll-driven cinematic camera**: 8–10 composed keyframe shots (position + lookAt + fov),
   eased between with a smootherstep "hold–move–hold" cadence so it reads as deliberate cuts;
   optionally strung on a Catmull-Rom spline for a curved dolly, with a tiny per-shot dutch-angle.
@@ -255,7 +263,7 @@ the DOM keeps every click). It is driven entirely by the store. Include:
 - A **signature GPU particle field** (one draw call, `THREE.Points` + a hand-written
   `ShaderMaterial`) that continuously **re-forms into distinct shapes as you scroll**, one per
   section, each particle keeping identity across formations (position=FROM buffer, `aTo`=TO buffer,
-  `uBlend` mixes; swap buffers only when crossing a section boundary). Make the shapes *mean*
+  `uBlend` mixes; swap buffers only when crossing a section boundary). Make the shapes _mean_
   something and read at a glance — e.g. a Saturn-style ring system, a fingerprint whorl, an atom,
   a spiral galaxy, a wide constellation, a pulsing beacon, and a final signature glyph. Give
   particles a swarm feel (per-particle staggered departure + seeded arc paths) and a near/far
@@ -355,5 +363,7 @@ shipping unused 3D models/images · animating height/top instead of transform.
   Does the message land with all effects off?
 
 Build it. Make the first screen unforgettable, and make everything after it feel intentional.
+
 ```
+
 ```

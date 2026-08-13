@@ -23,9 +23,8 @@ export default function useOverlayScrollLock(active) {
       previousBodyPaddingRight = document.body.style.paddingRight;
 
       const scrollbarGap = window.innerWidth - document.documentElement.clientWidth;
-      const currentPadding = Number.parseFloat(
-        window.getComputedStyle(document.body).paddingRight
-      ) || 0;
+      const currentPadding =
+        Number.parseFloat(window.getComputedStyle(document.body).paddingRight) || 0;
 
       document.body.style.overflow = "hidden";
       if (scrollbarGap > 0) {

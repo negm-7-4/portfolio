@@ -41,8 +41,7 @@ const lerp = (a, b, t) => a + (b - a) * t;
 
 /* A real mouse is present — decided once, independent of the perf tier. */
 const HAS_FINE_POINTER =
-  typeof window !== "undefined" &&
-  !window.matchMedia?.("(pointer: coarse)").matches;
+  typeof window !== "undefined" && !window.matchMedia?.("(pointer: coarse)").matches;
 
 /* One composed camera shot per chapter (pos + lookAt + fov + dutch roll).
    Scroll eases between consecutive keys, so the journey reads as deliberate
@@ -253,7 +252,9 @@ function SectionAccent() {
     }
   });
 
-  return <pointLight ref={light} position={[0, 3, 6]} intensity={11} color={colors[0]} distance={24} />;
+  return (
+    <pointLight ref={light} position={[0, 3, 6]} intensity={11} color={colors[0]} distance={24} />
+  );
 }
 
 /* ── Post stack. Bloom + vignette everywhere; chromatic aberration on high. ── */
@@ -266,8 +267,7 @@ function Post({ quality }) {
   useFrame(() => {
     if (quality !== "high") return;
     const { warp, velocity } = experience.getState();
-    const k =
-      0.0006 + warp * 0.0042 + Math.min(Math.abs(velocity) * 2, 1) * 0.001;
+    const k = 0.0006 + warp * 0.0042 + Math.min(Math.abs(velocity) * 2, 1) * 0.001;
     caOffset.set(k, k);
   });
 
@@ -282,12 +282,7 @@ function Post({ quality }) {
           crisp while the receding background + far particles soften. Subtle
           on purpose (small focal length / bokeh). High-tier only. */}
       {quality === "high" ? (
-        <DepthOfField
-          focusDistance={0.06}
-          focalLength={0.02}
-          bokehScale={2.2}
-          height={480}
-        />
+        <DepthOfField focusDistance={0.06} focalLength={0.02} bokehScale={2.2} height={480} />
       ) : null}
       <Bloom
         intensity={quality === "high" ? 0.62 : 0.42}
@@ -397,11 +392,7 @@ export default function CinematicWorld({ quality = "high" }) {
   const dprMax = live === "high" ? 1.8 : 1.3;
 
   return (
-    <div
-      className="fixed inset-0 -z-10"
-      aria-hidden="true"
-      style={{ pointerEvents: "none" }}
-    >
+    <div className="fixed inset-0 -z-10" aria-hidden="true" style={{ pointerEvents: "none" }}>
       <ProgressBridge />
       <Canvas
         frameloop={frameloop}
@@ -420,9 +411,7 @@ export default function CinematicWorld({ quality = "high" }) {
         style={{ pointerEvents: "none" }}
       >
         <Suspense fallback={null}>
-          <PerformanceMonitor
-            onDecline={() => setLive((c) => (c === "high" ? "mid" : c))}
-          >
+          <PerformanceMonitor onDecline={() => setLive((c) => (c === "high" ? "mid" : c))}>
             <Scene quality={live} />
           </PerformanceMonitor>
         </Suspense>

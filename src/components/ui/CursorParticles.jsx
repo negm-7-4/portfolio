@@ -18,9 +18,9 @@ export default function CursorParticles() {
 
     const resize = () => {
       dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width  = window.innerWidth  * dpr;
+      canvas.width = window.innerWidth * dpr;
       canvas.height = window.innerHeight * dpr;
-      canvas.style.width  = window.innerWidth  + "px";
+      canvas.style.width = window.innerWidth + "px";
       canvas.style.height = window.innerHeight + "px";
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
@@ -28,13 +28,18 @@ export default function CursorParticles() {
     window.addEventListener("resize", resize);
 
     const particles = [];
-    let mx = -9999, my = -9999, lastMx = -9999, lastMy = -9999;
+    let mx = -9999,
+      my = -9999,
+      lastMx = -9999,
+      lastMy = -9999;
     let lastEmit = 0;
 
     const onMove = (e) => {
-      mx = e.clientX; my = e.clientY;
+      mx = e.clientX;
+      my = e.clientY;
       const now = performance.now();
-      const dx = mx - lastMx, dy = my - lastMy;
+      const dx = mx - lastMx,
+        dy = my - lastMy;
       const dist = Math.hypot(dx, dy);
       // emit proportional to speed, throttled by interval.
       // Capped at 60 particles + 2 per emit for lower fill-rate cost.
@@ -56,13 +61,14 @@ export default function CursorParticles() {
         }
         lastEmit = now;
       }
-      lastMx = mx; lastMy = my;
+      lastMx = mx;
+      lastMy = my;
     };
     window.addEventListener("pointermove", onMove, { passive: true });
 
     let raf;
     let running = true;
-    let idleFrames = 0;            // count frames with no particles → skip work
+    let idleFrames = 0; // count frames with no particles → skip work
     const tick = () => {
       if (particles.length === 0) {
         // No particles to draw — clear once, then skip until something happens
@@ -83,7 +89,10 @@ export default function CursorParticles() {
         p.vy += 0.012;
         p.vx *= 0.985;
         p.life -= p.decay;
-        if (p.life <= 0) { particles.splice(i, 1); continue; }
+        if (p.life <= 0) {
+          particles.splice(i, 1);
+          continue;
+        }
 
         const a = p.life;
         const r = p.size * (0.6 + a * 0.6);
@@ -129,10 +138,6 @@ export default function CursorParticles() {
   }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
-      className="pointer-events-none fixed inset-0 z-[9997]"
-      aria-hidden
-    />
+    <canvas ref={canvasRef} className="pointer-events-none fixed inset-0 z-[9997]" aria-hidden />
   );
 }

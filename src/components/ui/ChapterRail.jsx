@@ -93,15 +93,13 @@ export default function ChapterRail() {
                     height: isActive ? 2 : 1,
                   }}
                   transition={{
-                    width:           { type: "spring", stiffness: 380, damping: 28, mass: 0.55 },
-                    height:          { duration: 0.3, ease: [0.16, 1, 0.3, 1] },
+                    width: { type: "spring", stiffness: 380, damping: 28, mass: 0.55 },
+                    height: { duration: 0.3, ease: [0.16, 1, 0.3, 1] },
                     backgroundColor: { duration: 0.4, ease: [0.16, 1, 0.3, 1] },
                   }}
                   className="relative block rounded-full"
                   style={{
-                    boxShadow: isActive
-                      ? `0 0 14px ${s.color}99, 0 0 4px ${s.color}`
-                      : "none",
+                    boxShadow: isActive ? `0 0 14px ${s.color}99, 0 0 4px ${s.color}` : "none",
                   }}
                 />
               </button>

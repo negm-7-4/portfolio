@@ -27,15 +27,11 @@ export default function ScrubReveal({
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const p = useSpring(scrollYProgress, SPRING_SCROLL);
 
-  const y       = useTransform(p, [0, 1], [parallax, -parallax]);
+  const y = useTransform(p, [0, 1], [parallax, -parallax]);
   const rotateX = useTransform(p, [0, 0.5, 1], [tilt, 0, -tilt]);
-  const scale   = useTransform(p, [0, 0.5, 1], [1 + zoom, 1 + zoom * 0.45, 1]);
+  const scale = useTransform(p, [0, 0.5, 1], [1 + zoom, 1 + zoom * 0.45, 1]);
   const opacity = useTransform(p, [0.0, 0.16], [0.35, 1]);
-  const clip    = useTransform(
-    p,
-    [0.03, 0.32],
-    ["inset(0% 0% 100% 0%)", "inset(0% 0% 0% 0%)"]
-  );
+  const clip = useTransform(p, [0.03, 0.32], ["inset(0% 0% 100% 0%)", "inset(0% 0% 0% 0%)"]);
 
   return (
     <motion.div

@@ -29,7 +29,9 @@ export default function AppCrashScreen() {
       <span aria-hidden style={{ fontSize: "2rem", color: "#aab4c4" }}>
         ✦
       </span>
-      <h1 style={{ fontSize: "1.5rem", fontWeight: 700, margin: 0 }}>Something broke on this page</h1>
+      <h1 style={{ fontSize: "1.5rem", fontWeight: 700, margin: 0 }}>
+        Something broke on this page
+      </h1>
       <p style={{ maxWidth: "34rem", lineHeight: 1.7, color: "#8a93a6", margin: 0 }}>
         Sorry — that is on me, not on you. Reloading usually fixes it. If it does not, I would
         genuinely like to know.

@@ -20,8 +20,8 @@ export default function BrowserFrame({
   });
 
   // Scroll-driven base parallax
-  const y     = useTransform(scrollYProgress, [0, 1], [60, -60]);
-  const rot   = useTransform(scrollYProgress, [0, 0.5, 1], [tilt ? 6 : 0, 0, tilt ? -6 : 0]);
+  const y = useTransform(scrollYProgress, [0, 1], [60, -60]);
+  const rot = useTransform(scrollYProgress, [0, 0.5, 1], [tilt ? 6 : 0, 0, tilt ? -6 : 0]);
   const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.94, 1, 0.96]);
 
   // Cursor-reactive tilt on hover
@@ -33,12 +33,15 @@ export default function BrowserFrame({
   const onMove = (e) => {
     const r = ref.current?.getBoundingClientRect();
     if (!r) return;
-    const px = (e.clientX - r.left) / r.width  - 0.5;
-    const py = (e.clientY - r.top)  / r.height - 0.5;
-    hx.set(-py * 8);   // rotateX from vertical mouse position
-    hy.set( px * 10);  // rotateY from horizontal mouse position
+    const px = (e.clientX - r.left) / r.width - 0.5;
+    const py = (e.clientY - r.top) / r.height - 0.5;
+    hx.set(-py * 8); // rotateX from vertical mouse position
+    hy.set(px * 10); // rotateY from horizontal mouse position
   };
-  const onLeave = () => { hx.set(0); hy.set(0); };
+  const onLeave = () => {
+    hx.set(0);
+    hy.set(0);
+  };
 
   return (
     <motion.div
@@ -56,7 +59,9 @@ export default function BrowserFrame({
         {/* Glow halo — intensifies on hover */}
         <div
           className="pointer-events-none absolute -inset-6 rounded-3xl opacity-30 blur-2xl transition-opacity duration-500 group-hover/frame:opacity-60"
-          style={{ background: `radial-gradient(circle at 50% 30%, ${accent}55 0%, transparent 65%)` }}
+          style={{
+            background: `radial-gradient(circle at 50% 30%, ${accent}55 0%, transparent 65%)`,
+          }}
         />
 
         {/* Frame */}
@@ -113,8 +118,7 @@ export default function BrowserFrame({
             <div
               className="pointer-events-none absolute inset-0 opacity-[0.04]"
               style={{
-                backgroundImage:
-                  "linear-gradient(transparent 50%, rgba(255,255,255,1) 50%)",
+                backgroundImage: "linear-gradient(transparent 50%, rgba(255,255,255,1) 50%)",
                 backgroundSize: "100% 4px",
               }}
               aria-hidden
@@ -122,7 +126,10 @@ export default function BrowserFrame({
             {/* live scan beam — a soft bright line sweeps down like a monitor refresh */}
             <div
               className="scan-beam pointer-events-none absolute inset-x-0 top-0 h-14 opacity-[0.06]"
-              style={{ background: "linear-gradient(180deg, transparent, rgba(255,255,255,0.9), transparent)" }}
+              style={{
+                background:
+                  "linear-gradient(180deg, transparent, rgba(255,255,255,0.9), transparent)",
+              }}
               aria-hidden
             />
           </div>

@@ -24,7 +24,7 @@ export default function SignatureFlourish({ className = "" }) {
     const start = async () => {
       if (started) return;
       started = true;
-      const { gsap } = await loadGsap();
+      const { gsap } = await loadGsap("DrawSVGPlugin");
       if (canceled || !ref.current) return;
 
       ctx = gsap.context(() => {
@@ -47,11 +47,7 @@ export default function SignatureFlourish({ className = "" }) {
             ease: "power2.inOut",
             stagger: 0.25,
           })
-          .to(
-            ".sig-star",
-            { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(2.5)" },
-            "-=0.35"
-          )
+          .to(".sig-star", { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(2.5)" }, "-=0.35")
           .fromTo(
             ".sig-star",
             { rotate: 0 },
@@ -79,13 +75,7 @@ export default function SignatureFlourish({ className = "" }) {
   }, [reducedMotion]);
 
   return (
-    <svg
-      ref={ref}
-      viewBox="0 0 240 60"
-      className={className}
-      fill="none"
-      aria-hidden="true"
-    >
+    <svg ref={ref} viewBox="0 0 240 60" className={className} fill="none" aria-hidden="true">
       {/* main calligraphic swash */}
       <path
         className="sig-draw"
@@ -105,10 +95,7 @@ export default function SignatureFlourish({ className = "" }) {
       />
       {/* terminal star that pops + slowly rotates */}
       <g className="sig-star" transform="translate(232 22)">
-        <path
-          d="M0 -6 L1.7 -1.7 L6 0 L1.7 1.7 L0 6 L-1.7 1.7 L-6 0 L-1.7 -1.7 Z"
-          fill="#c8d2dd"
-        />
+        <path d="M0 -6 L1.7 -1.7 L6 0 L1.7 1.7 L0 6 L-1.7 1.7 L-6 0 L-1.7 -1.7 Z" fill="#c8d2dd" />
       </g>
       <defs>
         <linearGradient id="sigGrad" x1="0" y1="0" x2="1" y2="0">

@@ -16,7 +16,7 @@ export default function TiltCard({
   max = 16,
   glare = true,
   spotlight = true,
-  spotColor = "170,180,196",  // silver-blue (matches palette)
+  spotColor = "170,180,196", // silver-blue (matches palette)
   ...rest
 }) {
   const ref = useRef(null);
@@ -46,7 +46,7 @@ export default function TiltCard({
     const rect = rectRef.current ?? ref.current?.getBoundingClientRect();
     if (!rect) return;
     const px = (e.clientX - rect.left) / rect.width;
-    const py = (e.clientY - rect.top)  / rect.height;
+    const py = (e.clientY - rect.top) / rect.height;
     ry.set((px - 0.5) * max * 2);
     rx.set(-(py - 0.5) * max * 2);
     gx.set(px * 100);
@@ -54,15 +54,16 @@ export default function TiltCard({
   };
   const onLeave = () => {
     rectRef.current = null;
-    rx.set(0); ry.set(0);
-    gx.set(50); gy.set(50);
+    rx.set(0);
+    ry.set(0);
+    gx.set(50);
+    gy.set(50);
     tz.set(0);
   };
 
   const glareBg = useTransform(
     [gx, gy],
-    ([x, y]) =>
-      `radial-gradient(circle at ${x}% ${y}%, rgba(255,255,255,0.22), transparent 55%)`
+    ([x, y]) => `radial-gradient(circle at ${x}% ${y}%, rgba(255,255,255,0.22), transparent 55%)`
   );
   const spotBg = useTransform(
     [gx, gy],
@@ -102,8 +103,7 @@ export default function TiltCard({
         style={{
           background: `linear-gradient(135deg, rgba(${spotColor},0.25), rgba(${spotColor},0))`,
           padding: "1px",
-          WebkitMask:
-            "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+          WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
           WebkitMaskComposite: "xor",
           maskComposite: "exclude",
         }}

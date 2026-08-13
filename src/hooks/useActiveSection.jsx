@@ -41,7 +41,10 @@ export function ActiveSectionProvider({ children }) {
         let bestId = sections[0].id;
         let bestRatio = -1;
         for (const [id, r] of ratios) {
-          if (r > bestRatio) { bestRatio = r; bestId = id; }
+          if (r > bestRatio) {
+            bestRatio = r;
+            bestId = id;
+          }
         }
         const next = sections.find((s) => s.id === bestId);
         if (next) setActive((cur) => (cur.id === next.id ? cur : next));
@@ -65,20 +68,43 @@ export function ActiveSectionProvider({ children }) {
           else observed.delete(s.id);
         }
       }
+      return observed.size === sections.length;
     };
 
-    sync();
+    const allResolved = sync();
 
-    // Re-sync whenever the main DOM changes (lazy section chunks loading).
-    // rAF-throttled so massive subtree updates don't pile up sync() calls.
-    let pending = false;
-    const scheduledSync = () => {
-      if (pending) return;
-      pending = true;
-      requestAnimationFrame(() => { pending = false; sync(); });
-    };
-    const mo = new MutationObserver(scheduledSync);
-    mo.observe(document.body, { childList: true, subtree: true });
+    /* Watch for lazy section chunks swapping their placeholders out.
+     *
+     * This used to observe document.body with subtree:true for the lifetime of
+     * the page. On a page whose entire premise is AnimatePresence adding and
+     * removing nodes constantly, that fired hundreds of times for the handful
+     * of mutations that actually mattered.
+     *
+     * Two changes: scope it to the <main> that actually contains the sections,
+     * and — since sections only ever appear, never disappear — disconnect for
+     * good once every one has been found. In practice the observer is alive
+     * for the first few seconds of the visit and then costs nothing.
+     */
+    let mo = null;
+    if (!allResolved) {
+      let pending = false;
+      const scheduledSync = () => {
+        if (pending) return;
+        pending = true;
+        requestAnimationFrame(() => {
+          pending = false;
+          if (sync()) {
+            mo?.disconnect();
+            mo = null;
+          }
+        });
+      };
+      mo = new MutationObserver(scheduledSync);
+      mo.observe(document.getElementById("main-content") ?? document.body, {
+        childList: true,
+        subtree: true,
+      });
+    }
 
     // Page progress 0–1 — written into a motion value so subscribers
     // (ChapterRail height, ReadingIndicator percentage, etc.) don't
@@ -92,7 +118,7 @@ export function ActiveSectionProvider({ children }) {
 
     return () => {
       io.disconnect();
-      mo.disconnect();
+      mo?.disconnect();
       observed.clear();
       window.removeEventListener("scroll", onScroll);
     };

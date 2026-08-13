@@ -12,8 +12,7 @@ export const SITE_URL = (
   import.meta.env?.VITE_SITE_URL || "https://mohamed-negm.vercel.app"
 ).replace(/\/+$/, "");
 
-export const CONTACT_EMAIL =
-  import.meta.env?.VITE_CONTACT_EMAIL || "mohammednegm11234@gmail.com";
+export const CONTACT_EMAIL = import.meta.env?.VITE_CONTACT_EMAIL || "mohammednegm11234@gmail.com";
 
 /** Absolute URL for a site-relative path. */
 export const absoluteUrl = (path = "/") => `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;

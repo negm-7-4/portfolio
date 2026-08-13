@@ -28,7 +28,11 @@ export default function Reveal({
   return (
     <motion.div
       className={className}
-      style={{ transformPerspective: depth ? 1100 : undefined, willChange: "transform, opacity", ...style }}
+      style={{
+        transformPerspective: depth ? 1100 : undefined,
+        willChange: "transform, opacity",
+        ...style,
+      }}
       variants={variants}
       initial="hidden"
       whileInView="show"
@@ -65,11 +69,22 @@ export function RevealGroup({ children, className = "", stagger = 0.08, delay = 
   );
 }
 
-export function RevealItem({ children, className = "", dir = "up", blur = true, depth = true, style }) {
+export function RevealItem({
+  children,
+  className = "",
+  dir = "up",
+  blur = true,
+  depth = true,
+  style,
+}) {
   return (
     <motion.div
       className={className}
-      style={{ transformPerspective: depth ? 1100 : undefined, willChange: "transform, opacity", ...style }}
+      style={{
+        transformPerspective: depth ? 1100 : undefined,
+        willChange: "transform, opacity",
+        ...style,
+      }}
       variants={{
         ...revealVariants({ dir, blur, depth }),
         show: {

@@ -51,20 +51,26 @@ export function registerSectionTransition(fn) {
 export function scrollTo(target, options = {}) {
   const { offset = 0, duration, immediate = false } = options;
 
+  /* Resolve the target BEFORE choosing a path. Lenis happens to accept a
+     selector string too, which hid the fact that the two branches disagreed:
+     a selector matching nothing was a silent no-op natively but reached Lenis
+     as a live call. Resolving up front makes both behave the same. */
+  const resolved = typeof target === "string" ? document.querySelector(target) : target;
+
+  if (resolved == null) return;
+
   if (lenis) {
-    lenis.scrollTo(target, { offset, duration, immediate });
+    lenis.scrollTo(resolved, { offset, duration, immediate });
     return;
   }
 
   const behavior = immediate ? "auto" : "smooth";
-  if (typeof target === "number") {
-    window.scrollTo({ top: target, behavior });
+  if (typeof resolved === "number") {
+    window.scrollTo({ top: resolved, behavior });
     return;
   }
-  const el = typeof target === "string" ? document.querySelector(target) : target;
-  if (!el) return;
   // Native scrollIntoView has no offset, so do the arithmetic by hand.
-  const top = el.getBoundingClientRect().top + window.scrollY + offset;
+  const top = resolved.getBoundingClientRect().top + window.scrollY + offset;
   window.scrollTo({ top, behavior });
 }
 

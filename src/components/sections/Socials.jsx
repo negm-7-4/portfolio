@@ -35,17 +35,33 @@ function InstagramIcon({ size = 40 }) {
 }
 
 const ICONS = {
-  GitHub:    GithubIcon,
-  LinkedIn:  LinkedinIcon,
-  Facebook:  FacebookIcon,
+  GitHub: GithubIcon,
+  LinkedIn: LinkedinIcon,
+  Facebook: FacebookIcon,
   Instagram: InstagramIcon,
 };
 
 const BRAND = {
-  GitHub:    { color: "#ffffff", glow: "rgba(255,255,255,0.40)", grad: "linear-gradient(135deg,#2b3038 0%,#0d1117 100%)" },
-  LinkedIn:  { color: "#0a66c2", glow: "rgba(10,102,194,0.55)",  grad: "linear-gradient(135deg,#0a66c2 0%,#003a7a 100%)" },
-  Facebook:  { color: "#1877f2", glow: "rgba(24,119,242,0.55)",  grad: "linear-gradient(135deg,#1877f2 0%,#0a4dad 100%)" },
-  Instagram: { color: "#e1306c", glow: "rgba(225,48,108,0.55)",  grad: "linear-gradient(135deg,#f58529 0%,#dd2a7b 50%,#8134af 100%)" },
+  GitHub: {
+    color: "#ffffff",
+    glow: "rgba(255,255,255,0.40)",
+    grad: "linear-gradient(135deg,#2b3038 0%,#0d1117 100%)",
+  },
+  LinkedIn: {
+    color: "#0a66c2",
+    glow: "rgba(10,102,194,0.55)",
+    grad: "linear-gradient(135deg,#0a66c2 0%,#003a7a 100%)",
+  },
+  Facebook: {
+    color: "#1877f2",
+    glow: "rgba(24,119,242,0.55)",
+    grad: "linear-gradient(135deg,#1877f2 0%,#0a4dad 100%)",
+  },
+  Instagram: {
+    color: "#e1306c",
+    glow: "rgba(225,48,108,0.55)",
+    grad: "linear-gradient(135deg,#f58529 0%,#dd2a7b 50%,#8134af 100%)",
+  },
 };
 
 /* ───────────────── Individual social orb ───────────────── */
@@ -90,7 +106,11 @@ function SocialOrb({ s, i }) {
             damping: 14,
             mass: 0.7,
           }}
-          whileHover={{ scale: 1.2, y: -12, transition: { type: "spring", stiffness: 380, damping: 20 } }}
+          whileHover={{
+            scale: 1.2,
+            y: -12,
+            transition: { type: "spring", stiffness: 380, damping: 20 },
+          }}
           whileTap={{ scale: 0.88, rotate: -8 }}
           className="group relative flex h-24 w-24 md:h-28 md:w-28 items-center justify-center rounded-full"
           style={{
@@ -185,10 +205,7 @@ function SocialOrb({ s, i }) {
 /* ───────────────── Section ───────────────── */
 export default function Socials() {
   return (
-    <section
-      id="socials"
-      className="relative w-full py-28 md:py-40 overflow-hidden"
-    >
+    <section id="socials" className="relative w-full py-28 md:py-40 overflow-hidden">
       {/* Ambient orbs that float behind */}
       <motion.div
         className="pointer-events-none absolute left-1/4 top-1/3 h-72 w-72 rounded-full opacity-[0.05]"

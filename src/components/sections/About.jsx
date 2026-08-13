@@ -8,18 +8,14 @@ import { profile, aboutCards } from "../../data/content";
 
 /* ─── Subtle SVG glyphs for the trait cards ─── */
 const ICONS = {
-  code:   "M8 6L2 12l6 6M16 6l6 6-6 6",
+  code: "M8 6L2 12l6 6M16 6l6 6-6 6",
   design: "M12 19l7-7-3-3-7 7v3h3zM18 9l1.5-1.5a2.1 2.1 0 0 0-3-3L15 6",
-  bolt:   "M13 2L3 14h7l-1 8 10-12h-7l1-8z",
-  puzzle: "M10 3v3a2 2 0 0 0 4 0V3h4v4h-3a2 2 0 0 0 0 4h3v6h-4v-3a2 2 0 0 0-4 0v3H6v-6h3a2 2 0 0 0 0-4H6V3h4z",
+  bolt: "M13 2L3 14h7l-1 8 10-12h-7l1-8z",
+  puzzle:
+    "M10 3v3a2 2 0 0 0 4 0V3h4v4h-3a2 2 0 0 0 0 4h3v6h-4v-3a2 2 0 0 0-4 0v3H6v-6h3a2 2 0 0 0 0-4H6V3h4z",
 };
 
-const TRAIT_COLORS = [
-  "138,147,166",
-  "111,124,140",
-  "156,149,140",
-  "170,180,196",
-];
+const TRAIT_COLORS = ["138,147,166", "111,124,140", "156,149,140", "170,180,196"];
 
 /* ─── Stat row used in the right sidebar ─── */
 function StatLine({ label, value, i }) {
@@ -35,7 +31,10 @@ function StatLine({ label, value, i }) {
       <span className="text-[10px] font-semibold uppercase tracking-[0.3em] text-white/55">
         {label}
       </span>
-      <span className="font-display text-sm font-semibold tracking-tight text-white md:text-base" dir="auto">
+      <span
+        className="font-display text-sm font-semibold tracking-tight text-white md:text-base"
+        dir="auto"
+      >
         {value}
       </span>
     </motion.div>
@@ -49,24 +48,20 @@ export default function About() {
     target: ref,
     offset: ["start end", "end start"],
   });
-  const bgY     = useTransform(scrollYProgress, [0, 1], [80, -80]);
-  const titleY  = useTransform(scrollYProgress, [0, 1], [40, -40]);
+  const bgY = useTransform(scrollYProgress, [0, 1], [80, -80]);
+  const titleY = useTransform(scrollYProgress, [0, 1], [40, -40]);
 
   const stats = [
-    { label: "Role",       value: profile.role        },
-    { label: "Major",      value: profile.education   },
-    { label: "Year",       value: profile.year        },
-    { label: "University", value: profile.university  },
-    { label: "Location",   value: profile.location    },
-    { label: "Status",     value: profile.status      },
+    { label: "Role", value: profile.role },
+    { label: "Major", value: profile.education },
+    { label: "Year", value: profile.year },
+    { label: "University", value: profile.university },
+    { label: "Location", value: profile.location },
+    { label: "Status", value: profile.status },
   ];
 
   return (
-    <section
-      id="about"
-      ref={ref}
-      className="relative w-full py-32 md:py-44"
-    >
+    <section id="about" ref={ref} className="relative w-full py-32 md:py-44">
       {/* ambient orb */}
       <motion.div
         style={{ y: bgY }}
@@ -80,7 +75,10 @@ export default function About() {
         aria-hidden
         className="pointer-events-none absolute left-1/4 bottom-1/4 h-[380px] w-[380px] rounded-full opacity-[0.04]"
       >
-        <div className="animate-aurora h-full w-full rounded-full bg-[radial-gradient(circle,#8a93a6_0%,transparent_70%)]" style={{ animationDelay: "-7s" }} />
+        <div
+          className="animate-aurora h-full w-full rounded-full bg-[radial-gradient(circle,#8a93a6_0%,transparent_70%)]"
+          style={{ animationDelay: "-7s" }}
+        />
       </motion.div>
 
       {/* floating 3D wireframe sculptures — ambient depth */}
@@ -93,10 +91,7 @@ export default function About() {
         {/* ── Two-column intro: huge bio left, stats right ── */}
         <div className="grid grid-cols-1 gap-10 md:grid-cols-12 md:gap-16">
           {/* LEFT — Bio essay with cinematic typography */}
-          <motion.div
-            style={{ y: titleY }}
-            className="md:col-span-7"
-          >
+          <motion.div style={{ y: titleY }} className="md:col-span-7">
             <motion.p
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -106,13 +101,10 @@ export default function About() {
               style={{ fontSize: "clamp(1.4rem, 2.6vw, 2.4rem)" }}
               dir="auto"
             >
-              I&apos;m{" "}
-              <span className="font-semibold text-white">{profile.name}</span>
-              {" "}— a{" "}
-              <span className="text-gradient italic font-medium">front-end developer</span>
-              {" "}and{" "}
-              <span className="font-semibold text-white">{profile.year} CS &amp; AI</span>
-              {" "}student at {profile.university}, building the kind of websites I want to use.
+              I&apos;m <span className="font-semibold text-white">{profile.name}</span> — a{" "}
+              <span className="text-gradient italic font-medium">front-end developer</span> and{" "}
+              <span className="font-semibold text-white">{profile.year} CS &amp; AI</span> student
+              at {profile.university}, building the kind of websites I want to use.
             </motion.p>
 
             <motion.p
@@ -126,8 +118,8 @@ export default function About() {
               I specialise in fast, immersive interfaces with{" "}
               <span className="font-medium text-white/85">React</span>,{" "}
               <span className="font-medium text-white/85">Three.js</span> and{" "}
-              <span className="font-medium text-white/85">Framer Motion</span>.
-              From accounting ERPs to 3D web experiences — every pixel, every easing curve, every detail matters.
+              <span className="font-medium text-white/85">Framer Motion</span>. From accounting ERPs
+              to 3D web experiences — every pixel, every easing curve, every detail matters.
             </motion.p>
 
             <motion.p
@@ -250,7 +242,9 @@ export default function About() {
                   <span
                     aria-hidden
                     className="pointer-events-none absolute -inset-3 rounded-full opacity-0 blur-2xl transition-opacity duration-500 group-hover/card:opacity-70"
-                    style={{ background: `radial-gradient(circle, rgba(${TRAIT_COLORS[i]},0.45), transparent 70%)` }}
+                    style={{
+                      background: `radial-gradient(circle, rgba(${TRAIT_COLORS[i]},0.45), transparent 70%)`,
+                    }}
                   />
                   <motion.div
                     whileHover={{ rotate: -10, scale: 1.12 }}
@@ -279,9 +273,7 @@ export default function About() {
                 <h3 className="mb-2.5 font-display text-lg font-semibold tracking-tight text-white">
                   {c.title}
                 </h3>
-                <p className="text-[13px] leading-[1.7] text-white/55">
-                  {c.desc}
-                </p>
+                <p className="text-[13px] leading-[1.7] text-white/55">{c.desc}</p>
 
                 {/* bottom accent line that grows on hover */}
                 <span

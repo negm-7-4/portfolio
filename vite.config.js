@@ -6,14 +6,15 @@ import tailwindcss from "@tailwindcss/vite";
 // needed lazily / on interaction. Preloading them would defeat the
 // whole point of code-splitting.
 
-const LAZY_CHUNKS = new Set(["spline", "gsap", "gsap-plugins", "three"]);
+// NB: "gsap" also matches every per-plugin chunk (gsap-drawsvgplugin-*, …).
+const LAZY_CHUNKS = new Set(["spline", "gsap", "three"]);
 
-// The now-free GSAP club plugins (SplitText, MorphSVG, DrawSVG, …). They are
-// only pulled in by `loadGsap()` when a premium effect first mounts, so they
-// live in their OWN lazy chunk — kept out of the small `gsap` core chunk that
-// ScrollTrigger loads early, and off the critical path entirely.
+// The now-free GSAP club plugins (SplitText, MorphSVG, DrawSVG, …). Each gets
+// its OWN chunk, so `loadGsap("DrawSVGPlugin")` fetches 2 kB rather than the
+// 25 kB the whole set used to cost when they shared one chunk. All are kept
+// out of the small `gsap` core chunk that ScrollTrigger loads.
 // NB: Observer is intentionally NOT here — ScrollTrigger (in the core `gsap`
-// chunk) imports it, so splitting it out creates a gsap ⇄ gsap-plugins cycle.
+// chunk) imports it, so splitting it out creates a dependency cycle.
 const GSAP_PLUGINS =
   /[\\/]gsap[\\/](SplitText|MorphSVGPlugin|DrawSVGPlugin|MotionPathPlugin|Flip|ScrambleTextPlugin|CustomEase|CustomBounce|CustomWiggle|InertiaPlugin|Physics2DPlugin|Draggable|EasePack|TextPlugin)/;
 
@@ -161,8 +162,10 @@ export default defineConfig(({ mode }) => {
 
             // Animation libs
             if (id.includes("framer-motion") || id.includes("motion")) return "motion";
-            // Premium GSAP plugins → separate lazy chunk (before the core test).
-            if (GSAP_PLUGINS.test(id)) return "gsap-plugins";
+            // Each club plugin gets its OWN chunk, so loading one does not
+            // drag the other nine along (before the core gsap test).
+            const clubPlugin = id.match(GSAP_PLUGINS);
+            if (clubPlugin) return `gsap-${clubPlugin[1].toLowerCase()}`;
             if (id.includes("gsap")) return "gsap";
 
             // Smooth scroll

@@ -115,7 +115,7 @@ export default [
 
   /* ── Build tooling + tests ── */
   {
-    files: ["*.config.js", "scripts/**/*.js", "**/*.test.js", "**/*.test.jsx"],
+    files: ["*.config.js", "scripts/**/*.{js,mjs}", "**/*.test.js", "**/*.test.jsx"],
     languageOptions: {
       ecmaVersion: "latest",
       sourceType: "module",

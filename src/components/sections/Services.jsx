@@ -75,8 +75,7 @@ function ServiceRow({ s, i, isOpen, onHover }) {
         animate={{ opacity: isOpen ? 1 : 0 }}
         transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
         style={{
-          background:
-            "linear-gradient(180deg, rgba(170,180,196,0.04) 0%, transparent 100%)",
+          background: "linear-gradient(180deg, rgba(170,180,196,0.04) 0%, transparent 100%)",
         }}
       />
 
@@ -187,13 +186,7 @@ export default function Services() {
 
         <div onMouseLeave={() => setOpen(0)}>
           {services.map((s, i) => (
-            <ServiceRow
-              key={s.num}
-              s={s}
-              i={i}
-              isOpen={open === i}
-              onHover={setOpen}
-            />
+            <ServiceRow key={s.num} s={s} i={i} isOpen={open === i} onHover={setOpen} />
           ))}
         </div>
       </div>

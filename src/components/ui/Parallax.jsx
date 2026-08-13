@@ -30,9 +30,9 @@ export default function Parallax({
   const springy = useSpring(scrollYProgress, SPRING_SCROLL);
   const progress = smooth ? springy : scrollYProgress;
 
-  const y       = useTransform(progress, [0, 1], [distance, -distance]);
+  const y = useTransform(progress, [0, 1], [distance, -distance]);
   const opacity = useTransform(progress, [0, 0.18, 0.82, 1], [0.2, 1, 1, 0.2]);
-  const skewY   = useScrollVelocity({ max: 2, clampAt: 1800 });
+  const skewY = useScrollVelocity({ max: 2, clampAt: 1800 });
 
   return (
     <motion.div

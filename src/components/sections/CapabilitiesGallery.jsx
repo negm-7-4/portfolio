@@ -18,9 +18,9 @@ const ACCENTS = ["#aab4c4", "#8a93a6", "#9c958c", "#b8c4d6"];
 
 // Decorative spinning glyph per panel.
 const SHAPES = [
-  "M30 4 L34 26 L56 30 L34 34 L30 56 L26 34 L4 30 L26 26 Z",          // 4-point star
+  "M30 4 L34 26 L56 30 L34 34 L30 56 L26 34 L4 30 L26 26 Z", // 4-point star
   "M30 6 C44 6 56 16 54 30 C52 42 42 52 30 54 C18 52 6 44 8 30 C10 18 18 8 30 6 Z", // blob
-  "M20 4 L40 4 L56 20 L56 40 L40 56 L20 56 L4 40 L4 20 Z",            // octagon
+  "M20 4 L40 4 L56 20 L56 40 L40 56 L20 56 L4 40 L4 20 Z", // octagon
   "M30 4 C46 14 56 24 56 30 C56 36 46 46 30 56 C14 46 4 36 4 30 C4 24 14 14 30 4 Z", // squircle
 ];
 
@@ -40,7 +40,10 @@ export default function CapabilitiesGallery() {
     const ro = new ResizeObserver(update);
     ro.observe(track);
     window.addEventListener("resize", update);
-    return () => { ro.disconnect(); window.removeEventListener("resize", update); };
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", update);
+    };
   }, []);
 
   const { scrollYProgress } = useScroll({ target: wrapRef, offset: ["start start", "end end"] });
@@ -56,9 +59,13 @@ export default function CapabilitiesGallery() {
         <div className="mx-auto mb-8 flex w-[90%] max-w-7xl items-end justify-between gap-6">
           <div>
             <div className="mb-3 flex items-center gap-3">
-              <span className="font-display text-[12px] font-semibold tracking-[0.3em] text-white/65">( ✦ )</span>
+              <span className="font-display text-[12px] font-semibold tracking-[0.3em] text-white/65">
+                ( ✦ )
+              </span>
               <span className="h-px w-12 bg-gradient-to-r from-white/40 to-transparent" />
-              <span className="text-[11px] font-semibold uppercase tracking-[0.32em] text-white/60">Capabilities</span>
+              <span className="text-[11px] font-semibold uppercase tracking-[0.32em] text-white/60">
+                Capabilities
+              </span>
             </div>
             <h2 className="font-display text-4xl font-bold leading-[0.95] tracking-tight text-white sm:text-5xl md:text-6xl">
               How I <span className="text-gradient italic font-light">can help</span>
@@ -68,7 +75,12 @@ export default function CapabilitiesGallery() {
           <div className="hidden shrink-0 flex-col items-end gap-2 md:flex">
             <span className="flex items-center gap-2 text-[10px] uppercase tracking-[0.3em] text-white/60">
               Scroll
-              <motion.span animate={{ x: [0, 6, 0] }} transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}>→</motion.span>
+              <motion.span
+                animate={{ x: [0, 6, 0] }}
+                transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+              >
+                →
+              </motion.span>
             </span>
             <span className="relative block h-px w-40 overflow-hidden bg-white/10">
               <motion.span
@@ -103,13 +115,20 @@ export default function CapabilitiesGallery() {
                 <span
                   aria-hidden
                   className="pointer-events-none absolute left-6 top-2 select-none font-display font-bold leading-none tracking-tighter"
-                  style={{ fontSize: "clamp(6rem, 13vw, 12rem)", color: "rgba(255,255,255,0.05)", textShadow: `0 0 70px ${accent}40` }}
+                  style={{
+                    fontSize: "clamp(6rem, 13vw, 12rem)",
+                    color: "rgba(255,255,255,0.05)",
+                    textShadow: `0 0 70px ${accent}40`,
+                  }}
                 >
                   {s.num}
                 </span>
 
                 {/* spinning decorative glyph */}
-                <span className="spin-slower pointer-events-none absolute right-7 top-7 block h-14 w-14 opacity-50 md:h-16 md:w-16" aria-hidden>
+                <span
+                  className="spin-slower pointer-events-none absolute right-7 top-7 block h-14 w-14 opacity-50 md:h-16 md:w-16"
+                  aria-hidden
+                >
                   <svg viewBox="0 0 60 60" className="h-full w-full">
                     <path d={SHAPES[i % SHAPES.length]} fill={`${accent}55`} />
                   </svg>
@@ -118,16 +137,25 @@ export default function CapabilitiesGallery() {
                 {/* live scan beam */}
                 <div
                   className="scan-beam pointer-events-none absolute inset-x-0 top-0 h-16 opacity-[0.05]"
-                  style={{ background: "linear-gradient(180deg, transparent, rgba(255,255,255,0.9), transparent)" }}
+                  style={{
+                    background:
+                      "linear-gradient(180deg, transparent, rgba(255,255,255,0.9), transparent)",
+                  }}
                   aria-hidden
                 />
 
                 {/* content (bottom-anchored) */}
                 <div className="relative">
-                  <span className="font-display text-[11px] font-semibold uppercase tracking-[0.3em]" style={{ color: `${accent}dd` }}>
+                  <span
+                    className="font-display text-[11px] font-semibold uppercase tracking-[0.3em]"
+                    style={{ color: `${accent}dd` }}
+                  >
                     Service / {s.num}
                   </span>
-                  <h3 className="mt-3 font-display font-bold leading-[0.98] tracking-tight text-white" style={{ fontSize: "clamp(2.2rem, 4vw, 3.4rem)" }}>
+                  <h3
+                    className="mt-3 font-display font-bold leading-[0.98] tracking-tight text-white"
+                    style={{ fontSize: "clamp(2.2rem, 4vw, 3.4rem)" }}
+                  >
                     {s.title}
                   </h3>
                   <p className="mt-4 max-w-md text-[14px] leading-[1.75] text-white/55 md:text-[15px]">
@@ -136,7 +164,10 @@ export default function CapabilitiesGallery() {
 
                   <ul className="mt-6 flex flex-col gap-2.5">
                     {s.points.map((pt, pi) => (
-                      <li key={pt} className="flex items-center gap-3 text-sm font-medium text-white/80">
+                      <li
+                        key={pt}
+                        className="flex items-center gap-3 text-sm font-medium text-white/80"
+                      >
                         <span
                           className="font-display text-[10px] font-bold tracking-widest"
                           style={{ color: accent }}

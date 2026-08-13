@@ -53,13 +53,17 @@ export function ToastProvider({ children }) {
         <AnimatePresence>
           {toasts.map((t) => {
             const tint =
-              t.kind === "success" ? "rgba(74,222,128,0.45)" :
-              t.kind === "warn"    ? "rgba(251,191,36,0.45)" :
-                                     "rgba(170,180,196,0.45)";
+              t.kind === "success"
+                ? "rgba(74,222,128,0.45)"
+                : t.kind === "warn"
+                  ? "rgba(251,191,36,0.45)"
+                  : "rgba(170,180,196,0.45)";
             const dot =
-              t.kind === "success" ? "rgb(74,222,128)" :
-              t.kind === "warn"    ? "rgb(251,191,36)" :
-                                     "rgb(170,180,196)";
+              t.kind === "success"
+                ? "rgb(74,222,128)"
+                : t.kind === "warn"
+                  ? "rgb(251,191,36)"
+                  : "rgb(170,180,196)";
             return (
               <motion.div
                 key={t.id}

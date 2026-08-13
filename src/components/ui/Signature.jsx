@@ -61,7 +61,7 @@ export default function Signature({ className = "" }) {
           initial={{ pathLength: 0, opacity: 0 }}
           animate={{
             pathLength: inView ? 1 : 0,
-            opacity:    inView ? 0.6 : 0,
+            opacity: inView ? 0.6 : 0,
           }}
           transition={{
             duration: 1.4,

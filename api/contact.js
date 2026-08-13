@@ -10,13 +10,17 @@ function clean(value, maxLength) {
 }
 
 function escapeHtml(value) {
-  return value.replace(/[&<>'"]/g, (character) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    "'": "&#39;",
-    '"': "&quot;",
-  })[character]);
+  return value.replace(
+    /[&<>'"]/g,
+    (character) =>
+      ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "'": "&#39;",
+        '"': "&quot;",
+      })[character]
+  );
 }
 
 function isRateLimited(ip) {
@@ -52,7 +56,9 @@ export default async function handler(request, response) {
   const ip = clean(forwardedIp || request.socket?.remoteAddress || "unknown", 80);
   if (isRateLimited(ip)) {
     response.setHeader("Retry-After", "600");
-    return response.status(429).json({ message: "Too many messages. Please try again in a few minutes." });
+    return response
+      .status(429)
+      .json({ message: "Too many messages. Please try again in a few minutes." });
   }
 
   const body = request.body && typeof request.body === "object" ? request.body : {};
@@ -117,7 +123,7 @@ export default async function handler(request, response) {
       `,
       tags: [{ name: "source", value: "portfolio_contact" }],
     },
-    { idempotencyKey: `portfolio-contact/${fingerprint}` },
+    { idempotencyKey: `portfolio-contact/${fingerprint}` }
   );
 
   if (error) {

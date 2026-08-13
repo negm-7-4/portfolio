@@ -19,7 +19,10 @@ export function registerSW() {
       .then((regs) => regs.forEach((r) => r.unregister()))
       .catch(() => undefined);
     if (typeof caches !== "undefined" && caches.keys) {
-      caches.keys().then((keys) => keys.forEach((k) => caches.delete(k))).catch(() => undefined);
+      caches
+        .keys()
+        .then((keys) => keys.forEach((k) => caches.delete(k)))
+        .catch(() => undefined);
     }
     return;
   }

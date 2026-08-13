@@ -33,7 +33,11 @@ export default function SplitText({
       className="inline-block overflow-hidden pb-[0.14em] mr-[0.28em] align-bottom"
       style={{ perspective: 600 }}
     >
-      <motion.span variants={child} className="inline-block" style={{ transformOrigin: "50% 100%" }}>
+      <motion.span
+        variants={child}
+        className="inline-block"
+        style={{ transformOrigin: "50% 100%" }}
+      >
         {children}
       </motion.span>
     </span>
@@ -53,20 +57,28 @@ export default function SplitText({
           the animated fragments are hidden from the tree. */}
       <span className="sr-only">{text}</span>
       <span aria-hidden="true" className="contents">
-      {perChar
-        ? words.map((word, wi) => (
-            // keep each word intact (no mid-word wrapping) but reveal its letters
-            <span key={wi} className="inline-flex mr-[0.28em] whitespace-nowrap" style={{ perspective: 600 }}>
-              {word.split("").map((ch, ci) => (
-                <span key={ci} className="inline-block overflow-hidden pb-[0.14em]">
-                  <motion.span variants={child} className="inline-block" style={{ transformOrigin: "50% 100%" }}>
-                    {ch}
-                  </motion.span>
-                </span>
-              ))}
-            </span>
-          ))
-        : words.map((word, i) => <Unit key={i}>{word}</Unit>)}
+        {perChar
+          ? words.map((word, wi) => (
+              // keep each word intact (no mid-word wrapping) but reveal its letters
+              <span
+                key={wi}
+                className="inline-flex mr-[0.28em] whitespace-nowrap"
+                style={{ perspective: 600 }}
+              >
+                {word.split("").map((ch, ci) => (
+                  <span key={ci} className="inline-block overflow-hidden pb-[0.14em]">
+                    <motion.span
+                      variants={child}
+                      className="inline-block"
+                      style={{ transformOrigin: "50% 100%" }}
+                    >
+                      {ch}
+                    </motion.span>
+                  </span>
+                ))}
+              </span>
+            ))
+          : words.map((word, i) => <Unit key={i}>{word}</Unit>)}
       </span>
     </MotionTag>
   );

@@ -3,10 +3,10 @@ import { motion, useScroll, useTransform } from "motion/react";
 import { loadScrollSync } from "../../lib/scrollSync";
 
 const stats = [
-  { value: 15,  suffix: "+", label: "Projects shipped",   note: "From dashboards to 3D web." },
-  { value: 2,   suffix: "+", label: "Years coding",       note: "Daily craft & continuous learning." },
-  { value: 12,  suffix: "+", label: "Technologies",       note: "React, Three.js, motion & more." },
-  { value: 100, suffix: "%", label: "Passion",            note: "Always. Without exception." },
+  { value: 15, suffix: "+", label: "Projects shipped", note: "From dashboards to 3D web." },
+  { value: 2, suffix: "+", label: "Years coding", note: "Daily craft & continuous learning." },
+  { value: 12, suffix: "+", label: "Technologies", note: "React, Three.js, motion & more." },
+  { value: 100, suffix: "%", label: "Passion", note: "Always. Without exception." },
 ];
 
 export default function Stats() {
@@ -45,7 +45,9 @@ export default function Stats() {
               start: "top 85%",
               toggleActions: "restart none restart none",
             },
-            onUpdate: () => { el.textContent = Math.floor(obj.v); },
+            onUpdate: () => {
+              el.textContent = Math.floor(obj.v);
+            },
           });
         });
       }, root);
@@ -69,10 +71,7 @@ export default function Stats() {
   }, []);
 
   return (
-    <section
-      ref={root}
-      className="relative w-full overflow-hidden py-24 md:py-40"
-    >
+    <section ref={root} className="relative w-full overflow-hidden py-24 md:py-40">
       {/* gradient drift */}
       <motion.div
         style={{ y: bgY }}
@@ -130,9 +129,13 @@ export default function Stats() {
                   className="pointer-events-none absolute -inset-4 rounded-full blur-2xl"
                   animate={{ opacity: [0.22, 0.34, 0.22] }}
                   transition={{ duration: 4 + i * 0.5, repeat: Infinity, ease: "easeInOut" }}
-                  style={{ background: "radial-gradient(circle, rgba(170,180,196,0.4), transparent 70%)" }}
+                  style={{
+                    background: "radial-gradient(circle, rgba(170,180,196,0.4), transparent 70%)",
+                  }}
                 />
-                <span className="stat-num relative text-gradient" data-value={s.value}>0</span>
+                <span className="stat-num relative text-gradient" data-value={s.value}>
+                  0
+                </span>
                 <span className="relative text-gradient">{s.suffix}</span>
 
                 {/* faint orbit dot in upper-right of each number */}
@@ -149,9 +152,7 @@ export default function Stats() {
               <p className="mt-4 text-[11px] font-semibold uppercase tracking-[0.28em] text-white/65 md:text-xs">
                 {s.label}
               </p>
-              <p className="mt-1.5 text-[13px] leading-relaxed text-white/55">
-                {s.note}
-              </p>
+              <p className="mt-1.5 text-[13px] leading-relaxed text-white/55">{s.note}</p>
 
               {/* hover underline that grows + accent dot at the end */}
               <div className="mt-4 flex items-center gap-2">
