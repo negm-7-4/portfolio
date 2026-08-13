@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef } from "react";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { damp, dampC } from "maath/easing";
 import * as THREE from "three";
 
@@ -258,6 +258,7 @@ const VERT = /* glsl */ `
   uniform float uShockR;  // the pulse ring's current radius (world units)
   uniform vec3  uPointer; // cursor projected onto the field's plane (world)
   uniform float uPush;    // pointer interaction strength (0 on touch tiers)
+  uniform float uPixelRatio; // device pixels per CSS pixel
 
   attribute vec3  aTo;
   attribute float aSeed;
@@ -267,6 +268,7 @@ const VERT = /* glsl */ `
   varying float vTw;
   varying float vPinf;
   varying float vDepth;
+  varying float vShrink; // <1 once a point would be smaller than a pixel
 
   void main() {
     vColT = aColT;
@@ -319,7 +321,21 @@ const VERT = /* glsl */ `
 
     vTw = 0.55 + 0.45 * sin(uTime * 2.0 + ph * 3.0);
     float s = uSize * (0.45 + aSeed) * vTw * (1.0 + vPinf * 1.1);
-    gl_PointSize = clamp(s * (220.0 / -mv.z), 1.0, 64.0);
+
+    /* Size in DEVICE pixels, so uPixelRatio keeps a particle the same
+       apparent size on a retina panel as on a 1x one. Without it the whole
+       field renders visibly finer — and dimmer, since each point covers a
+       quarter of the area — the moment you open it on a good display. */
+    float wanted = s * (220.0 / -mv.z) * uPixelRatio;
+
+    /* Sub-pixel fade. A point smaller than one pixel cannot be drawn smaller,
+       so clamping alone makes the far field flicker: every distant particle
+       snaps to a full pixel and then twinkles as it crosses the sample grid.
+       Holding the size at 1px and giving back the area it should have lost as
+       alpha is the standard fix, and it turns that shimmer into a smooth
+       recession into the distance. */
+    vShrink = clamp(wanted, 0.0, 1.0);
+    gl_PointSize = clamp(wanted, 1.0, 64.0);
 
     gl_Position = projectionMatrix * mv;
   }
@@ -336,6 +352,7 @@ const FRAG = /* glsl */ `
   varying float vTw;
   varying float vPinf;
   varying float vDepth;
+  varying float vShrink;
 
   void main() {
     vec2 uv = gl_PointCoord - 0.5;
@@ -356,6 +373,9 @@ const FRAG = /* glsl */ `
 
     float alpha = glow * glow * uOpacity * (0.35 + 0.65 * vTw) * clamp(uReveal, 0.0, 1.0);
     alpha *= 1.0 + vPinf * 0.5;
+    // Give back, as transparency, the area a sub-pixel point was forced to
+    // keep. Squared because it stands in for a shrinking 2D footprint.
+    alpha *= vShrink * vShrink;
     gl_FragColor = vec4(col, alpha);
 
     #include <colorspace_fragment>
@@ -374,6 +394,12 @@ export default function MorphField({ quality = "high", interactive = false }) {
   const lastShock = useRef(0);
 
   const N = quality === "high" ? 7000 : 3600;
+
+  /* R3F drives dpr adaptively (see the Canvas' dpr={[1, dprMax]}), so this is
+     read from the live renderer rather than from devicePixelRatio — the two
+     disagree the moment performance scaling kicks in, and a point sized for
+     the wrong ratio is exactly the artefact the uniform exists to prevent. */
+  const pixelRatio = useThree((s) => s.viewport.dpr);
 
   // ── Precompute every formation once (deterministic). ──────────────
   const forms = useMemo(() => {
@@ -440,6 +466,7 @@ export default function MorphField({ quality = "high", interactive = false }) {
           uPointer: { value: new THREE.Vector3(0, 0, 999) },
           uPush: { value: 0 },
           uSize: { value: quality === "high" ? 0.8 : 1.1 },
+          uPixelRatio: { value: 1 },
           uOpacity: { value: 0.68 },
           uColorA: { value: new THREE.Color("#6f7c8c") },
           uColorB: { value: new THREE.Color(sections[0].accent) },
@@ -465,6 +492,10 @@ export default function MorphField({ quality = "high", interactive = false }) {
       material.dispose();
     };
   }, [geometry, material]);
+
+  useEffect(() => {
+    material.uniforms.uPixelRatio.value = pixelRatio;
+  }, [material, pixelRatio]);
 
   const F = forms.length;
 

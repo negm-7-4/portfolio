@@ -1,16 +1,49 @@
-import { motion, useScroll, useSpring, useTransform, useReducedMotion } from "motion/react";
+import {
+  motion,
+  useInView,
+  useScroll,
+  useSpring,
+  useTransform,
+  useReducedMotion,
+} from "motion/react";
 import { useRef, useState, useEffect } from "react";
 import useDeviceProfile from "../../hooks/useDeviceProfile";
 import { experience } from "../../store/experience";
 import MagneticButton from "../ui/MagneticButton";
 import MagneticText from "../ui/MagneticText";
 import { celebrate } from "../../lib/confetti";
+import { sfxLaunch } from "../../lib/ambientAudio";
 import { goToSection } from "../../lib/navigation";
 import { profile, heroTags } from "../../data/content";
 import { EASE_OUT, EASE_BACK } from "../../lib/motion";
 
 // A spring with a hint of life used for the hero tag pills.
 const TAG_SPRING = { type: "spring", stiffness: 200, damping: 15, mass: 0.7 };
+
+/**
+ * ONE reveal clock for the hero.
+ *
+ * This used to be a dozen hand-tuned `delay` values that had drifted into a
+ * staircase running from 0.4s to 1.88s — and, worse, they were keyed to
+ * *mount*. The hero sits a full viewport below the fold behind the opaque
+ * cover screen, so the entire 2.9s of choreography played to an empty room,
+ * and a visitor who scrolled within the first couple of seconds (which is
+ * everyone) arrived partway through and watched the remainder trickle in.
+ *
+ * Named variants fix both halves. The parent starts the sequence when the
+ * hero is actually *seen*, and `staggerChildren` derives every child's delay
+ * from one number, so the cadence can be tuned in a single place instead of
+ * being re-derived by hand each time an element is added.
+ */
+const REVEAL_STAGGER = 0.075;
+
+const heroGroup = {
+  hidden: {},
+  visible: { transition: { staggerChildren: REVEAL_STAGGER, delayChildren: 0.04 } },
+};
+
+/** Pass-through: lets a wrapper relay the parent's variant to its children. */
+const heroRelay = { hidden: {}, visible: {} };
 
 const ROLES = ["Software Engineer", "Front-End Developer", "React Specialist", "Motion Designer"];
 
@@ -190,6 +223,10 @@ export default function Hero() {
     offset: ["start start", "end start"],
   });
 
+  /* Start the reveal when the hero is genuinely on screen, not when React
+     mounts it. `once` so scrolling back up does not replay it. */
+  const revealed = useInView(ref, { once: true, amount: 0.2 });
+
   // Multi-layer parallax — spring-smoothed so it doesn't feel jittery on Lenis
   const sScroll = useSpring(scrollYProgress, { stiffness: 80, damping: 22 });
   const yText = useTransform(sScroll, [0, 1], [0, -180]);
@@ -246,12 +283,24 @@ export default function Hero() {
       {/* ── Main content grid ───────────────────────────────────── */}
       <div className="mx-auto grid w-[90%] sm:w-[88%] max-w-7xl items-center gap-8 md:grid-cols-[1.05fr_0.95fr] md:gap-4">
         {/* LEFT: copy */}
-        <motion.div style={{ y: yText, opacity, scale }} className="z-10">
+        <motion.div
+          style={{ y: yText, opacity, scale }}
+          className="z-10"
+          variants={heroGroup}
+          initial="hidden"
+          animate={revealed ? "visible" : "hidden"}
+        >
           {/* Available status pill */}
           <motion.div
-            initial={{ opacity: 0, y: -10, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ delay: 0.4, duration: 0.6, ease: EASE_BACK }}
+            variants={{
+              hidden: { opacity: 0, y: -10, scale: 0.9 },
+              visible: {
+                opacity: 1,
+                y: 0,
+                scale: 1,
+                transition: { duration: 0.5, ease: EASE_BACK },
+              },
+            }}
             className="gradient-border group/pill mb-6 inline-flex items-center gap-2 rounded-full glass px-3.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.28em] text-white/70 transition-all duration-300 hover:bg-white/[0.08] hover:tracking-[0.32em]"
             style={{
               boxShadow: "inset 0 1px 0 rgba(255,255,255,0.06), 0 0 32px rgba(74,222,128,0.06)",
@@ -270,9 +319,10 @@ export default function Hero() {
             {/* expanding hairline — reads as a "live" progress bar under the pill */}
             <motion.span
               aria-hidden
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ delay: 0.7, duration: 0.9, ease: EASE_OUT }}
+              variants={{
+                hidden: { scaleX: 0 },
+                visible: { scaleX: 1, transition: { duration: 0.8, ease: EASE_OUT } },
+              }}
               className="absolute -bottom-1 left-3 right-3 h-px origin-left bg-gradient-to-r from-green-400/0 via-green-400/70 to-green-400/0"
             />
             <motion.span
@@ -284,15 +334,17 @@ export default function Hero() {
 
           {/* Hi there I'm */}
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.5, duration: 0.55, ease: EASE_OUT }}
+            variants={{
+              hidden: { opacity: 0, x: -20 },
+              visible: { opacity: 1, x: 0, transition: { duration: 0.5, ease: EASE_OUT } },
+            }}
             className="mb-4 flex items-center gap-3"
           >
             <motion.span
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ delay: 0.55, duration: 0.6, ease: EASE_OUT }}
+              variants={{
+                hidden: { scaleX: 0 },
+                visible: { scaleX: 1, transition: { duration: 0.55, ease: EASE_OUT } },
+              }}
               className="h-px w-10 origin-left bg-gradient-to-r from-white/40 to-transparent"
             />
             <span className="text-[11px] font-semibold uppercase tracking-[0.32em] text-white/55">
@@ -303,7 +355,8 @@ export default function Hero() {
           {/* MASSIVE NAME — locked single line per word.
               An <h2>: the page's single <h1> is the cover statement in
               PhotoIntro, which is first in the DOM and carries the name. */}
-          <h2
+          <motion.h2
+            variants={heroRelay}
             className="font-display font-bold leading-[0.88] tracking-[-0.02em]"
             style={{
               fontSize: "clamp(2.8rem, 7vw, 7rem)",
@@ -314,24 +367,26 @@ export default function Hero() {
               <motion.span
                 className="block whitespace-nowrap"
                 style={{ transformOrigin: "0% 100%" }}
-                initial={{
-                  y: "118%",
-                  rotateX: 48,
-                  filter: "blur(10px) drop-shadow(0 0 0px rgba(170,180,196,0))",
-                }}
-                animate={{
-                  y: 0,
-                  rotateX: 0,
-                  filter: [
-                    "blur(0px) drop-shadow(0 0 0px rgba(170,180,196,0))",
-                    "blur(0px) drop-shadow(0 0 28px rgba(170,180,196,0.55))",
-                    "blur(0px) drop-shadow(0 0 0px rgba(170,180,196,0))",
-                  ],
-                }}
-                transition={{
-                  y: { duration: 1.1, delay: 0.55, ease: EASE_OUT },
-                  rotateX: { duration: 1.1, delay: 0.55, ease: EASE_OUT },
-                  filter: { duration: 1.6, delay: 0.55, times: [0, 0.35, 1] },
+                variants={{
+                  hidden: {
+                    y: "118%",
+                    rotateX: 48,
+                    filter: "blur(10px) drop-shadow(0 0 0px rgba(170,180,196,0))",
+                  },
+                  visible: {
+                    y: 0,
+                    rotateX: 0,
+                    filter: [
+                      "blur(0px) drop-shadow(0 0 0px rgba(170,180,196,0))",
+                      "blur(0px) drop-shadow(0 0 28px rgba(170,180,196,0.55))",
+                      "blur(0px) drop-shadow(0 0 0px rgba(170,180,196,0))",
+                    ],
+                    transition: {
+                      y: { duration: 0.85, ease: EASE_OUT },
+                      rotateX: { duration: 0.85, ease: EASE_OUT },
+                      filter: { duration: 1.4, times: [0, 0.35, 1] },
+                    },
+                  },
                 }}
               >
                 <MagneticText text={profile.firstName} radius={180} strength={24} />
@@ -341,25 +396,31 @@ export default function Hero() {
               <motion.span
                 className="block whitespace-nowrap italic font-light text-gradient"
                 style={{ transformOrigin: "0% 100%" }}
-                initial={{ y: "118%", rotateX: 48, filter: "blur(10px)" }}
-                animate={{ y: 0, rotateX: 0, filter: "blur(0px)" }}
-                transition={{
-                  duration: 1.1,
-                  delay: 0.72,
-                  ease: EASE_OUT,
-                  filter: { duration: 0.7, delay: 0.72 },
+                variants={{
+                  hidden: { y: "118%", rotateX: 48, filter: "blur(10px)" },
+                  visible: {
+                    y: 0,
+                    rotateX: 0,
+                    filter: "blur(0px)",
+                    transition: {
+                      duration: 0.85,
+                      ease: EASE_OUT,
+                      filter: { duration: 0.6 },
+                    },
+                  },
                 }}
               >
                 <MagneticText text={profile.lastName} radius={180} strength={24} />
               </motion.span>
             </span>
-          </h2>
+          </motion.h2>
 
           {/* Role typewriter — bigger */}
           <motion.div
-            initial={{ opacity: 0, y: 22 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.95, duration: 0.6, ease: EASE_OUT }}
+            variants={{
+              hidden: { opacity: 0, y: 22 },
+              visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE_OUT } },
+            }}
             className="mt-6 text-2xl md:text-3xl"
           >
             <TypewriterRole />
@@ -368,9 +429,15 @@ export default function Hero() {
           {/* tagline — body copy stays plain for guaranteed spacing/readability
               (clarity > effect); a single soft fade+lift is enough. */}
           <motion.p
-            initial={{ opacity: 0, y: 16, filter: "blur(4px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={{ delay: 1.08, duration: 0.7, ease: EASE_OUT }}
+            variants={{
+              hidden: { opacity: 0, y: 16, filter: "blur(4px)" },
+              visible: {
+                opacity: 1,
+                y: 0,
+                filter: "blur(0px)",
+                transition: { duration: 0.6, ease: EASE_OUT },
+              },
+            }}
             className="mt-6 max-w-md text-base leading-relaxed text-white/55 md:text-lg"
           >
             {profile.tagline}
@@ -378,14 +445,17 @@ export default function Hero() {
 
           {/* CTAs */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.18, duration: 0.6 }}
+            variants={{
+              hidden: { opacity: 0, y: 20 },
+              visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE_OUT } },
+            }}
             className="mt-9 flex flex-wrap gap-3"
           >
             <MagneticButton
               onClick={(e) => {
                 celebrate(e.clientX, e.clientY);
+                // No-op unless the visitor has turned sound on themselves.
+                sfxLaunch();
                 goToSection("projects");
               }}
               className="group relative inline-flex items-center gap-3 overflow-hidden rounded-xl bg-white px-7 py-4 text-sm font-semibold text-black shadow-[0_18px_36px_-12px_rgba(255,255,255,0.35)]"
@@ -427,21 +497,25 @@ export default function Hero() {
 
           {/* tags */}
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.4 }}
+            variants={{
+              hidden: { opacity: 0 },
+              // The pills stagger inside this group; keep their beat tighter
+              // than the section's so eight of them do not add a second.
+              visible: { opacity: 1, transition: { staggerChildren: 0.035 } },
+            }}
             className="mt-8"
           >
             <p className="mb-2.5 text-[9px] font-semibold uppercase tracking-[0.3em] text-white/50">
               Crafting with
             </p>
             <ul className="flex flex-wrap gap-2">
-              {heroTags.map((t, i) => (
+              {heroTags.map((t) => (
                 <motion.li
                   key={t}
-                  initial={{ opacity: 0, scale: 0.7, y: 18 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  transition={{ delay: 1.4 + i * 0.06, ...TAG_SPRING }}
+                  variants={{
+                    hidden: { opacity: 0, scale: 0.7, y: 18 },
+                    visible: { opacity: 1, scale: 1, y: 0, transition: TAG_SPRING },
+                  }}
                   whileHover={{ y: -3, scale: 1.06 }}
                   data-cursor="hover"
                   className="gradient-border group/tag relative inline-flex items-center gap-1.5 rounded-lg glass px-3 py-1.5 text-xs text-white/65 transition-colors hover:text-white"
@@ -475,8 +549,10 @@ export default function Hero() {
         style={{ opacity }}
         className="group absolute bottom-24 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-3 text-white/70"
         initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.7, duration: 0.6 }}
+        animate={revealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+        // Lands just after the copy has settled. Keyed to the hero being seen
+        // for the same reason everything else here is.
+        transition={{ delay: 0.62, duration: 0.5 }}
       >
         {/* tiny pulsing accent dot at the top */}
         <motion.span

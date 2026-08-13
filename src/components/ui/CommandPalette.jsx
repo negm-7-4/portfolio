@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { sections } from "../../data/sections";
 import { profile } from "../../data/content";
 import useOverlayScrollLock from "../../hooks/useOverlayScrollLock";
+import useReturnFocus from "../../hooks/useReturnFocus";
 import { goToSection, scrollToTop } from "../../lib/navigation";
 import { APP_EVENTS, onAppEvent } from "../../lib/appEvents";
 
@@ -17,9 +18,9 @@ export default function CommandPalette() {
   const [idx, setIdx] = useState(0);
   const inputRef = useRef(null);
   const listRef = useRef(null);
-  const lastFocused = useRef(null);
 
   useOverlayScrollLock(open);
+  useReturnFocus(open);
 
   // build the searchable command list
   const commands = useMemo(() => {
@@ -82,7 +83,10 @@ export default function CommandPalette() {
   // open / close on Cmd+K
   useEffect(() => {
     const onKey = (e) => {
-      // Cmd+K (mac) or Ctrl+K (win/linux)
+      // Cmd+K (mac) or Ctrl+K (win/linux). `key` is absent on some synthetic
+      // and IME-composition events, and this listener lives for the whole
+      // session — a throw here would break every later keystroke.
+      if (typeof e.key !== "string") return;
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
         setOpen((o) => !o);
@@ -116,17 +120,18 @@ export default function CommandPalette() {
     return () => window.removeEventListener("keydown", onKey);
   }, [open, filtered, idx]);
 
-  // focus the input when opened (restoring focus on close), reset index
+  // Focus the input when opened and reset the selection. Returning focus on
+  // close belongs to useReturnFocus, which also handles the opener having
+  // disappeared in the meantime.
   useEffect(() => {
-    if (open) {
-      lastFocused.current = document.activeElement;
-      setIdx(0);
-      setTimeout(() => inputRef.current?.focus(), 50);
-    } else {
+    if (!open) {
       setQ("");
-      // return focus to whatever was focused before opening
-      lastFocused.current?.focus?.();
+      return undefined;
     }
+
+    setIdx(0);
+    const timer = window.setTimeout(() => inputRef.current?.focus(), 50);
+    return () => window.clearTimeout(timer);
   }, [open]);
 
   // keep selected item in view
