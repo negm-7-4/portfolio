@@ -4,7 +4,7 @@ import { getLenis } from "../lib/navigation";
 let activeLocks = 0;
 let previousBodyOverflow = "";
 let previousBodyPaddingRight = "";
-let lockedLenis = null;
+let lockedLenis: ReturnType<typeof getLenis> = null;
 let shouldRestartLenis = false;
 
 /**
@@ -14,7 +14,7 @@ let shouldRestartLenis = false;
  * The module-level counter keeps nested/overlapping overlays from restarting
  * Lenis or unlocking the body until the final overlay has closed.
  */
-export default function useOverlayScrollLock(active) {
+export default function useOverlayScrollLock(active: boolean): void {
   useEffect(() => {
     if (!active) return undefined;
 
@@ -32,8 +32,11 @@ export default function useOverlayScrollLock(active) {
       }
 
       lockedLenis = getLenis();
-      shouldRestartLenis = Boolean(lockedLenis && !lockedLenis.isStopped);
-      if (shouldRestartLenis) lockedLenis.stop();
+      // Only resume on release what was actually running when we locked —
+      // stopping an already-stopped instance and then "restarting" it would
+      // start smooth scrolling that the page had deliberately turned off.
+      shouldRestartLenis = Boolean(lockedLenis?.stop && !lockedLenis.isStopped);
+      if (shouldRestartLenis) lockedLenis?.stop?.();
     }
 
     activeLocks += 1;

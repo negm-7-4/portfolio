@@ -2,61 +2,73 @@
   "/projects/acoustic-1.jpg": {
     "width": 909,
     "height": 512,
-    "widths": [640]
+    "widths": [640],
+    "lqip": "data:image/webp;base64,UklGRmoAAABXRUJQVlA4IF4AAAAQBACdASoUAAsAPt1cp00opSOiMAgBEBuJQBOkERhgbYhnBrrRQLv0gAD947W2MBeDvIeSPTBVu9dI4LyJ4hu8cGpPnTHCXgeyExotym4NfqS7fiEaHkvHZvrdAAAA"
   },
   "/projects/automation-1.jpg": {
     "width": 1600,
     "height": 774,
-    "widths": [640, 1024, 1600]
+    "widths": [640, 1024, 1600],
+    "lqip": "data:image/webp;base64,UklGRjwAAABXRUJQVlA4IDAAAAAQAwCdASoUAAoAPt1apkyopSOiMAgBEBuJaQAAlNRDCgAA/vEtk4rgKNi2siCAAAA="
   },
   "/projects/bascalscalar.png": {
     "width": 1918,
     "height": 1045,
-    "widths": [640, 1024, 1600]
+    "widths": [640, 1024, 1600],
+    "lqip": "data:image/webp;base64,UklGRpQAAABXRUJQVlA4IIgAAABwBACdASoUAAsAPt1apkyopSOiMAgBEBuJbACdMoMYHYAbxmBjOeylEQxAAAD+6ibGDqEC4C+FrJLq7J78wOxBbygABo8w/Xlj7odfHn6a9IxFcpv+FhxNbNnCAdiM/r5FZJnksjnxf3sFP+ShdVmzr/vKlZcwgw32I8sP1jA8Q6FlEt/+asAA"
   },
   "/projects/nexora-2.jpg": {
     "width": 1600,
     "height": 774,
-    "widths": [640, 1024, 1600]
+    "widths": [640, 1024, 1600],
+    "lqip": "data:image/webp;base64,UklGRkgAAABXRUJQVlA4IDwAAACQAwCdASoUAAoAPt1apkyopSOiMAgBEBuJZwC/OCHfFSCe2H1UAP7w1o8YJcvU0wuwug5OdWG7o6oAAAA="
   },
   "/projects/nexora-3.jpg": {
     "width": 1600,
     "height": 770,
-    "widths": [640, 1024, 1600]
+    "widths": [640, 1024, 1600],
+    "lqip": "data:image/webp;base64,UklGRlwAAABXRUJQVlA4IFAAAADQAwCdASoUAAoAPt1apkyopSOiMAgBEBuJZQCdMoAC+91vmDhISAAA/u7EyIHQ9FIi+kxCvywem+xQNCvidu579rBJ+azctADgABDBnQAAAA=="
   },
   "/projects/nexora.jpg": {
     "width": 1280,
     "height": 622,
-    "widths": [640, 1024]
+    "widths": [640, 1024],
+    "lqip": "data:image/webp;base64,UklGRkYAAABXRUJQVlA4IDoAAACwAwCdASoUAAoAPt1apkyopSOiMAgBEBuJZQC7ACHw2BYhuBK4AAD+7rMsZLgWAvpsgustFHNq8YAA"
   },
   "/projects/sams-1.jpg": {
     "width": 1600,
     "height": 782,
-    "widths": [640, 1024, 1600]
+    "widths": [640, 1024, 1600],
+    "lqip": "data:image/webp;base64,UklGRmoAAABXRUJQVlA4IF4AAACwAwCdASoUAAoAPt1cpkyopSOiMAgBEBuJaQAAUyZAMadF7O83aAD+8EIYMKPxVlTaJ2RsOQgL1qtdCroESQebkeBmPn3beCBDW3EntGw7De9VYd5MjTrDy40CXgAA"
   },
   "/projects/social.jpg": {
     "width": 835,
     "height": 460,
-    "widths": [640]
+    "widths": [640],
+    "lqip": "data:image/webp;base64,UklGRlAAAABXRUJQVlA4IEQAAAAwAwCdASoUAAsAPt1apkyopSOiMAgBEBuJZwDE2CHfusiwAP7yt5of+C8VuJ/vQKkb+U1DbLHqLhUKDN0UrKnFT8AAAA=="
   },
   "/projects/todo.jpg": {
     "width": 1080,
     "height": 482,
-    "widths": [640, 1024]
+    "widths": [640, 1024],
+    "lqip": "data:image/webp;base64,UklGRkYAAABXRUJQVlA4IDoAAAAQAwCdASoUAAkAPt1apkyopSOiMAgBEBuJZwAAg/N7IpAA/vDSGe0H/aH9i0Anqh8gryOnTY3YyAAA"
   },
   "/projects/vera-1.jpg": {
     "width": 1600,
     "height": 773,
-    "widths": [640, 1024, 1600]
+    "widths": [640, 1024, 1600],
+    "lqip": "data:image/webp;base64,UklGRogAAABXRUJQVlA4IHwAAADwAwCdASoUAAoAPt1cp0yopSOiMAgBEBuJZQC06CHYnPUemXbFM34AAP7w0rrQbprI7THloVuo/MTH3vqxP5Mld1Eld/48O2R/B0KM0eArgrjnZ5/Sr7zZz6R5X7IPPfqEWfv/whcwWaIh55Ix8Ww910TXJVzZTZe8YAAA"
   },
   "/projects/vera-2.jpg": {
     "width": 1600,
     "height": 772,
-    "widths": [640, 1024, 1600]
+    "widths": [640, 1024, 1600],
+    "lqip": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAABwAwCdASoUAAoAPt1ep00opSOiMAgBEBuJZwAAW+i3kcfnN8AA/vLHXUhVyKv0KNRF+sR8qQHW8ZDyLgTIvfkOJgSiofHxGPmAAA=="
   },
   "/projects/vera-3.jpg": {
     "width": 1600,
     "height": 698,
-    "widths": [640, 1024, 1600]
+    "widths": [640, 1024, 1600],
+    "lqip": "data:image/webp;base64,UklGRkoAAABXRUJQVlA4ID4AAACQAwCdASoUAAkAPt1cpkyopSOiMAgBEBuJYwAAW+sYbq0IL3gAAP7vYEJu8Ize6HRP6D4uNvkAuAV1Fq4AAA=="
   }
 }

@@ -7,6 +7,7 @@ import App from "./App.jsx";
 import ErrorBoundary from "./components/ErrorBoundary.jsx";
 import AppCrashScreen from "./components/AppCrashScreen.jsx";
 import { registerSW } from "./lib/registerSW";
+import { installGlobalErrorReporting } from "./lib/reportError";
 import { printConsoleSignature } from "./lib/consoleSignature";
 
 /* There is no client-side router here: unknown paths are served the static
@@ -21,6 +22,10 @@ createRoot(document.getElementById("root")).render(
     <SpeedInsights />
   </StrictMode>
 );
+
+// Async failures never reach an ErrorBoundary — catch them before the app
+// mounts, so a rejected chunk import is reported rather than silent.
+installGlobalErrorReporting();
 
 // Cache assets aggressively so repeat visits are instant
 registerSW();

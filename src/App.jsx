@@ -151,18 +151,41 @@ export default function App() {
 
   /* The opening portrait is fully opaque, so downloading and executing the
      3D world behind it only burns the critical path. Warm it when the visitor
-     starts leaving the cover, with a long idle fallback for stationary tabs. */
+     starts leaving the cover, with a long idle fallback for stationary tabs.
+
+     The mount goes through an idle callback rather than happening inline.
+     Evaluating the three.js chunk and building the scene is one long,
+     uninterruptible task, and firing it straight from the scroll handler
+     dropped it directly on top of the hero's entrance — measured at 5.4s of
+     main-thread blocking inside the reveal window on this hardware, which is
+     exactly the "hero takes a couple of seconds to show up" symptom. Yielding
+     first is self-tuning: on a fast machine idle arrives almost immediately,
+     and on a slow one the animation gets to finish instead of being frozen
+     halfway through. The timeout keeps it bounded if the thread never idles. */
   useEffect(() => {
     if (useLite || worldEnabled) return undefined;
+
+    let cancelPending = null;
+    const mountWorld = () => setWorldEnabled(true);
+
     const enable = () => {
-      if (window.scrollY < window.innerHeight * 0.35) return;
-      setWorldEnabled(true);
+      if (cancelPending || window.scrollY < window.innerHeight * 0.35) return;
+      const ric = window.requestIdleCallback;
+      if (ric) {
+        const id = ric(mountWorld, { timeout: 1800 });
+        cancelPending = () => window.cancelIdleCallback?.(id);
+      } else {
+        const id = window.setTimeout(mountWorld, 400);
+        cancelPending = () => window.clearTimeout(id);
+      }
     };
-    const idleFallback = window.setTimeout(() => setWorldEnabled(true), 30000);
+
+    const idleFallback = window.setTimeout(mountWorld, 30000);
     window.addEventListener("scroll", enable, { passive: true });
     return () => {
       window.clearTimeout(idleFallback);
       window.removeEventListener("scroll", enable);
+      cancelPending?.();
     };
   }, [useLite, worldEnabled]);
 
@@ -249,7 +272,10 @@ export default function App() {
             </Suspense>
 
             {/* ── Page content ─────────────────────────────────────── */}
-            <main id="main-content" className="relative z-[2]">
+            {/* tabIndex -1 makes this a programmatic focus target: the skip
+                link lands here, and useReturnFocus falls back to it when the
+                element that opened an overlay is gone by the time it closes. */}
+            <main id="main-content" tabIndex={-1} className="relative z-[2]">
               {/* The opaque photo cover screen — hides the 3D world; the gem +
                 Hero reveal on scroll and carry the rest of the journey. */}
               <PhotoIntro />

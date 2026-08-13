@@ -10,7 +10,7 @@
  * "more than one copy of React" / "Invalid hook call" / a black screen.
  * Nuking it in dev guarantees a clean module graph.
  */
-export function registerSW() {
+export function registerSW(): void {
   if (!("serviceWorker" in navigator)) return;
 
   if (import.meta.env.DEV) {

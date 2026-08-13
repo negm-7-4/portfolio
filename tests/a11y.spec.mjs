@@ -65,7 +65,20 @@ try {
     const context = await browser.newContext({ viewport });
     const page = await context.newPage();
     await page.goto(BASE, { waitUntil: "networkidle", timeout: 60000 });
-    await page.waitForTimeout(2500);
+
+    /* Wait for the preloader to finish before auditing anything.
+       Not to hide it — its contrast is fine at rest (6.2:1) — but because it
+       exits on an opacity fade, and axe sampling mid-fade measures the
+       dissolving composite (1.05:1) and reports a violation that no visitor
+       could ever experience. Auditing settled states is what makes this check
+       deterministic; a flaky a11y gate teaches people to ignore it.
+       The sr-only progressbar inside the preloader is the exit signal. */
+    await page
+      .waitForSelector('[role="progressbar"]', { state: "detached", timeout: 30000 })
+      .catch(() => {
+        /* already gone, or this tier skips the preloader entirely */
+      });
+    await page.waitForTimeout(1200);
 
     findings.push(await audit(page, `${label} · cover`));
 

@@ -193,6 +193,110 @@ export function sfxWarp() {
   osc.onended = () => og.disconnect();
 }
 
+/**
+ * LAUNCH — the cinematic swell under the hero's primary call to action.
+ *
+ * This is an ORIGINAL cue, synthesized live like everything else here. It is
+ * deliberately written in the register people associate with big space-film
+ * scores — a pipe-organ registration and a slow rising perfect fifth — but it
+ * is not, and must not become, anyone's actual soundtrack. Shipping a
+ * commercial score on a public portfolio is a copyright takedown waiting to
+ * happen, and it would also mean the first real audio download on a site that
+ * has so far cost visitors zero bytes of audio.
+ *
+ * The organ character comes from the drawbar registration: a fundamental plus
+ * its octave, twelfth, double octave and seventeenth, all sines. That stack
+ * is what makes a sine pile read as "organ" rather than "beep". A slow attack
+ * and long release give it the swell; a shallow tremolo keeps it breathing.
+ */
+export function sfxLaunch() {
+  if (!enabled || !ctx) return;
+  const t = ctx.currentTime;
+
+  const ROOT = 146.83; // D3
+  const RISE = 220.0; // A3 — a perfect fifth up
+  const ATTACK = 0.14;
+  const HOLD = 1.15;
+  const RELEASE = 1.25;
+  const END = ATTACK + HOLD + RELEASE;
+
+  // Drawbar registration: harmonic ratio → relative loudness.
+  const DRAWBARS = [
+    [1, 1.0], // fundamental
+    [2, 0.5], // octave
+    [3, 0.34], // twelfth
+    [4, 0.22], // double octave
+    [6, 0.12], // seventeenth-ish upper colour
+  ];
+
+  const voice = ctx.createGain();
+  voice.gain.setValueAtTime(0.0001, t);
+  voice.gain.exponentialRampToValueAtTime(0.34, t + ATTACK);
+  voice.gain.setValueAtTime(0.34, t + ATTACK + HOLD);
+  voice.gain.exponentialRampToValueAtTime(0.0001, t + END);
+
+  // Rolls the top off so the upper drawbars sit behind the fundamental
+  // instead of shrieking on laptop speakers.
+  const tone = ctx.createBiquadFilter();
+  tone.type = "lowpass";
+  tone.frequency.setValueAtTime(1500, t);
+  tone.frequency.linearRampToValueAtTime(2600, t + ATTACK + HOLD);
+  tone.Q.value = 0.4;
+
+  voice.connect(tone);
+  tone.connect(sfxBus);
+
+  // Shallow tremolo — an organ is never perfectly static.
+  const trem = ctx.createOscillator();
+  trem.type = "sine";
+  trem.frequency.value = 5.2;
+  const tremDepth = ctx.createGain();
+  tremDepth.gain.value = 0.045;
+  trem.connect(tremDepth);
+  tremDepth.connect(voice.gain);
+  trem.start(t);
+  trem.stop(t + END);
+
+  const oscillators = DRAWBARS.map(([ratio, level]) => {
+    const osc = ctx.createOscillator();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(ROOT * ratio, t);
+    // The swell rises a fifth — the move that carries the whole cue.
+    osc.frequency.exponentialRampToValueAtTime(RISE * ratio, t + ATTACK + HOLD);
+
+    const g = ctx.createGain();
+    g.gain.value = level;
+    osc.connect(g);
+    g.connect(voice);
+    osc.start(t);
+    osc.stop(t + END);
+    osc.onended = () => g.disconnect();
+    return osc;
+  });
+
+  // Sub octave for weight under the organ.
+  const sub = ctx.createOscillator();
+  sub.type = "sine";
+  sub.frequency.setValueAtTime(ROOT / 2, t);
+  sub.frequency.exponentialRampToValueAtTime(RISE / 2, t + ATTACK + HOLD);
+  const subG = ctx.createGain();
+  subG.gain.setValueAtTime(0.0001, t);
+  subG.gain.exponentialRampToValueAtTime(0.2, t + ATTACK * 1.6);
+  subG.gain.exponentialRampToValueAtTime(0.0001, t + END);
+  sub.connect(subG);
+  subG.connect(sfxBus);
+  sub.start(t);
+  sub.stop(t + END);
+
+  sub.onended = () => subG.disconnect();
+  oscillators[0].onended = () => {
+    trem.disconnect();
+    tremDepth.disconnect();
+    voice.disconnect();
+    tone.disconnect();
+  };
+}
+
 // A consonant pentatonic scale — chapter pings can never sound "wrong".
 const PING_SCALE = [523.25, 587.33, 698.46, 783.99, 880.0, 1046.5];
 

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import { profile, resume } from "../../data/content";
 import useOverlayScrollLock from "../../hooks/useOverlayScrollLock";
+import useReturnFocus from "../../hooks/useReturnFocus";
 import { APP_EVENTS, onAppEvent } from "../../lib/appEvents";
 
 /**
@@ -42,19 +43,14 @@ export default function CvModal() {
   const [open, setOpen] = useState(false);
   const reduce = useReducedMotion();
   const panelRef = useRef(null);
-  const lastFocused = useRef(null);
 
-  useEffect(() => {
-    const onOpen = () => {
-      lastFocused.current = document.activeElement;
-      setOpen(true);
-    };
-    return onAppEvent(APP_EVENTS.openCv, onOpen);
-  }, []);
+  useEffect(() => onAppEvent(APP_EVENTS.openCv, () => setOpen(true)), []);
 
   useOverlayScrollLock(open);
+  useReturnFocus(open);
 
-  // ESC to close, trap focus inside the dialog and restore it on close.
+  // ESC to close and trap focus inside the dialog. Restoring it on close is
+  // useReturnFocus's job — including the case where the opener is gone.
   useEffect(() => {
     if (!open) return;
 
@@ -103,7 +99,6 @@ export default function CvModal() {
     return () => {
       window.clearTimeout(focusTimer);
       window.removeEventListener("keydown", onKey);
-      if (lastFocused.current?.isConnected) lastFocused.current.focus();
     };
   }, [open]);
 

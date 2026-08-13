@@ -24,20 +24,20 @@ vercel dev
 
 ## Scripts
 
-| Command                 | What it does                                            |
-| ----------------------- | ------------------------------------------------------- |
-| `npm run dev`           | Vite dev server                                         |
-| `npm run build`         | Production build into `dist/`                           |
-| `npm run preview`       | Serve the production build locally                      |
-| `npm run lint`          | ESLint (flat config, with `jsx-a11y` and hooks rules)   |
-| `npm run typecheck`     | `tsc --noEmit` over the typed surface                   |
-| `npm run format`        | Prettier, write                                         |
-| `npm run test`          | Vitest, single run                                      |
-| `npm run test:coverage` | Vitest with V8 coverage                                 |
-| `npm run test:a11y`     | axe-core audit against the built site (needs `preview`) |
-| `npm run budget`        | Fail if the critical-path bundle exceeded its budget    |
-| `npm run images`        | Regenerate responsive AVIF/WebP derivatives             |
-| `npm run check`         | Everything CI runs, in order                            |
+| Command                 | What it does                                                |
+| ----------------------- | ----------------------------------------------------------- |
+| `npm run dev`           | Vite dev server                                             |
+| `npm run build`         | Production build into `dist/`                               |
+| `npm run preview`       | Serve the production build locally                          |
+| `npm run lint`          | ESLint (flat config, with `jsx-a11y` and hooks rules)       |
+| `npm run typecheck`     | `tsc --noEmit` over the typed surface                       |
+| `npm run format`        | Prettier, write                                             |
+| `npm run test`          | Vitest, single run                                          |
+| `npm run test:coverage` | Vitest with V8 coverage                                     |
+| `npm run test:a11y`     | axe-core audit against the built site (needs `preview`)     |
+| `npm run budget`        | Fail if the critical-path bundle exceeded its budget        |
+| `npm run images`        | Regenerate AVIF/WebP derivatives + inline LQIP placeholders |
+| `npm run check`         | Everything CI runs, in order                                |
 
 ---
 
@@ -65,9 +65,12 @@ import of three.js fails the build rather than quietly costing every visitor
 
 ### TypeScript
 
-Adopted from the logic layer outward rather than in one risky rename. `src/lib`,
-`src/config` and `src/data` are `.ts` today and type-checked under `strict` plus
-`noUncheckedIndexedAccess`; the `.jsx` components still compile through
+Adopted from the logic layer outward rather than in one risky rename. Navigation,
+app events, toast, motion tokens, error reporting, the site config and the
+section data are `.ts` today, type-checked under `strict` plus
+`noUncheckedIndexedAccess`. The rest — the `.jsx` components, and the handful of
+`.js` modules in `src/lib` that are mostly thin wrappers over third-party
+imports (`scrollSync`, `gsapPlugins`, `ambientAudio`) — still compile through
 `allowJs` with `checkJs: false`, and join the checked surface as they are
 touched. `npm run typecheck` runs in CI, so the typed part cannot rot while the
 migration finishes.
@@ -88,6 +91,7 @@ src/
   hooks/          device profile, active section, Lenis, cursor, scroll lock
   lib/            navigation, app events, toast, GSAP loaders, audio, motion tokens
   data/           all copy and project data — edit here, not in components
+                  + imageManifest.json (dimensions + inline LQIP, generated)
   config/         site-wide constants (public URL, contact email)
                   (lib / data / config are TypeScript)
 api/
@@ -97,13 +101,13 @@ scripts/          image pipeline + bundle budget
 
 ### Navigation
 
-Everything that scrolls goes through `src/lib/navigation.js`. The Lenis
+Everything that scrolls goes through `src/lib/navigation.ts`. The Lenis
 instance and the cinematic page transition register themselves there on mount;
 callers just ask for `goToSection(id)` and get the best behaviour available —
 curtain transition, else Lenis, else native scroll. Nothing reads globals.
 
 Cross-tree commands (open the CV modal, open the command palette) go through
-named events in `src/lib/appEvents.js` rather than prop drilling.
+named events in `src/lib/appEvents.ts` rather than prop drilling.
 
 ### Resilience
 
@@ -111,6 +115,19 @@ Most of this page is WebGL, and GPU reality is not uniform — a shader that wil
 not compile on one Android driver used to take down the entire React tree.
 `ErrorBoundary` now wraps the 3D world (falling back to the 2D background), each
 lazy section, the ambient chrome, the cursor layer, and the app root.
+
+Degrading gracefully is only half of it: a fallback nobody hears about is a bug
+that never gets fixed. Every boundary catch, plus uncaught errors and unhandled
+rejections (which never reach a boundary at all), is reported through the
+Vercel Analytics custom event already loaded for pageviews — no extra
+dependency, no extra request. What is sent is deliberately thin: which boundary,
+the error name, a truncated message. No stack traces, no identifiers.
+
+A rule this codebase now holds to: **JavaScript may remove a fallback, never
+reveal the content.** `ResponsiveImage` learned it the hard way — an earlier
+blur-up faded images in on `onLoad`, so any missed load event left the photo
+permanently invisible behind a 20px blur. The real pixels now paint over the
+placeholder on their own; JS only tidies up afterwards.
 
 ### Accessibility
 
@@ -133,6 +150,12 @@ focusable buttons (keyboard-reachable, invisible to screen readers); the
 preloader put `role="progressbar"` on the full-screen wrapper that also held
 the Skip button; and a corner label sat at 1.26:1 contrast, which is not
 subtle, it is invisible.
+
+The audit waits for the preloader to finish before sampling. Not to excuse it —
+its contrast is fine at rest — but because it exits on an opacity fade, and axe
+sampling mid-fade measures the dissolving composite and reports a violation no
+visitor could experience. A flaky accessibility gate teaches people to ignore
+it, so it asserts on settled states only.
 
 ---
 
@@ -186,6 +209,17 @@ generated `sitemap.xml` and `robots.txt`. Moving to a custom domain is a
 one-line change. `vite.config.js` carries the same values as defaults so a
 clean checkout with no `.env` still builds correct URLs.
 
+## Images
+
+`npm run images` generates, per project shot: AVIF and WebP at 640/1024/1600,
+the real intrinsic dimensions, and a ~175-byte 20px WebP inlined as a data URI.
+`ResponsiveImage` renders a `<picture>` with `srcset`/`sizes`, `width`/`height`
+so the box is reserved before a byte arrives, and the tiny WebP as the image's
+own background so the slot shows the shot's colours instead of an empty box.
+
+Output is committed, so a deploy never depends on `sharp` installing in the
+build environment.
+
 ## Structured data
 
 `index.html` carries Person and WebSite JSON-LD, plus a `CreativeWork` entry
@@ -206,6 +240,26 @@ Security headers (CSP, HSTS, `X-Frame-Options`, `X-Content-Type-Options`,
 inline scripts only because the JSON-LD blocks in `index.html` are inline;
 `connect-src` is locked to this origin plus the Vercel vitals endpoint, which
 is what actually constrains exfiltration.
+
+### Cache tiers
+
+Three of them, and the split is by whether a URL can ever change meaning:
+
+| Path                                | Policy                            | Why                                             |
+| ----------------------------------- | --------------------------------- | ----------------------------------------------- |
+| `/assets/`, `/fonts/`, `/textures/` | `max-age=31536000, immutable`     | content-hashed or never edited in place         |
+| `/projects/`, root images           | `max-age=86400` + a week of `swr` | stable names, contents can be regenerated       |
+| `sitemap`, `robots`, manifest       | `max-age=3600`                    | cheap, and staleness is visible to crawlers     |
+| `sw.js`, the CV                     | `max-age=0, must-revalidate`      | must never pin a visitor to an old build/résumé |
+
+The root-image rule is written `/([^/]+).(png|jpg|…)` rather than `/(.*).(…)`
+on purpose. The broad form also matches `/textures/earth/earth_day.jpg`, which
+already has an `immutable` rule — and Vercel merges every matching `headers`
+entry, so a second `Cache-Control` on the same URL is a coin flip you do not
+want to be holding. Restricting the match to a single path segment keeps the
+tiers disjoint, and if the pattern were ever misparsed the rule matches nothing
+and those files fall back to the platform default, which is the harmless
+direction to fail in.
 
 ## Licence
 
