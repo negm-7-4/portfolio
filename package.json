@@ -32,9 +32,9 @@
     "test:a11y": "node tests/a11y.spec.mjs"
   },
   "dependencies": {
-    "@react-three/drei": "^10.7.7",
-    "@react-three/fiber": "^9.6.1",
-    "@react-three/postprocessing": "^3.0.4",
+    "@react-three/drei": "^10.7.8",
+    "@react-three/fiber": "^9.7.0",
+    "@react-three/postprocessing": "^3.0.5",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
     "canvas-confetti": "^1.9.4",
@@ -44,7 +44,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "resend": "^6.19.0",
-    "three": "^0.185.0",
+    "three": "^0.185.1",
     "zustand": "^5.0.14"
   },
   "devDependencies": {
