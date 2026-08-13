@@ -15,6 +15,24 @@ export const useExperience = create(
   subscribeWithSelector((set) => ({
     // ── Live, per-frame state (written by ExperienceBridge) ──
     scroll: 0, // page progress 0 → 1
+    /**
+     * Where the visitor is in the STORY, as a continuous chapter position:
+     * 0 = chapter 0 is on screen, 1 = chapter 1, … and `sectionCount` = the
+     * very bottom of the page.
+     *
+     * This is not `scroll * sectionCount`. Chapters are wildly different
+     * heights — the projects gallery is several screens, the hero is one —
+     * so a uniform split put every camera shot and every particle formation
+     * somewhere between the two chapters it was composed for. The hero's own
+     * shot was the worst casualty: it lived entirely behind the opaque cover
+     * screen, and by the time the hero was actually visible the camera was a
+     * third of the way to the About shot with the rings already dissolving.
+     *
+     * ExperienceBridge measures the real section offsets and interpolates
+     * between them, so chapter k is exactly k and every shot lands.
+     */
+    story: 0,
+    storyN: 0, // the same value normalised to 0 → 1, for journey-wide grades
     velocity: 0, // smoothed scroll velocity (signed)
     pointer: { x: 0, y: 0 }, // normalised cursor, -1 → 1 on each axis
     sectionIndex: 0, // current chapter (0 → sectionCount-1)
@@ -27,15 +45,19 @@ export const useExperience = create(
     // ── Configuration (written once on mount) ──
     sectionCount: 10,
     quality: "high", // 'high' | 'mid' — drives DPR, particle counts, post-fx
-    reducedMotion: false,
 
     // ── Lifecycle ──
+    // NB: there is deliberately no `reducedMotion` or `paused` here. Both used
+    // to exist with setters nothing ever called, which read as "the world
+    // responds to these" when it does not. Reduced motion is handled upstream
+    // (it forces the "low" tier, and the low tier never mounts the world at
+    // all), and pausing is the Canvas's own `frameloop` switch.
     ready: false, // the world has painted its first frame
-    paused: false, // tab hidden → freeze the render loop
     loadProgress: 0, // real asset progress 0 → 100 (drei useProgress, world chunk)
 
     // ── Writers ──
-    setScroll: (scroll, velocity = 0) => set({ scroll, velocity }),
+    setScroll: (scroll, velocity = 0, story = 0, storyN = 0) =>
+      set({ scroll, velocity, story, storyN }),
     setPointer: (x, y) =>
       set((s) => {
         // Mutate in place — pointer has no React subscribers, only the
@@ -53,9 +75,7 @@ export const useExperience = create(
     setWarp: (warp) => set({ warp }),
     setShock: (shock) => set({ shock }),
     setQuality: (quality) => set({ quality }),
-    setReducedMotion: (reducedMotion) => set({ reducedMotion }),
     setReady: (ready) => set({ ready }),
-    setPaused: (paused) => set({ paused }),
     setLoadProgress: (loadProgress) => set({ loadProgress }),
   }))
 );

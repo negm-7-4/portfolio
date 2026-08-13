@@ -177,7 +177,10 @@ export default function Preloader({ onDone }) {
   const covering = phase !== "done";
 
   return (
-    <div className="fixed inset-0 z-[10000] overflow-hidden">
+    // data-preloader is a test hook: the accessibility audit waits for this
+    // node to leave before it samples the cover, so it never measures colour
+    // contrast through a half-faded overlay (see tests/a11y.spec.mjs).
+    <div data-preloader className="fixed inset-0 z-[10000] overflow-hidden">
       {/* The progressbar role lives on its own node rather than the
           full-screen wrapper: the wrapper also holds the Skip button, and a
           progressbar is not allowed to contain interactive content. */}

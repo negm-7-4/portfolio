@@ -30,6 +30,12 @@ function StickyInfo({ p, idx, total }) {
         {/* mega ghost number */}
         <span
           aria-hidden
+          // Purely ornamental: an 8%-white ghost numeral that exists to add
+          // depth behind the title. It is meant to be barely there, so a
+          // contrast rule does not apply to it — `data-decorative` is how the
+          // a11y audit knows the difference between "unreadable" and
+          // "deliberately a texture". See tests/a11y.spec.mjs.
+          data-decorative=""
           className="block select-none font-display leading-[0.78] tracking-tighter"
           style={{
             fontSize: "clamp(7rem, 17vw, 16rem)",
@@ -46,7 +52,10 @@ function StickyInfo({ p, idx, total }) {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.1, duration: 0.4 }}
             className="block font-display text-[11px] font-semibold uppercase tracking-[0.32em]"
-            style={{ color: `${p.color}cc` }}
+            // Full alpha, not `cc`. At 11px a brand hue already sits close to
+            // the 4.5:1 floor on this background; knocking 20% off it put the
+            // darker project colours under.
+            style={{ color: p.color }}
           >
             ( {idx} / {String(total).padStart(2, "0")} ) · {p.category}
           </motion.span>

@@ -106,7 +106,7 @@ export default function HeroModel() {
   }, [shardGeo, shardMat]);
 
   useFrame((state, dt) => {
-    const { scroll, pointer, hovered } = experience.getState();
+    const { storyN, pointer, hovered } = experience.getState();
     const g = group.current;
     if (!g) return;
     const t = state.clock.elapsedTime;
@@ -115,7 +115,7 @@ export default function HeroModel() {
     // away (that hand-off used to leave a plain sphere behind, which read
     // as "the shape turned into a circle"). It only eases down a little
     // with depth; the particle formations around it carry the storytelling.
-    const w = 1 - smoothstep(0.06, 0.9, scroll) * 0.3;
+    const w = 1 - smoothstep(0.06, 0.9, storyN) * 0.3;
     const cur = g.scale.x;
     g.scale.setScalar(cur + (w - cur) * Math.min(1, dt * 3));
 
@@ -125,7 +125,7 @@ export default function HeroModel() {
     // yaw is now a pure function of scroll plus a small bounded breath, so
     // scroll 0 always composes the SAME art-directed hero shot, while
     // travelling down still turns the gem a full, deliberate quarter-turn.
-    const yaw = HERO_YAW + scroll * 2.4 + Math.sin(t * 0.28) * 0.09;
+    const yaw = HERO_YAW + storyN * 2.4 + Math.sin(t * 0.28) * 0.09;
     g.rotation.y += (yaw - g.rotation.y) * Math.min(1, dt * 2.6);
 
     // Hover leans the gem toward the viewer instead of spinning it up —
