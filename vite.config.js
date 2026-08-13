@@ -145,11 +145,98 @@ function projectSchema(env) {
   };
 }
 
+/**
+ * Fills the <noscript> block with the site's real content at build time.
+ *
+ * Everything on this page is client-rendered, so a client that does not run
+ * JavaScript sees an empty div and a one-line apology. Google renders JS, but
+ * plenty of things that matter do not: link unfurlers, archive crawlers,
+ * text-mode readers, corporate proxies that strip scripts, and anyone whose
+ * bundle simply failed to load on a bad connection.
+ *
+ * The content is generated from the same `content.js` the app renders, so it
+ * cannot drift, and it lives inside <noscript> — visible only when scripts are
+ * off. That is the honest placement: it is a fallback, not a second hidden
+ * copy of the page served to crawlers.
+ */
+function noscriptContent() {
+  const esc = (value) =>
+    String(value).replace(
+      /[&<>"']/g,
+      (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]
+    );
+
+  return {
+    name: "portfolio-noscript-content",
+    async transformIndexHtml(html) {
+      const { profile, projects, services, experience } = await import("./src/data/content.js");
+
+      const section = (heading, items) =>
+        `<h2 style="font-size:1.05rem;margin:2rem 0 .6rem;color:#dfe3ea">${esc(heading)}</h2>` +
+        `<ul style="padding-left:1.1rem;line-height:1.75">${items.join("")}</ul>`;
+
+      const body = [
+        `<h1 style="font-size:1.7rem;margin-bottom:.35rem">${esc(profile.name)}</h1>`,
+        `<p style="color:#aab4c4;margin:0 0 .4rem">${esc(profile.role)} · ${esc(profile.location)}</p>`,
+        `<p style="line-height:1.7">${esc(profile.tagline)}</p>`,
+        `<p><a href="mailto:${esc(profile.email)}" style="color:#aab4c4">${esc(profile.email)}</a>` +
+          ` · <a href="${esc(profile.resumeUrl)}" style="color:#aab4c4">CV (PDF)</a></p>`,
+
+        section(
+          "Projects",
+          projects.map(
+            (p) =>
+              `<li><strong>${esc(p.title)}</strong> — ${esc(p.tagline)}. ${esc(p.desc)}` +
+              ` <em>${esc(p.tech.join(", "))}</em>` +
+              (p.github ? ` <a href="${esc(p.github)}" style="color:#aab4c4">source</a>` : "") +
+              (p.live ? ` <a href="${esc(p.live)}" style="color:#aab4c4">live</a>` : "") +
+              `</li>`
+          )
+        ),
+
+        section(
+          "Services",
+          services.map((s) => `<li><strong>${esc(s.title)}</strong> — ${esc(s.desc)}</li>`)
+        ),
+
+        section(
+          "Experience",
+          experience.map(
+            (e) =>
+              `<li><strong>${esc(e.role)}</strong>, ${esc(e.company)} (${esc(e.period)}) — ${esc(e.desc)}</li>`
+          )
+        ),
+
+        section(
+          "Elsewhere",
+          profile.socials.map(
+            (s) => `<li><a href="${esc(s.url)}" style="color:#aab4c4">${esc(s.label)}</a></li>`
+          )
+        ),
+
+        `<p style="margin-top:2rem;color:#8a93a6">This portfolio's interactive 3D experience needs JavaScript. Everything above is the same content, in plain text.</p>`,
+      ].join("");
+
+      return html.replace(
+        "<!--noscript-content-->",
+        `<div style="max-width:46rem;margin:8vh auto;padding:0 1.5rem;font-family:system-ui,sans-serif;color:#dfe3ea">${body}</div>`
+      );
+    },
+  };
+}
+
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "VITE_");
 
   return {
-    plugins: [react(), tailwindcss(), htmlEnv(env), sitemap(env), projectSchema(env)],
+    plugins: [
+      react(),
+      tailwindcss(),
+      htmlEnv(env),
+      sitemap(env),
+      projectSchema(env),
+      noscriptContent(),
+    ],
 
     // ── React-Three-Fiber + Vite interop ──────────────────────────────────
     // Without this, Vite's dep optimiser can resolve React through two module

@@ -11,7 +11,58 @@ import { subscribeWithSelector } from "zustand/middleware";
  *
  * Keep this lean. It is hot state, read every frame.
  */
-export const useExperience = create(
+
+/** Rendering quality tier, mirrored from `useDeviceProfile`. */
+export type Quality = "high" | "mid";
+
+export interface ExperienceState {
+  // ── Live, per-frame state (written by ExperienceBridge) ──
+  /** Page progress 0 → 1. */
+  scroll: number;
+  /** Smoothed scroll velocity, signed. */
+  velocity: number;
+  /** Normalised cursor, -1 → 1 on each axis. Mutated in place; see setPointer. */
+  pointer: { x: number; y: number };
+  sectionIndex: number;
+  /** Cursor is over an interactive 3D object (the hero orb). */
+  hovered: boolean;
+  /** Hex string while the projects gallery is on screen — dyes the world. */
+  accentOverride: string | null;
+  /** -1 → 1 across the projects gallery; lateral camera dolly. */
+  gallery: number;
+  /** Arrival shockwave — set to 1 on anchor nav, decays inside the world. */
+  warp: number;
+  /** Radial pulse through the particle field; MorphField owns the decay. */
+  shock: number;
+
+  // ── Configuration (written once on mount) ──
+  sectionCount: number;
+  quality: Quality;
+  reducedMotion: boolean;
+
+  // ── Lifecycle ──
+  ready: boolean;
+  paused: boolean;
+  /** Real asset progress 0 → 100. */
+  loadProgress: number;
+
+  // ── Writers ──
+  setScroll: (scroll: number, velocity?: number) => void;
+  setPointer: (x: number, y: number) => void;
+  setSection: (sectionIndex: number) => void;
+  setHovered: (hovered: boolean) => void;
+  setAccentOverride: (accentOverride: string | null) => void;
+  setGallery: (gallery: number) => void;
+  setWarp: (warp: number) => void;
+  setShock: (shock: number) => void;
+  setQuality: (quality: Quality) => void;
+  setReducedMotion: (reducedMotion: boolean) => void;
+  setReady: (ready: boolean) => void;
+  setPaused: (paused: boolean) => void;
+  setLoadProgress: (loadProgress: number) => void;
+}
+
+export const useExperience = create<ExperienceState>()(
   subscribeWithSelector((set) => ({
     // ── Live, per-frame state (written by ExperienceBridge) ──
     scroll: 0, // page progress 0 → 1

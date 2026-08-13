@@ -4,8 +4,11 @@ import confetti from "canvas-confetti";
  * Burst confetti at a given screen coordinate (or center of viewport).
  * Reuses a single dedicated canvas to avoid mount thrash on rapid clicks.
  */
-let instance = null;
-function getInstance() {
+type Fire = ReturnType<typeof confetti.create>;
+
+let instance: Fire | null = null;
+
+function getInstance(): Fire {
   if (instance) return instance;
   const canvas = document.createElement("canvas");
   canvas.style.cssText =
@@ -17,7 +20,17 @@ function getInstance() {
 
 const SILVER = ["#ffffff", "#d9e0ec", "#8a93a6", "#b8c4d6", "#cbd2dd"];
 
-export function burst(x, y, opts = {}) {
+/** The confetti options this app varies. The rest stay at the house defaults. */
+export interface BurstOptions {
+  /** Override the silver palette. */
+  colors?: string[];
+  particleCount?: number;
+  spread?: number;
+  scalar?: number;
+  startVelocity?: number;
+}
+
+export function burst(x?: number, y?: number, opts: BurstOptions = {}): void {
   const fire = getInstance();
   const origin = {
     x: (x ?? window.innerWidth / 2) / window.innerWidth,
@@ -38,7 +51,7 @@ export function burst(x, y, opts = {}) {
 }
 
 /** Fancy two-stage burst (rim + center) for big CTA clicks. */
-export function celebrate(x, y, color) {
+export function celebrate(x?: number, y?: number, color?: string): void {
   const colors = color ? [color, "#ffffff"] : SILVER;
   burst(x, y, { particleCount: 80, spread: 90, colors, scalar: 1.05 });
   setTimeout(
@@ -48,11 +61,15 @@ export function celebrate(x, y, color) {
 }
 
 /** Click burst that picks coords from a MouseEvent. */
-export function burstFromEvent(e, opts = {}) {
+export function burstFromEvent(
+  e: { clientX: number; clientY: number },
+  opts: BurstOptions = {}
+): void {
   burst(e.clientX, e.clientY, opts);
 }
 
 /** Hook helper — call inside a click handler */
 export function useConfettiClick() {
-  return (e, opts) => celebrate(e.clientX, e.clientY, opts?.color);
+  return (e: { clientX: number; clientY: number }, opts?: { color?: string }): void =>
+    celebrate(e.clientX, e.clientY, opts?.color);
 }

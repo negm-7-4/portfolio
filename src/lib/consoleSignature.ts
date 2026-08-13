@@ -7,7 +7,7 @@
  * trust this origin.
  */
 /* eslint-disable no-console -- the whole point of this module */
-export function printConsoleSignature() {
+export function printConsoleSignature(): void {
   if (import.meta.env.DEV) return; // dev consoles have enough noise already
 
   console.log(

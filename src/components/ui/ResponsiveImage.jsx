@@ -1,3 +1,5 @@
+import { useEffect, useRef, useState } from "react";
+
 import manifest from "../../data/imageManifest.json";
 
 /**
@@ -30,6 +32,16 @@ export default function ResponsiveImage({
   ...rest
 }) {
   const entry = manifest[src];
+  const imgRef = useRef(null);
+  const [loaded, setLoaded] = useState(false);
+
+  /* A cached image can finish decoding before React attaches onLoad. This only
+     tidies the placeholder away — it is never what makes the photo visible
+     (see the style comment below) — but without it the stand-in would linger
+     behind an already-painted image. */
+  useEffect(() => {
+    if (imgRef.current?.complete && imgRef.current.naturalWidth > 0) setLoaded(true);
+  }, []);
 
   // No derivatives (a new image added without re-running the script) — still
   // render something correct rather than nothing.
@@ -56,6 +68,7 @@ export default function ResponsiveImage({
       <source type="image/avif" srcSet={srcSet("avif")} sizes={sizes} />
       <source type="image/webp" srcSet={srcSet("webp")} sizes={sizes} />
       <img
+        ref={imgRef}
         src={src}
         alt={alt}
         width={entry.width}
@@ -64,7 +77,31 @@ export default function ResponsiveImage({
         loading={loading}
         decoding="async"
         fetchPriority={fetchPriority}
-        style={style}
+        onLoad={() => setLoaded(true)}
+        /* Two decisions here, both about failure modes.
+        
+           The stand-in is the <img>'s OWN background, not an extra element:
+           <picture> only permits <source> and <img> children, so a wrapper
+           would be invalid markup that browsers relocate out of the picture.
+           A 20px WebP scaled to fill is blurred by the browser's own smoothing.
+
+           And the image is NEVER hidden waiting for JS. An earlier version
+           faded it in on `onLoad`, which meant any missed load event — a
+           lazy image the browser defers, a decode that beats hydration —
+           left the photo permanently at opacity 0 with only a blurry 20px
+           square visible. Now the real pixels simply paint over the
+           background when they arrive; `loaded` only *removes* the fallback
+           afterwards. JS tidies up, it never reveals. */
+        style={{
+          ...style,
+          ...(entry.lqip && !loaded
+            ? {
+                backgroundImage: `url("${entry.lqip}")`,
+                backgroundSize: "cover",
+                backgroundPosition: "top center",
+              }
+            : null),
+        }}
         {...rest}
       />
     </picture>

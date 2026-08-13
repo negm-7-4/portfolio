@@ -1,5 +1,7 @@
 import { Component } from "react";
 
+import { reportError } from "../lib/reportError";
+
 /**
  * Renders `fallback` if its subtree throws.
  *
@@ -36,6 +38,12 @@ export default class ErrorBoundary extends Component {
       // the visitor and tells an attacker about the internals.
       console.warn(`[ErrorBoundary] ${label} failed, showing fallback:`, error, info);
     }
+
+    /* Degrading gracefully without reporting means the failure is invisible:
+       a visitor whose driver cannot compile a shader would silently get the
+       2D fallback forever and nobody would ever learn. */
+    reportError({ boundary: label, error, componentStack: info?.componentStack });
+
     this.props.onError?.(error, info);
   }
 

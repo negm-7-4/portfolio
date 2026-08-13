@@ -15,12 +15,21 @@
  *   3. native scrolling with the offset applied by hand.
  */
 
-/** The slice of Lenis this module needs. Keeps the import graph free of Lenis. */
+/**
+ * The slice of Lenis this app actually uses. Keeps the import graph free of
+ * Lenis, and documents the contract: anything satisfying this can drive the
+ * site's scrolling, which is what makes the fallback path testable.
+ */
 export interface ScrollDriver {
   scrollTo: (
     target: Element | number | string,
     options?: { offset?: number; duration?: number | undefined; immediate?: boolean }
   ) => void;
+  /** Suspend smooth scrolling — used while a modal holds the viewport. */
+  stop?: () => void;
+  /** Resume after a stop. */
+  start?: () => void;
+  readonly isStopped?: boolean;
 }
 
 export interface ScrollOptions {
