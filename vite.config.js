@@ -181,10 +181,10 @@ export default defineConfig(({ mode }) => {
 
     test: {
       environment: "node",
-      include: ["src/**/*.test.{js,jsx}", "api/**/*.test.js"],
+      include: ["src/**/*.test.{js,jsx,ts,tsx}", "api/**/*.test.js"],
       coverage: {
         provider: "v8",
-        include: ["src/lib/**", "src/hooks/**", "api/**"],
+        include: ["src/lib/**", "src/hooks/**", "src/config/**", "api/**"],
         reporter: ["text", "lcov"],
       },
     },

@@ -12,30 +12,59 @@
  *
  *   1. the PageTransition curtain (if it is mounted), else
  *   2. a Lenis smooth scroll (if Lenis is running), else
- *   3. native `scrollIntoView`.
+ *   3. native scrolling with the offset applied by hand.
  */
+
+/** The slice of Lenis this module needs. Keeps the import graph free of Lenis. */
+export interface ScrollDriver {
+  scrollTo: (
+    target: Element | number | string,
+    options?: { offset?: number; duration?: number | undefined; immediate?: boolean }
+  ) => void;
+}
+
+export interface ScrollOptions {
+  /** Pixels to shift the landing position by. Negative clears a sticky header. */
+  offset?: number;
+  /** Seconds. Only honoured by the smooth driver. */
+  duration?: number;
+  /** Jump with no animation (used while a transition curtain covers the page). */
+  immediate?: boolean;
+}
+
+export interface GoToSectionOptions extends ScrollOptions {
+  /**
+   * Play the full-screen curtain transition. Pass `false` for in-place jumps
+   * (a gallery scrolling itself into view) where a wipe would be disorienting.
+   */
+  cinematic?: boolean;
+}
+
+type SectionTransition = (id: string) => void;
+type Unregister = () => void;
 
 /** Sticky-header clearance applied to every section landing. */
 export const NAV_OFFSET = -40;
 
-let lenis = null;
-let sectionTransition = null;
+let lenis: ScrollDriver | null = null;
+let sectionTransition: SectionTransition | null = null;
 
 /* ── Registration (called by useLenis / PageTransition on mount) ── */
 
-export function registerLenis(instance) {
+export function registerLenis(instance: ScrollDriver): Unregister {
   lenis = instance;
   return () => {
+    // Guarded so a late unmount cannot clear an instance registered after it.
     if (lenis === instance) lenis = null;
   };
 }
 
 /** The live Lenis instance, or null before it boots / after unmount. */
-export function getLenis() {
+export function getLenis(): ScrollDriver | null {
   return lenis;
 }
 
-export function registerSectionTransition(fn) {
+export function registerSectionTransition(fn: SectionTransition): Unregister {
   sectionTransition = fn;
   return () => {
     if (sectionTransition === fn) sectionTransition = null;
@@ -48,7 +77,7 @@ export function registerSectionTransition(fn) {
  * Scroll to an element, a numeric offset, or a selector — smoothly through
  * Lenis when it is available, natively otherwise.
  */
-export function scrollTo(target, options = {}) {
+export function scrollTo(target: Element | number | string, options: ScrollOptions = {}): void {
   const { offset = 0, duration, immediate = false } = options;
 
   /* Resolve the target BEFORE choosing a path. Lenis happens to accept a
@@ -64,7 +93,7 @@ export function scrollTo(target, options = {}) {
     return;
   }
 
-  const behavior = immediate ? "auto" : "smooth";
+  const behavior: ScrollBehavior = immediate ? "auto" : "smooth";
   if (typeof resolved === "number") {
     window.scrollTo({ top: resolved, behavior });
     return;
@@ -75,18 +104,18 @@ export function scrollTo(target, options = {}) {
 }
 
 /** Back to the very top of the page. */
-export function scrollToTop(options = {}) {
+export function scrollToTop(options: ScrollOptions = {}): void {
   scrollTo(0, { duration: 1.6, ...options });
 }
 
 /**
  * Travel to a section by id.
  *
- * `cinematic: false` skips the curtain transition — use it for in-place jumps
- * (a gallery scrolling itself into view) where a full-screen wipe would be
- * disorienting.
+ * @returns `true` if the section exists and navigation started, `false` if
+ *   there is no such section — so a caller can fall back rather than silently
+ *   doing nothing.
  */
-export function goToSection(id, options = {}) {
+export function goToSection(id: string, options: GoToSectionOptions = {}): boolean {
   const { cinematic = true, offset = NAV_OFFSET } = options;
   const el = document.getElementById(id);
   if (!el) return false;

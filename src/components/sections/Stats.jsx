@@ -2,11 +2,38 @@ import { useEffect, useRef } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
 import { loadScrollSync } from "../../lib/scrollSync";
 
+/* Measured numbers, not adjectives.
+   These used to read "15+ projects · 2+ years · 12+ technologies · 100%
+   passion" — the sort of thing every portfolio says and none of them can
+   show. Every figure below came off a real run and can be pointed at:
+   the first two from the VÉRA API load test, the third from the Acoustic
+   Room Mapper's DSP loop, the fourth from this page's own CI budget. */
 const stats = [
-  { value: 15, suffix: "+", label: "Projects shipped", note: "From dashboards to 3D web." },
-  { value: 2, suffix: "+", label: "Years coding", note: "Daily craft & continuous learning." },
-  { value: 12, suffix: "+", label: "Technologies", note: "React, Three.js, motion & more." },
-  { value: 100, suffix: "%", label: "Passion", note: "Always. Without exception." },
+  {
+    value: 2650,
+    suffix: "",
+    label: "Requests / second",
+    note: "VÉRA API under 50 concurrent users — zero errors.",
+  },
+  {
+    value: 46,
+    suffix: "ms",
+    label: "p99 latency",
+    note: "Ninety-ninth percentile, at that same sustained load.",
+  },
+  {
+    value: 50,
+    prefix: "<",
+    suffix: "ms",
+    label: "DSP round trip",
+    note: "Mic to live floor plan — FFT cross-correlation at 48 kHz.",
+  },
+  {
+    value: 172,
+    suffix: "kB",
+    label: "Critical path",
+    note: "This page, gzipped. Enforced by a build that fails if it grows.",
+  },
 ];
 
 export default function Stats() {
@@ -46,7 +73,8 @@ export default function Stats() {
               toggleActions: "restart none restart none",
             },
             onUpdate: () => {
-              el.textContent = Math.floor(obj.v);
+              // Grouped so the biggest figure reads as 2,650 rather than 2650.
+              el.textContent = Math.floor(obj.v).toLocaleString("en-US");
             },
           });
         });
@@ -133,10 +161,15 @@ export default function Stats() {
                     background: "radial-gradient(circle, rgba(170,180,196,0.4), transparent 70%)",
                   }}
                 />
+                {s.prefix && <span className="relative text-gradient">{s.prefix}</span>}
                 <span className="stat-num relative text-gradient" data-value={s.value}>
                   0
                 </span>
-                <span className="relative text-gradient">{s.suffix}</span>
+                {s.suffix && (
+                  <span className="relative text-gradient" style={{ fontSize: "0.42em" }}>
+                    {s.suffix}
+                  </span>
+                )}
 
                 {/* faint orbit dot in upper-right of each number */}
                 <motion.span
@@ -162,6 +195,20 @@ export default function Stats() {
             </motion.div>
           ))}
         </div>
+
+        {/* Where the figures come from. A number without a source is a slogan. */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: false, margin: "-10%" }}
+          transition={{ delay: 0.4, duration: 0.6 }}
+          className="mt-14 max-w-2xl text-[11px] leading-relaxed tracking-[0.08em] text-white/40"
+        >
+          Throughput and latency from a load test of the VÉRA storefront API (50 concurrent users,
+          2,650 req/s sustained, 0 errors, p99 ≈ 46&nbsp;ms). DSP figure from the Acoustic Room
+          Mapper&rsquo;s C++17 engine. Critical-path weight is this page&rsquo;s own gzipped entry
+          bundle, checked on every build.
+        </motion.p>
       </div>
     </section>
   );

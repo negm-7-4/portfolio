@@ -3,7 +3,21 @@
 // background gradient, chapter rail and cursor tint pick up, so scrolling feels
 // like moving through different lighting states of one connected 3D world.
 
-export const sections = [
+export interface Section {
+  /** Must match the DOM id of the rendered <section>. */
+  id: string;
+  /** Chapter number shown by the rail and the transition card. */
+  num: string;
+  label: string;
+  /** Primary chapter colour. */
+  color: string;
+  /** Lighter partner used for glows and gradient ends. */
+  accent: string;
+  /** Hue in degrees — the 3D world grades toward this while the chapter holds. */
+  hue: number;
+}
+
+export const sections: Section[] = [
   { id: "hero", num: "00", label: "Intro", color: "#6c7bff", accent: "#9fb0ff", hue: 232 },
   { id: "about", num: "01", label: "About", color: "#8a6cff", accent: "#b39cff", hue: 256 },
   { id: "services", num: "02", label: "Services", color: "#5b8dff", accent: "#9cc0ff", hue: 218 },

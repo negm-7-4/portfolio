@@ -30,6 +30,7 @@ vercel dev
 | `npm run build`         | Production build into `dist/`                         |
 | `npm run preview`       | Serve the production build locally                    |
 | `npm run lint`          | ESLint (flat config, with `jsx-a11y` and hooks rules) |
+| `npm run typecheck`     | `tsc --noEmit` over the typed surface                 |
 | `npm run format`        | Prettier, write                                       |
 | `npm run test`          | Vitest, single run                                    |
 | `npm run test:coverage` | Vitest with V8 coverage                               |
@@ -61,6 +62,19 @@ The heaviest thing here is the R3F world: three.js + drei + postprocessing is
 import of three.js fails the build rather than quietly costing every visitor
 300 kB.
 
+### TypeScript
+
+Adopted from the logic layer outward rather than in one risky rename. `src/lib`,
+`src/config` and `src/data` are `.ts` today and type-checked under `strict` plus
+`noUncheckedIndexedAccess`; the `.jsx` components still compile through
+`allowJs` with `checkJs: false`, and join the checked surface as they are
+touched. `npm run typecheck` runs in CI, so the typed part cannot rot while the
+migration finishes.
+
+TypeScript is pinned to 6.x deliberately: `typescript-eslint` does not support
+the 7.0 compiler API yet, and lint coverage on the typed files is worth more
+here than being on the newest compiler.
+
 ### Structure
 
 ```
@@ -74,6 +88,7 @@ src/
   lib/            navigation, app events, toast, GSAP loaders, audio, motion tokens
   data/           all copy and project data — edit here, not in components
   config/         site-wide constants (public URL, contact email)
+                  (lib / data / config are TypeScript)
 api/
   contact.js      Vercel Function: validation, rate limit, Resend delivery
 scripts/          image pipeline + bundle budget

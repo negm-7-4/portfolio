@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import type { ScrollDriver } from "./navigation";
 import {
   NAV_OFFSET,
   getLenis,
@@ -17,10 +18,10 @@ import {
  * wrong is invisible in code review and very visible on the page.
  */
 
-let cleanups = [];
+let cleanups: Array<() => void> = [];
 
 function useLenis() {
-  const lenis = { scrollTo: vi.fn() };
+  const lenis = { scrollTo: vi.fn() } satisfies ScrollDriver;
   cleanups.push(registerLenis(lenis));
   return lenis;
 }
@@ -31,7 +32,7 @@ function useTransition() {
   return travel;
 }
 
-function addSection(id) {
+function addSection(id: string) {
   const el = document.createElement("section");
   el.id = id;
   document.body.appendChild(el);
@@ -90,7 +91,7 @@ describe("scrollTo", () => {
 
   it("falls back to native scrolling with the offset applied by hand", () => {
     const el = addSection("about");
-    vi.spyOn(el, "getBoundingClientRect").mockReturnValue({ top: 500 });
+    vi.spyOn(el, "getBoundingClientRect").mockReturnValue({ ...new DOMRect(), top: 500 });
     window.scrollY = 100;
 
     scrollTo(el, { offset: -40 });
@@ -180,7 +181,7 @@ describe("goToSection", () => {
 
   it("still works with nothing registered at all", () => {
     const el = addSection("hero");
-    vi.spyOn(el, "getBoundingClientRect").mockReturnValue({ top: 0 });
+    vi.spyOn(el, "getBoundingClientRect").mockReturnValue({ ...new DOMRect(), top: 0 });
 
     expect(goToSection("hero")).toBe(true);
     expect(window.scrollTo).toHaveBeenCalledWith({ top: NAV_OFFSET, behavior: "smooth" });

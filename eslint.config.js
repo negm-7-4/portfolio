@@ -5,6 +5,7 @@ import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 import jsxA11y from "eslint-plugin-jsx-a11y";
 import prettier from "eslint-config-prettier";
+import tseslint from "typescript-eslint";
 
 /**
  * Flat ESLint config.
@@ -23,9 +24,18 @@ export default [
 
   js.configs.recommended,
 
+  /* TypeScript is being adopted from the logic layer outward: lib, config and
+     data are .ts today, the .jsx components follow as they are touched. These
+     are the type-aware-free recommended rules, which is all a mixed codebase
+     can meaningfully enforce until the migration finishes. */
+  ...tseslint.configs.recommended.map((config) => ({
+    ...config,
+    files: ["src/**/*.{ts,tsx}", "scripts/**/*.ts"],
+  })),
+
   /* ── Browser source ── */
   {
-    files: ["src/**/*.{js,jsx}"],
+    files: ["src/**/*.{js,jsx,ts,tsx}"],
     languageOptions: {
       ecmaVersion: "latest",
       sourceType: "module",
@@ -93,7 +103,7 @@ export default [
      API — sixty times a second, by design. The compiler's immutability
      rules have no model for that, so they are off in the 3D layer only. */
   {
-    files: ["src/components/three/**/*.{js,jsx}"],
+    files: ["src/components/three/**/*.{js,jsx,ts,tsx}"],
     rules: {
       "react-hooks/immutability": "off",
       "react-hooks/refs": "off",
@@ -115,13 +125,26 @@ export default [
 
   /* ── Build tooling + tests ── */
   {
-    files: ["*.config.js", "scripts/**/*.{js,mjs}", "**/*.test.js", "**/*.test.jsx"],
+    files: ["*.config.js", "scripts/**/*.{js,mjs}", "**/*.test.{js,jsx,ts,tsx}"],
     languageOptions: {
       ecmaVersion: "latest",
       sourceType: "module",
       globals: { ...globals.node },
     },
     rules: { "no-console": "off" },
+  },
+
+  /* The base rule cannot see TS constructs (types, enums, overloads) and
+     misreports them; the TS-aware version replaces it in typed files. */
+  {
+    files: ["src/**/*.{ts,tsx}", "scripts/**/*.ts"],
+    rules: {
+      "no-unused-vars": "off",
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_", varsIgnorePattern: "^_", caughtErrors: "none" },
+      ],
+    },
   },
 
   prettier,

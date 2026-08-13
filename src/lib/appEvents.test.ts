@@ -30,7 +30,7 @@ describe("app events", () => {
 
     emitAppEvent(APP_EVENTS.openCv, { from: "navbar" });
 
-    expect(handler.mock.calls[0][0].detail).toEqual({ from: "navbar" });
+    expect(handler.mock.calls[0]?.[0]?.detail).toEqual({ from: "navbar" });
     off();
   });
 

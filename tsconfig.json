@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "types": ["vite/client", "node"],
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "skipLibCheck": true,
+
+    /* Strict, because the point of adopting TypeScript on a codebase that
+       already works is to catch the things review does not. */
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "exactOptionalPropertyTypes": false,
+
+    /* Vite owns emit; tsc is only ever a checker here. */
+    "noEmit": true,
+
+    /* Migration posture: the .jsx components are not converted yet, so JS is
+       allowed in the graph but NOT type-checked. The typed surface — lib,
+       config, data, hooks — is checked strictly. As components move to .tsx
+       they join that surface; nothing has to move all at once. */
+    "allowJs": true,
+    "checkJs": false
+  },
+  "include": ["src", "scripts", "vite.config.js", "eslint.config.js"],
+  "exclude": ["node_modules", "dist", "coverage"]
+}

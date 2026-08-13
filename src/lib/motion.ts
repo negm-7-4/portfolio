@@ -53,7 +53,9 @@ export const VIEWPORT = { once: false, margin: "-12% 0px -12% 0px" };
 
 /* ─────────────────────  VARIANT FACTORIES  ─────────────────── */
 
-const OFFSETS = {
+export type RevealDirection = "up" | "down" | "left" | "right" | "none";
+
+const OFFSETS: Record<RevealDirection, { x: number; y: number }> = {
   up: { y: 56, x: 0 },
   down: { y: -56, x: 0 },
   left: { x: 56, y: 0 },
@@ -61,12 +63,28 @@ const OFFSETS = {
   none: { x: 0, y: 0 },
 };
 
+export interface RevealOptions {
+  /** Which way the element travels in from. */
+  dir?: RevealDirection;
+  /** Override the default 56px travel, keeping the direction's sign. */
+  distance?: number;
+  /** One-shot blur on entry — reads well on small text, costly on large areas. */
+  blur?: boolean;
+  /** Adds a touch of scale + rotateX so the element arrives through depth. */
+  depth?: boolean;
+}
+
 /**
  * Cinematic reveal variants — slide + fade + a hair of scale/perspective for
  * depth. Transform + opacity only (plus an optional one-shot blur on text).
  */
-export function revealVariants({ dir = "up", distance, blur = false, depth = false } = {}) {
-  const base = OFFSETS[dir] || OFFSETS.up;
+export function revealVariants({
+  dir = "up",
+  distance,
+  blur = false,
+  depth = false,
+}: RevealOptions = {}) {
+  const base = OFFSETS[dir] ?? OFFSETS.up;
   const off =
     distance != null
       ? {
