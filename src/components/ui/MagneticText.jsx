@@ -17,7 +17,7 @@ import { useCursor } from "../../hooks/useCursor";
  *   ③ When the cursor is far from the text (or hasn't moved since last
  *     frame), we skip work entirely.
  */
-function Char({ ch, radius, strength, registerChar, idx }) {
+function Char({ ch, radius, strength, registerChar, idx, charClassName = "" }) {
   const ref = useRef(null);
   const tx = useMotionValue(0);
   const ty = useMotionValue(0);
@@ -36,6 +36,7 @@ function Char({ ch, radius, strength, registerChar, idx }) {
   return (
     <motion.span
       ref={ref}
+      className={charClassName}
       style={{ display: "inline-block", x: sx, y: sy, rotate: sr, willChange: "transform" }}
     >
       {ch}
@@ -43,7 +44,25 @@ function Char({ ch, radius, strength, registerChar, idx }) {
   );
 }
 
-export default function MagneticText({ text, className = "", radius = 140, strength = 22 }) {
+/**
+ * @param {object}  props
+ * @param {string}  props.text
+ * @param {string} [props.className]      classes for the wrapper
+ * @param {string} [props.charClassName]  classes applied to EVERY letter span.
+ *   Required for any paint effect that clips to glyphs — `background-clip:
+ *   text` in particular. Each letter here is a transform-animated span, which
+ *   Chromium promotes to its own compositing layer, so an ancestor's
+ *   text-clipped background has no glyphs left to clip against and paints
+ *   nothing: the hero surname rendered completely invisible that way. Put the
+ *   gradient class on the letters instead and every letter clips its own.
+ */
+export default function MagneticText({
+  text,
+  className = "",
+  charClassName = "",
+  radius = 140,
+  strength = 22,
+}) {
   const c = useCursor();
   const charsRef = useRef([]);
   const rectsRef = useRef([]);
@@ -143,6 +162,7 @@ export default function MagneticText({ text, className = "", radius = 140, stren
             radius={radius}
             strength={strength}
             registerChar={registerChar}
+            charClassName={charClassName}
           />
         ))}
       </span>

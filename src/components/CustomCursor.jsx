@@ -23,9 +23,18 @@ export default function CustomCursor() {
   /* Resolved during the first render rather than in an effect: a coarse
      pointer is knowable immediately, and setting it afterwards meant one
      wasted render plus a frame where the custom cursor existed on a phone. */
-  const [hidden, setHidden] = useState(
+  const [coarse, setCoarse] = useState(
     () => typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches
   );
+  /* The pointer is outside the window — hide the visuals, keep every listener
+     alive. These are two different things and collapsing them into one
+     `hidden` flag was a permanent-failure bug: `pointerleave` set it, the
+     effect that owned BOTH listeners bailed out on `hidden`, and so the
+     matching `pointerenter` that would have brought the cursor back was torn
+     down along with it. Alt-tab once and the custom cursor never returned for
+     the rest of the session. */
+  const [offscreen, setOffscreen] = useState(false);
+  const hidden = coarse || offscreen;
   const [hovering, setHovering] = useState(false);
   const [pressing, setPressing] = useState(false);
   const [text, setText] = useState(null); // e.g. "View" on certain targets
@@ -57,13 +66,40 @@ export default function CustomCursor() {
      self-healing: no custom cursor, no hidden native one. */
   useEffect(() => {
     const root = document.documentElement;
-    if (hidden) {
+    // Keyed on `coarse`, not `hidden`: while the pointer is merely outside the
+    // window there is no cursor on the page to hide, and toggling the class
+    // there would make the native arrow flash back on every alt-tab.
+    if (coarse) {
       root.classList.remove("has-custom-cursor");
       return undefined;
     }
     root.classList.add("has-custom-cursor");
     return () => root.classList.remove("has-custom-cursor");
-  }, [hidden]);
+  }, [coarse]);
+
+  /* Window enter/leave and the pointer-type watch live in their own effect
+     that never bails out, so the cursor can always come back. */
+  useEffect(() => {
+    const mq = window.matchMedia("(pointer: coarse)");
+    const onPointerType = () => setCoarse(mq.matches);
+    mq.addEventListener?.("change", onPointerType);
+
+    const leave = () => setOffscreen(true);
+    const enter = () => setOffscreen(false);
+    document.addEventListener("pointerleave", leave);
+    document.addEventListener("pointerenter", enter);
+    // A pointermove is proof the pointer is over the page, whatever the
+    // enter/leave events did — the belt to their braces.
+    const wake = () => setOffscreen((was) => (was ? false : was));
+    window.addEventListener("pointermove", wake, { passive: true });
+
+    return () => {
+      mq.removeEventListener?.("change", onPointerType);
+      document.removeEventListener("pointerleave", leave);
+      document.removeEventListener("pointerenter", enter);
+      window.removeEventListener("pointermove", wake);
+    };
+  }, []);
 
   useEffect(() => {
     if (hidden) return undefined;
@@ -109,20 +145,13 @@ export default function CustomCursor() {
       setPressing(false);
       ringScale.set(1);
     };
-    const leave = () => setHidden(true);
-    const enter = () => setHidden(false);
-
     window.addEventListener("pointermove", move, { passive: true });
     window.addEventListener("pointerdown", down, { passive: true });
     window.addEventListener("pointerup", up, { passive: true });
-    document.addEventListener("pointerleave", leave);
-    document.addEventListener("pointerenter", enter);
     return () => {
       window.removeEventListener("pointermove", move);
       window.removeEventListener("pointerdown", down);
       window.removeEventListener("pointerup", up);
-      document.removeEventListener("pointerleave", leave);
-      document.removeEventListener("pointerenter", enter);
     };
   }, [hidden, x, y, size, opacity, dotScale, ringScale]);
 

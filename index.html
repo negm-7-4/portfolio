@@ -78,6 +78,17 @@
       href="/fonts/space-grotesk-latin-700.woff2"
       crossorigin
     />
+    <!-- The hero surname's display serif. Preloaded despite being one word:
+         it IS the focal point of the first screen, it is a 9.7 kB letters-only
+         subset, and without this it arrives after the stylesheet and the name
+         visibly re-sets from the Georgia fallback under the visitor's eyes. -->
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href="/fonts/playfair-display-name-italic.woff2"
+      crossorigin
+    />
 
     <!-- Structured data — helps Google show a rich result / knowledge panel -->
     <script type="application/ld+json">

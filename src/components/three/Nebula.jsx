@@ -120,14 +120,14 @@ export default function Nebula({ quality = "high" }) {
   }, [material]);
 
   useFrame((state, dt) => {
-    const { scroll, sectionIndex, accentOverride, warp } = experience.getState();
+    const { storyN, sectionIndex, accentOverride, warp } = experience.getState();
     const u = material.uniforms;
 
     u.uTime.value = state.clock.elapsedTime;
 
     // Breathes with the journey (strong hero/finale, calm middle);
     // a warp arrival flashes it briefly brighter.
-    const presence = 0.15 + (1 - Math.sin(scroll * Math.PI)) * 0.09;
+    const presence = 0.15 + (1 - Math.sin(storyN * Math.PI)) * 0.09;
     damp(u.uOpacity, "value", presence + warp * 0.28, 0.45, dt);
 
     // Same dye grammar as the morph field / accent light.
@@ -139,8 +139,8 @@ export default function Nebula({ quality = "high" }) {
     // The cloud slowly slides past as the page travels — one more parallax
     // layer between the stars and the architecture.
     if (mesh.current) {
-      mesh.current.position.x = -scroll * 9;
-      mesh.current.rotation.z = scroll * 0.06;
+      mesh.current.position.x = -storyN * 9;
+      mesh.current.rotation.z = storyN * 0.06;
     }
   });
 

@@ -11,8 +11,15 @@
    Now they are served from this origin, same connection as the HTML:
      • Inter — ONE variable file covers every weight 100–900 (48 kB).
      • Space Grotesk — five static latin weights the design actually uses.
+     • Playfair Display italic — the ornate display serif, and ONLY for the
+       hero surname. Subset to the 52 latin letters plus `.`, `-` and `'`
+       (9.7 kB instead of the full latin face's 39 kB): it is asked to set one
+       word, so shipping punctuation and digits it will never draw would be
+       four times the bytes for nothing. Letters rather than literally "Negm"
+       so editing `profile.lastName` cannot silently break the headline.
+       SIL Open Font License 1.1 — see public/fonts/PlayfairDisplay-OFL.txt.
    Latin subset only; `font-display: swap` keeps text visible throughout.
-   The two files needed for first paint are preloaded from index.html.
+   The files needed for first paint are preloaded from index.html.
    ══════════════════════════════════════════════════════════════════ */
 
 @font-face {
@@ -77,9 +84,22 @@
     U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
+/* The ornate one. Italic only — it exists to set the surname, and an upright
+   cut would just be more bytes nobody draws. Georgia is the fallback because
+   it is the closest high-contrast serif present on every platform, so a
+   `swap` flash lands on a similar shape instead of a geometric sans. */
+@font-face {
+  font-family: "Playfair Display";
+  font-style: italic;
+  font-display: swap;
+  font-weight: 400 700;
+  src: url("/fonts/playfair-display-name-italic.woff2") format("woff2");
+}
+
 @theme {
   --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
   --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Playfair Display", "Georgia", "Times New Roman", serif;
 
   --color-ink: #0b0d11;
   --color-ink-soft: #0f1217;
@@ -142,6 +162,29 @@ h3 {
   html.has-custom-cursor body {
     cursor: none;
   }
+  /* …and on EVERY descendant. `cursor` is inherited, but any element that
+     sets its own value wins over an inherited one, so `a { cursor: pointer }`
+     and `input { cursor: text }` from the UA/preflight kept punching the
+     native pointer back through: the arrow became a hand over every link and
+     an I-beam over every field, on top of the custom ring. The result was a
+     cursor that changed shape as you moved around the page — which is exactly
+     what a custom cursor exists to prevent.
+
+     Scoped to the class the component only sets while it is actually drawing,
+     so this can never strand a visitor with no pointer at all. */
+  html.has-custom-cursor *,
+  html.has-custom-cursor *::before,
+  html.has-custom-cursor *::after {
+    cursor: none !important;
+  }
+}
+
+/* Buttons are pointer targets. Without this they inherit the arrow, so on the
+   fallback path (custom cursor absent — touch, a JS failure, reduced tiers)
+   links looked clickable and buttons did not. */
+button:not(:disabled),
+[role="button"]:not([aria-disabled="true"]) {
+  cursor: pointer;
 }
 
 /* ==============================================================
@@ -221,6 +264,19 @@ h6 {
   font-family: var(--font-display);
 }
 
+/* The ornate display serif. Named explicitly rather than leaning on Tailwind's
+   generated `font-serif`, because the hero surname needs the family AND the
+   optical corrections that go with it: Playfair's italic is a high-contrast
+   didone, so at 100px+ it wants tighter tracking than a geometric sans and it
+   sets noticeably smaller on the same font-size. Both live here so the two
+   name lines can never drift apart. */
+.font-ornate {
+  font-family: var(--font-serif);
+  font-style: italic;
+  letter-spacing: -0.012em;
+  font-feature-settings: "kern", "liga", "calt";
+}
+
 /* Gradient text helper. Seven-stop gradient gives the highlight more
    "movement"; the slow loop reads as a living sheen rather than a strobe. */
 .text-gradient {
@@ -244,6 +300,70 @@ h6 {
 @keyframes gradientShift {
   to {
     background-position: 240% center;
+  }
+}
+
+/* Display variant of the sheen for type that sits over the live 3D world.
+   `.text-gradient`'s mid stop is #8a93a6 — deliberately dark, because on a
+   flat panel that dip is what reads as polished metal. Over the hero's
+   particle field the same dip lands on the brightest thing on screen and the
+   word disappears. This ramp never leaves the light end, so the glyphs keep
+   their contrast at every phase of the loop while the sheen still travels. */
+.text-gradient-bright {
+  background: linear-gradient(
+    110deg,
+    #ffffff 0%,
+    #dfe6f4 18%,
+    #ffffff 34%,
+    #c6d0e4 50%,
+    #ffffff 66%,
+    #dfe6f4 82%,
+    #ffffff 100%
+  );
+  background-size: 240% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradientShift 11s linear infinite;
+  will-change: background-position;
+}
+@media (prefers-reduced-motion: reduce) {
+  .text-gradient-bright {
+    animation: none;
+  }
+}
+
+/* THE KEYWORD — the single word a headline is actually about.
+   Everything else on this site is steel and white on purpose, which is what
+   lets one chromatic word carry real weight. Reserve it for one word per
+   screen: a second use halves the value of the first.
+
+   It borrows the ornate serif from the hero surname so the site's two big
+   typographic moments answer each other, and it runs indigo→violet, which is
+   the intro chapter's own hue rather than an unrelated colour. */
+.text-keyword {
+  font-family: var(--font-serif);
+  font-style: italic;
+  letter-spacing: -0.01em;
+  background: linear-gradient(
+    102deg,
+    #c2ccff 0%,
+    #8ea2ff 20%,
+    #ffffff 42%,
+    #b9a2ff 60%,
+    #7f8dff 80%,
+    #c2ccff 100%
+  );
+  background-size: 220% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradientShift 9s linear infinite;
+  will-change: background-position;
+}
+@media (prefers-reduced-motion: reduce) {
+  .text-keyword {
+    animation: none;
   }
 }
 

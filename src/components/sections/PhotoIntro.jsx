@@ -8,6 +8,7 @@ import {
   useMotionValue,
 } from "motion/react";
 import useDeviceProfile from "../../hooks/useDeviceProfile";
+import useFadeGate from "../../hooks/useFadeGate";
 import { profile } from "../../data/content";
 import { EASE_OUT } from "../../lib/motion";
 import { goToSection } from "../../lib/navigation";
@@ -96,11 +97,14 @@ function LightStreaks({ reduce }) {
 }
 
 // Big statement headline — last word carries the accent.
+/* `keyword: true` marks the one word the sentence turns on — it gets the
+   site's single chromatic treatment (see `.text-keyword`). Exactly one line
+   should carry it; the rest stay white so it has something to stand against. */
 const HEADLINE = [
   { text: "I ENGINEER" },
   { text: "INTERFACES THAT" },
   { text: "FEEL" },
-  { text: "ALIVE.", accent: true },
+  { text: "ALIVE.", keyword: true },
 ];
 
 const CUT = "/portrait-negm-cut.webp";
@@ -250,6 +254,12 @@ export default function PhotoIntro() {
   const photoOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
   const copyY = useTransform(scrollYProgress, [0, 1], [0, -140]);
   const copyOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
+  // Only the scroll cue takes the gate — it is the one focusable control that
+  // fades out, and it stayed tabbable/clickable at opacity 0. The copy block
+  // deliberately does NOT: it holds the page's only <h1>, and hiding that
+  // would pull the document's main heading out of the accessibility tree
+  // every time someone scrolls past the cover.
+  const cueVisibility = useFadeGate(copyOpacity);
 
   const line = (i) => ({
     initial: { y: "115%" },
@@ -333,7 +343,11 @@ export default function PhotoIntro() {
           {HEADLINE.map((l, i) => (
             <span key={i} className="block overflow-hidden">
               <motion.span
-                className={`block ${l.accent ? "text-gradient" : "text-white"}`}
+                className={`block ${l.keyword ? "text-keyword" : "text-white"}`}
+                // The keyword sets in a serif with a smaller cap height than
+                // the sans above it, and it is the line that should land
+                // hardest — so it gets a touch more size, not less.
+                style={l.keyword ? { fontSize: "1.16em", paddingBottom: "0.06em" } : undefined}
                 {...(instant ? {} : line(i))}
               >
                 {l.text}
@@ -362,7 +376,7 @@ export default function PhotoIntro() {
         initial={instant ? false : { opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.4, duration: 0.8 }}
-        style={{ opacity: copyOpacity }}
+        style={{ opacity: copyOpacity, visibility: cueVisibility }}
         className="group absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-3 text-white/50"
         aria-label="Scroll to enter"
       >

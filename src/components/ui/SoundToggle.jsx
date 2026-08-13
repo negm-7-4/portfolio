@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "motion/react";
-import { toggleAudio, sfxChapter } from "../../lib/ambientAudio";
+import { toggleAudio, sfxChapter, isAudioEnabled, onAudioChange } from "../../lib/ambientAudio";
 import { experience } from "../../store/experience";
 
 /**
@@ -8,9 +8,15 @@ import { experience } from "../../store/experience";
  * Sits just above the back-to-top button. The bars animate while sound is on.
  */
 export default function SoundToggle() {
-  const [on, setOn] = useState(false);
+  // Seeded from the audio module, not from a local guess: this button mounts
+  // late (deferred), so by the time it appears sound may already be armed.
+  const [on, setOn] = useState(isAudioEnabled);
 
   const handle = () => setOn(toggleAudio());
+
+  // Follow the module rather than owning the truth — anything else that arms
+  // or mutes audio keeps this button honest.
+  useEffect(() => onAudioChange(setOn), []);
 
   // While sound is on, entering each chapter rings a soft sonar ping that
   // climbs a pentatonic scale as you travel the page. The SFX itself no-ops

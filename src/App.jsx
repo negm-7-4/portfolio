@@ -52,6 +52,10 @@ function SectionPlaceholder({ id }) {
   return (
     <section
       id={id}
+      // Marks this as a stand-in, not the real chapter. `useActiveSection`
+      // needs to tell them apart: both carry the same id, so counting ids was
+      // not enough to know whether the real section had arrived.
+      data-section-placeholder=""
       style={{ minHeight: "60vh", contentVisibility: "auto", containIntrinsicSize: "0 600px" }}
       aria-hidden
       className="relative flex items-center justify-center"

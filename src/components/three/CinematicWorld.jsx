@@ -51,8 +51,18 @@ const HAS_FINE_POINTER =
    almost-subliminal dutch angle that makes a rig feel hand-operated. */
 const DEG = Math.PI / 180;
 const CAM_KEYS = [
-  { pos: [2.8, 0.6, 9.8], look: [-2.1, 0.2, 0], fov: 42, roll: 0 }, // 00 hero
-  { pos: [-3.2, 1.4, 10.6], look: [0.4, 0.0, 0], fov: 45, roll: -1.2 * DEG }, // 01 about
+  // 00 hero. `look.x` is what parks the sculpture in the right-hand column:
+  // the camera aims LEFT of the object, so the object lands right of frame
+  // centre, inside the DOM lens that frames it. At -2.1 it sat well short of
+  // that lens and drifted across the headline instead; -4.3 seats it in the
+  // ring of crosshairs where it belongs and gives the copy its column back.
+  // Pulled back from 9.8 as well: the ring system is wider now, and at the
+  // old distance its outer band ran off the right edge of the frame.
+  { pos: [2.8, 0.6, 11.6], look: [-4.0, 0.2, 0], fov: 42, roll: 0 }, // 00 hero
+  // 01 about. Nudged right (look.x 0.4 → -1.4): now that the fingerprint
+  // actually finishes forming during this chapter it landed squarely on the
+  // body copy. It sits in the gutter between the copy and the profile card.
+  { pos: [-3.2, 1.4, 10.6], look: [-1.4, 0.0, 0], fov: 45, roll: -1.2 * DEG }, // 01 about
   { pos: [4.8, 2.6, 11.4], look: [0.0, 0.4, 0], fov: 47, roll: 1.5 * DEG }, // 02 services
   { pos: [-5.4, 0.4, 12.2], look: [0.2, -0.2, 0], fov: 49, roll: -1.8 * DEG }, // 03 skills
   { pos: [0.0, 5.0, 12.8], look: [0.0, -0.8, 0], fov: 49, roll: 1.0 * DEG }, // 04 journey
@@ -93,7 +103,7 @@ function CameraRig() {
   const firstFrame = useRef(true);
 
   useFrame((state, dt) => {
-    const { scroll, pointer, velocity, gallery, warp } = experience.getState();
+    const { story, pointer, velocity, gallery, warp } = experience.getState();
 
     // Arrival shockwave decay — CameraRig is the single owner of the warp
     // lifecycle; every other consumer (post FX, morph field, nebula) just
@@ -101,9 +111,12 @@ function CameraRig() {
     if (warp > 0.001) experience.getState().setWarp(warp * Math.exp(-2.4 * dt));
     else if (warp !== 0) experience.getState().setWarp(0);
 
-    // Global scroll → which two shots we're between, and how far.
+    // Story position → which two shots we're between, and how far. There is
+    // one key per chapter, so `story` indexes them directly: shot k is now
+    // composed exactly when chapter k is on screen, which is what the shots
+    // were art-directed for in the first place.
     const K = CAM_KEYS.length;
-    const g = Math.min(K - 1 - 1e-4, Math.max(0, scroll * (K - 1)));
+    const g = Math.min(K - 1 - 1e-4, Math.max(0, story));
     const i = Math.floor(g);
     const f = g - i;
     const e = smootherstep(f); // hold → move → hold cadence (reads as a cut)
@@ -238,7 +251,7 @@ function SectionAccent() {
   const target = useMemo(() => new THREE.Color(colors[0]), [colors]);
 
   useFrame((_, dt) => {
-    const { sectionIndex, scroll, accentOverride } = experience.getState();
+    const { sectionIndex, storyN, accentOverride } = experience.getState();
     // Inside the projects gallery the active project's brand colour takes
     // over the world's accent light — each project dyes the whole scene.
     if (accentOverride) target.set(accentOverride);
@@ -248,7 +261,7 @@ function SectionAccent() {
       // Brightest for the hero / contact beats, dimmer through the middle;
       // the gallery dye gets an extra push so the tint clearly reads.
       const boost = accentOverride ? 4 : 0;
-      damp(light.current, "intensity", 11 - Math.sin(scroll * Math.PI) * 5.5 + boost, 0.4, dt);
+      damp(light.current, "intensity", 11 - Math.sin(storyN * Math.PI) * 5.5 + boost, 0.4, dt);
     }
   });
 

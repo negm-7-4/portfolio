@@ -73,8 +73,22 @@ export function ActiveSectionProvider({ children }) {
     );
 
     /** Sync the IO with whatever section elements currently exist in DOM.
-     *  Re-attaches observation when lazy sections swap in. */
+     *  Re-attaches observation when lazy sections swap in.
+     *
+     *  Returns true only once every chapter is observed through its REAL
+     *  element. That distinction is the whole point: `ViewportSection` renders
+     *  a placeholder carrying the same id, so on the first pass all ten ids
+     *  already exist and a count-based check declared victory immediately.
+     *  The MutationObserver below was then never started, and when each lazy
+     *  chunk swapped its placeholder for the real section the observer kept
+     *  watching the detached node — which reports ratio 0 forever.
+     *
+     *  The visible symptom was the whole site's "you are here" state freezing
+     *  on whichever chapter happened to be on screen when its chunk loaded:
+     *  the chapter rail still read SKILLS while the visitor was in the footer,
+     *  and no nav link carried aria-current for the rest of the session. */
     const sync = () => {
+      let resolved = 0;
       for (const s of sections) {
         const el = document.getElementById(s.id);
         const prev = observed.get(s.id);
@@ -83,9 +97,13 @@ export function ActiveSectionProvider({ children }) {
           if (el) io.observe(el);
           if (el) observed.set(s.id, el);
           else observed.delete(s.id);
+          // A swapped-in element starts with no reading; drop the stale one so
+          // a detached placeholder's last ratio cannot keep winning the vote.
+          ratios.set(s.id, 0);
         }
+        if (el?.isConnected && !el.hasAttribute("data-section-placeholder")) resolved++;
       }
-      return observed.size === sections.length;
+      return resolved === sections.length;
     };
 
     const allResolved = sync();
