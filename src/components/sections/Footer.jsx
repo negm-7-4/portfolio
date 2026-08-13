@@ -28,6 +28,7 @@ export default function Footer() {
 
   return (
     <footer
+      id="footer"
       ref={ref}
       className="relative w-full overflow-hidden border-t border-white/5 pt-28 md:pt-40"
     >

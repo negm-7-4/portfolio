@@ -53,7 +53,9 @@ export default function CapabilitiesGallery() {
   const height = distance ? `calc(100vh + ${distance * SCROLL_FACTOR}px)` : "100vh";
 
   return (
-    <div id="gallery" ref={wrapRef} className="relative" style={{ height }}>
+    // id matches the ViewportSection wrapper in App.jsx — otherwise the
+    // reserved id disappears the moment this chunk replaces its placeholder.
+    <div id="capabilities" ref={wrapRef} className="relative" style={{ height }}>
       <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden">
         {/* heading — stays put while the track sweeps */}
         <div className="mx-auto mb-8 flex w-[90%] max-w-7xl items-end justify-between gap-6">

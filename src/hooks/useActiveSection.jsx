@@ -38,14 +38,31 @@ export function ActiveSectionProvider({ children }) {
         for (const e of entries) {
           ratios.set(e.target.id, e.intersectionRatio);
         }
-        let bestId = sections[0].id;
-        let bestRatio = -1;
+
+        let bestId = null;
+        let bestRatio = 0;
         for (const [id, r] of ratios) {
           if (r > bestRatio) {
             bestRatio = r;
             bestId = id;
           }
         }
+
+        /* Nothing is intersecting — the footer fills the viewport at the very
+           bottom of the page, and the -15% root margin can leave a gap between
+           two sections mid-scroll.
+
+           This used to fall back to sections[0], which silently teleported the
+           whole site's "you are here" state back to the intro every time the
+           visitor reached the end: the chapter rail said INTRO while the reader
+           was looking at the footer, and no nav link was marked aria-current.
+           (The navbar carries its own workaround for exactly this, which is
+           why its trail stayed lit and hid the bug.)
+
+           Holding the last resolved section is the honest answer: you are
+           still in the chapter you last entered. */
+        if (bestId === null) return;
+
         const next = sections.find((s) => s.id === bestId);
         if (next) setActive((cur) => (cur.id === next.id ? cur : next));
       },
