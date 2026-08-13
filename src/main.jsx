@@ -4,15 +4,19 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import "./index.css";
 import App from "./App.jsx";
-import NotFound from "./components/NotFound.jsx";
+import ErrorBoundary from "./components/ErrorBoundary.jsx";
+import AppCrashScreen from "./components/AppCrashScreen.jsx";
 import { registerSW } from "./lib/registerSW";
+import { printConsoleSignature } from "./lib/consoleSignature";
 
-const pathname = window.location.pathname.replace(/\/+$/, "") || "/";
-const page = pathname === "/" || pathname === "/index.html" ? <App /> : <NotFound />;
-
+/* There is no client-side router here: unknown paths are served the static
+   public/404.html by the host WITH a real 404 status (vercel.json no longer
+   rewrites everything to "/"), so this entry only ever renders the site. */
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    {page}
+    <ErrorBoundary label="app root" fallback={<AppCrashScreen />}>
+      <App />
+    </ErrorBoundary>
     <Analytics />
     <SpeedInsights />
   </StrictMode>
@@ -20,3 +24,4 @@ createRoot(document.getElementById("root")).render(
 
 // Cache assets aggressively so repeat visits are instant
 registerSW();
+printConsoleSignature();

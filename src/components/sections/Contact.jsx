@@ -3,6 +3,8 @@ import { AnimatePresence, motion, useScroll, useTransform } from "motion/react";
 import SectionHeading from "../ui/SectionHeading";
 import MagneticButton from "../ui/MagneticButton";
 import { celebrate } from "../../lib/confetti";
+import { toast } from "../../lib/toast";
+import { openCv } from "../../lib/appEvents";
 import { profile } from "../../data/content";
 
 // Same-origin Vercel Function. If Resend is not configured in an environment,
@@ -102,9 +104,9 @@ function InfoRow({ icon: Icon, label, value, href, copyable, i }) {
     e.stopPropagation();
     try {
       await navigator.clipboard.writeText(value);
-      window.__toast?.(`${label} copied`, { kind: "success", icon: "✓" });
+      toast(`${label} copied`, { kind: "success", icon: "✓" });
     } catch {
-      window.__toast?.("Couldn't copy", { kind: "warn", icon: "⚠" });
+      toast("Couldn't copy", { kind: "warn", icon: "⚠" });
     }
   };
 
@@ -354,7 +356,7 @@ export default function Contact() {
               </div>
               <div className="relative flex shrink-0 items-center gap-2">
                 <button
-                  onClick={() => window.dispatchEvent(new Event("open-cv"))}
+                  onClick={openCv}
                   data-cursor="hover"
                   data-cursor-text="View"
                   className="rounded-lg border border-white/12 bg-white/[0.04] px-3 py-2 text-[10px] font-semibold uppercase tracking-widest text-white/70 transition-colors hover:bg-white/[0.09] hover:text-white"

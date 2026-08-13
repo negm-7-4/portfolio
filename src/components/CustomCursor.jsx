@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { motion, useMotionValue, useSpring, useTransform } from "motion/react";
+import { useEffect, useState } from "react";
+import { motion, useMotionValue, useSpring } from "motion/react";
 
 /**
  * Dot + magnetic ring + 6 trailing echoes that lag with increasing delay.
@@ -20,7 +20,12 @@ export default function CustomCursor() {
   const t4x = useSpring(x, { stiffness: 110, damping: 24, mass: 1.0 });
   const t4y = useSpring(y, { stiffness: 110, damping: 24, mass: 1.0 });
 
-  const [hidden, setHidden] = useState(false);
+  /* Resolved during the first render rather than in an effect: a coarse
+     pointer is knowable immediately, and setting it afterwards meant one
+     wasted render plus a frame where the custom cursor existed on a phone. */
+  const [hidden, setHidden] = useState(
+    () => typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches
+  );
   const [hovering, setHovering] = useState(false);
   const [pressing, setPressing] = useState(false);
   const [text, setText] = useState(null); // e.g. "View" on certain targets
@@ -43,11 +48,23 @@ export default function CustomCursor() {
     return () => cancelAnimationFrame(raf);
   }, [rotate]);
 
+  /* Hide the native cursor only while this component is actually drawing one.
+     It used to be a static `body { cursor: none }` rule in index.css, which
+     meant a JS failure, a slow chunk or an ErrorBoundary catch left the
+     visitor with NO pointer at all. Owning the rule here makes the trade
+     self-healing: no custom cursor, no hidden native one. */
   useEffect(() => {
-    if (window.matchMedia("(pointer: coarse)").matches) {
-      setHidden(true);
-      return;
+    const root = document.documentElement;
+    if (hidden) {
+      root.classList.remove("has-custom-cursor");
+      return undefined;
     }
+    root.classList.add("has-custom-cursor");
+    return () => root.classList.remove("has-custom-cursor");
+  }, [hidden]);
+
+  useEffect(() => {
+    if (hidden) return undefined;
 
     // Cursor x/y update on every move (cheap — just motion value sets).
     // Hover-target detection runs at most once per animation frame and
@@ -99,13 +116,7 @@ export default function CustomCursor() {
       document.removeEventListener("pointerleave", leave);
       document.removeEventListener("pointerenter", enter);
     };
-  }, [x, y, size, opacity, dotScale, ringScale]);
-
-  // Hide native cursor when ours is active
-  useEffect(() => {
-    document.documentElement.style.cursor = hidden ? "" : "none";
-    return () => { document.documentElement.style.cursor = ""; };
-  }, [hidden]);
+  }, [hidden, x, y, size, opacity, dotScale, ringScale]);
 
   if (hidden) return null;
 

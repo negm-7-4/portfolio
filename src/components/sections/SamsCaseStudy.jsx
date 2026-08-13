@@ -1,6 +1,7 @@
 import { motion } from "motion/react";
 import SectionHeading from "../ui/SectionHeading";
 import Reveal from "../ui/Reveal";
+import { goToSection } from "../../lib/navigation";
 
 const proof = [
   { value: "859", label: "backend tests" },
@@ -150,9 +151,7 @@ export default function SamsCaseStudy() {
                   href="#contact"
                   onClick={(event) => {
                     event.preventDefault();
-                    const target = document.getElementById("contact");
-                    if (window.__lenis && target) window.__lenis.scrollTo(target, { offset: -24 });
-                    else target?.scrollIntoView({ behavior: "smooth" });
+                    goToSection("contact", { cinematic: false, offset: -24 });
                   }}
                   className="rounded-full bg-white px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-black transition-transform hover:-translate-y-0.5"
                 >

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useSpring, useTransform } from "motion/react";
 import { services } from "../../data/content";
+import { goToSection } from "../../lib/navigation";
 
 /**
  * Pinned horizontal-scroll capabilities gallery — scrolling DOWN sweeps the
@@ -168,7 +169,7 @@ export default function CapabilitiesGallery() {
               Got something in mind?
             </p>
             <button
-              onClick={() => window.__goto?.("contact")}
+              onClick={() => goToSection("contact")}
               data-cursor="hover"
               className="rounded-full border border-white/15 px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/70 transition-colors hover:border-white/40 hover:text-white"
             >

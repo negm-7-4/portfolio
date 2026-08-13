@@ -10,6 +10,8 @@
  * "just works", but pushing its update through Lenis's own scroll event keeps
  * pinned/scrubbed timelines frame-accurate instead of one rAF behind.
  */
+import { getLenis } from "./navigation";
+
 let promise = null;
 
 export function loadScrollSync() {
@@ -17,7 +19,7 @@ export function loadScrollSync() {
     promise = Promise.all([import("gsap"), import("gsap/ScrollTrigger")]).then(
       ([{ default: gsap }, { ScrollTrigger }]) => {
         gsap.registerPlugin(ScrollTrigger);
-        const lenis = window.__lenis;
+        const lenis = getLenis();
         if (lenis && !lenis.__stSynced) {
           lenis.__stSynced = true;
           lenis.on("scroll", ScrollTrigger.update);

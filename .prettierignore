@@ -1,0 +1,7 @@
+dist
+coverage
+node_modules
+studio
+package-lock.json
+public/fonts
+public/404.html

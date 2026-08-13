@@ -22,11 +22,11 @@
     <meta name="keywords" content="Mohamed Negm, Software Engineer, Front-End Developer, React, Three.js, Framer Motion, Egypt, Portfolio, Web Developer" />
     <meta name="robots" content="index, follow, max-image-preview:large" />
 
-    <link rel="canonical" href="https://mohamed-negm.vercel.app/" />
+    <link rel="canonical" href="%VITE_SITE_URL%/" />
 
     <!-- Open Graph (Facebook, LinkedIn, WhatsApp) -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://mohamed-negm.vercel.app/" />
+    <meta property="og:url" content="%VITE_SITE_URL%/" />
     <meta property="og:title" content="Mohamed Negm — Software Engineer &amp; 3D Web" />
     <meta
       property="og:description"
@@ -34,8 +34,8 @@
     />
     <meta property="og:site_name" content="Mohamed Negm" />
     <meta property="og:locale" content="en_US" />
-    <meta property="og:image" content="https://mohamed-negm.vercel.app/og-mohamed-negm-2026.png" />
-    <meta property="og:image:secure_url" content="https://mohamed-negm.vercel.app/og-mohamed-negm-2026.png" />
+    <meta property="og:image" content="%VITE_SITE_URL%/og-mohamed-negm-2026.png" />
+    <meta property="og:image:secure_url" content="%VITE_SITE_URL%/og-mohamed-negm-2026.png" />
     <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -48,29 +48,15 @@
       name="twitter:description"
       content="Software Engineering student crafting fast 3D web experiences, AI systems and full-stack products."
     />
-    <meta name="twitter:image" content="https://mohamed-negm.vercel.app/og-mohamed-negm-2026.png" />
+    <meta name="twitter:image" content="%VITE_SITE_URL%/og-mohamed-negm-2026.png" />
     <meta name="twitter:image:alt" content="Mohamed Negm — Software Engineer portfolio" />
 
-    <!-- Fonts — early preconnect + preload the CSS so the swap-in is faster -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="preload"
-      as="style"
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
-      rel="stylesheet"
-      media="print"
-      onload="this.media='all'"
-    />
-    <noscript>
-      <link
-        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
-        rel="stylesheet"
-      />
-    </noscript>
+    <!-- Fonts are self-hosted (see the @font-face block in src/index.css), so
+         there is no third-party origin on the critical path at all. Only the
+         two faces needed for first paint are preloaded; the rest arrive with
+         the stylesheet. -->
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/inter-latin-variable.woff2" crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/space-grotesk-latin-700.woff2" crossorigin />
 
     <!-- Structured data — helps Google show a rich result / knowledge panel -->
     <script type="application/ld+json">
@@ -78,10 +64,10 @@
         "@context": "https://schema.org",
         "@type": "Person",
         "name": "Mohamed Negm",
-        "url": "https://mohamed-negm.vercel.app/",
-        "image": "https://mohamed-negm.vercel.app/og-mohamed-negm-2026.png",
+        "url": "%VITE_SITE_URL%/",
+        "image": "%VITE_SITE_URL%/og-mohamed-negm-2026.png",
         "jobTitle": "Software Engineer",
-        "email": "mailto:mohammednegm11234@gmail.com",
+        "email": "mailto:%VITE_CONTACT_EMAIL%",
         "description": "Software Engineering student crafting fast 3D web experiences, AI systems and full-stack products.",
         "knowsAbout": ["React", "Next.js", "Three.js", "Framer Motion", "Tailwind CSS", "GSAP", "JavaScript", "TypeScript"],
         "address": {
@@ -106,25 +92,12 @@
         "@context": "https://schema.org",
         "@type": "WebSite",
         "name": "Mohamed Negm — Portfolio",
-        "url": "https://mohamed-negm.vercel.app/",
+        "url": "%VITE_SITE_URL%/",
         "inLanguage": "en",
         "author": { "@type": "Person", "name": "Mohamed Negm" }
       }
     </script>
 
-    <!-- Console signature easter egg -->
-    <script>
-      // eslint-disable-next-line
-      console.log(
-        "%c\n  ✦  Mohamed Negm — Software Engineer  ✦\n",
-        "color:#aab4c4;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;letter-spacing:0.18em;"
-      );
-      console.log(
-        "%cCurious about how this was built?\n%cReact · Three.js · React-Three-Fiber · GSAP · Framer Motion\n\n→ github.com/negm-7-4",
-        "color:#dfe3ea;font-family:sans-serif;font-size:12px;",
-        "color:#8a93a6;font-family:sans-serif;font-size:11px;letter-spacing:0.05em;"
-      );
-    </script>
   </head>
   <body>
     <div id="root"></div>
@@ -134,7 +107,7 @@
         <p style="color:#8a93a6;line-height:1.7;">
           This portfolio uses JavaScript for its interactive 3D experience.
           Please enable JavaScript to view it, or reach me directly at
-          <a href="mailto:mohammednegm11234@gmail.com" style="color:#aab4c4;">mohammednegm11234@gmail.com</a>.
+          <a href="mailto:%VITE_CONTACT_EMAIL%" style="color:#aab4c4;">%VITE_CONTACT_EMAIL%</a>.
         </p>
       </div>
     </noscript>

@@ -20,7 +20,6 @@ export default function SignatureFlourish({ className = "" }) {
     let ctx;
     let canceled = false;
     let started = false;
-    let observer;
 
     const start = async () => {
       if (started) return;
@@ -62,7 +61,7 @@ export default function SignatureFlourish({ className = "" }) {
       }, ref);
     };
 
-    observer = new IntersectionObserver(
+    const observer = new IntersectionObserver(
       ([entry]) => {
         if (!entry.isIntersecting) return;
         observer.disconnect();

@@ -3,6 +3,8 @@ import { motion, AnimatePresence, useMotionValue, useSpring } from "motion/react
 import MagneticButton from "./ui/MagneticButton";
 import ScrambleText from "./ui/ScrambleText";
 import { useActiveSection } from "../hooks/useActiveSection";
+import { goToSection } from "../lib/navigation";
+import { openCv, openCommandPalette } from "../lib/appEvents";
 
 const links = [
   { label: "About",    id: "about"    },
@@ -104,15 +106,15 @@ export default function Navbar() {
 
   const go = (id) => {
     setOpen(false);
-    if (window.__goto) return window.__goto(id);
-    const el = document.getElementById(id);
-    if (!el) return;
-    if (window.__lenis) window.__lenis.scrollTo(el, { offset: -40 });
-    else el.scrollIntoView({ behavior: "smooth" });
+    goToSection(id);
   };
 
   // Detect mac for showing the right keycap (⌘ vs Ctrl)
-  const isMac = typeof navigator !== "undefined" && /Mac|iP(hone|ad)/.test(navigator.platform);
+  // `navigator.platform` is deprecated; userAgentData is the supported
+  // replacement, with the UA string as the fallback for browsers without it.
+  const isMac =
+    typeof navigator !== "undefined" &&
+    /mac|iphone|ipad|ipod/i.test(navigator.userAgentData?.platform || navigator.userAgent || "");
 
   /* How far along the constellation the visitor has travelled.
      The stars are not evenly spaced (labels differ in width), so the lit
@@ -260,7 +262,7 @@ export default function Navbar() {
         <div className="flex items-center gap-2">
           {/* Cmd+K hint */}
           <button
-            onClick={() => window.dispatchEvent(new KeyboardEvent("keydown", { key: "k", metaKey: !isMac ? false : true, ctrlKey: !isMac }))}
+            onClick={openCommandPalette}
             data-cursor="hover"
             data-cursor-text="Search"
             className="gradient-border flex h-9 items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-2.5 py-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-white/55 transition-colors hover:bg-white/[0.06] hover:text-white sm:px-3"
@@ -283,7 +285,7 @@ export default function Navbar() {
 
           <MagneticButton
             as="button"
-            onClick={() => window.dispatchEvent(new Event("open-cv"))}
+            onClick={openCv}
             data-cursor="hover"
             data-cursor-text="View CV"
             aria-label="View my CV"
@@ -312,7 +314,9 @@ export default function Navbar() {
             onClick={() => setOpen((o) => !o)}
             data-cursor="hover"
             className="flex h-10 w-10 items-center justify-center rounded-xl glass md:hidden"
-            aria-label="Toggle menu"
+            aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
+            aria-controls="mobile-menu"
           >
             <div className="flex flex-col gap-1.5">
               <motion.span
@@ -340,6 +344,7 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -16, scale: 0.96 }}
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            id="mobile-menu"
             className="absolute top-20 w-[92%] max-w-5xl overflow-hidden rounded-2xl glass p-4 md:hidden"
           >
             {/* corner brackets */}
@@ -392,7 +397,7 @@ export default function Navbar() {
 
             {/* mobile CV button */}
             <motion.button
-              onClick={() => { setOpen(false); window.dispatchEvent(new Event("open-cv")); }}
+              onClick={() => { setOpen(false); openCv(); }}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 + links.length * 0.05, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}

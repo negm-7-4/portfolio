@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { sections } from "../data/sections";
+import { goToSection as go } from "../lib/navigation";
 
 /**
  * Global keyboard navigation.
@@ -11,14 +12,6 @@ import { sections } from "../data/sections";
  */
 export default function useKeyboardNav(currentIndex) {
   useEffect(() => {
-    const go = (id) => {
-      if (window.__goto) return window.__goto(id);
-      const el = document.getElementById(id);
-      if (!el) return;
-      if (window.__lenis) window.__lenis.scrollTo(el, { offset: -40 });
-      else el.scrollIntoView({ behavior: "smooth" });
-    };
-
     const onKey = (e) => {
       // ignore if user is typing
       const tag = (e.target?.tagName || "").toLowerCase();

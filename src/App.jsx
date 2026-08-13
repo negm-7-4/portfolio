@@ -7,6 +7,7 @@ import { CursorProvider } from "./hooks/useCursor";
 import { ActiveSectionProvider } from "./hooks/useActiveSection";
 
 import Preloader from "./components/Preloader";
+import ErrorBoundary from "./components/ErrorBoundary";
 import DeferredMount from "./components/DeferredMount";
 import CustomCursor from "./components/CustomCursor";
 import KeyboardNavBridge from "./components/AppInner";
@@ -92,7 +93,15 @@ function ViewportSection({ id, children, minHeight = "70vh", rootMargin = "1200p
     return () => observer.disconnect();
   }, [ready, rootMargin]);
 
-  if (ready) return children;
+  if (ready) {
+    // One failing section should cost the visitor that section, not the site.
+    // The id stays in the DOM either way so the chapter rail keeps tracking.
+    return (
+      <ErrorBoundary label={`section:${id}`} fallback={<section id={id} hidden />}>
+        {children}
+      </ErrorBoundary>
+    );
+  }
   return (
     <div ref={markerRef} style={{ minHeight }}>
       <SectionPlaceholder id={id} />
@@ -174,14 +183,23 @@ export default function App() {
               world (its own fog/stars own the backdrop). Low-tier / reduced-
               motion stays on the cheap GLSL aurora + CSS starfield.        */}
           {useLite ? (
-            <Suspense fallback={null}><SpaceBackground /></Suspense>
+            <ErrorBoundary label="SpaceBackground" fallback={null}>
+              <Suspense fallback={null}><SpaceBackground /></Suspense>
+            </ErrorBoundary>
           ) : !worldEnabled ? (
-            <WebGLBackground />
+            <ErrorBoundary label="WebGLBackground" fallback={null}>
+              <WebGLBackground />
+            </ErrorBoundary>
           ) : (
-            <Suspense fallback={null}>
-              <CinematicWorld quality={tier} />
-              <ExperienceBridge />
-            </Suspense>
+            /* If the R3F world throws — a shader that will not compile on some
+               driver, a lost context, a failed asset — fall back to the cheap
+               GLSL aurora rather than letting React unmount the whole site. */
+            <ErrorBoundary label="CinematicWorld" fallback={<WebGLBackground />}>
+              <Suspense fallback={null}>
+                <CinematicWorld quality={tier} />
+                <ExperienceBridge />
+              </Suspense>
+            </ErrorBoundary>
           )}
 
           {/* Mobile readability veil — on phones the single-column layout puts
@@ -202,15 +220,17 @@ export default function App() {
 
           {/* These are visual but not critical for first paint.
               Touched-down tiers skip the heaviest extras to stay smooth. */}
-          <Suspense fallback={null}>
-            <DeferredMount>
-              <ChapterBackdrop />
-              {!useLite && <AmbientField />}
-              {!useLite && <CursorSpotlight />}
-              {!useLite && <VelocityVignette />}
-              {!useLite && <GrainOverlay />}
-            </DeferredMount>
-          </Suspense>
+          <ErrorBoundary label="ambient chrome" fallback={null}>
+            <Suspense fallback={null}>
+              <DeferredMount>
+                <ChapterBackdrop />
+                {!useLite && <AmbientField />}
+                {!useLite && <CursorSpotlight />}
+                {!useLite && <VelocityVignette />}
+                {!useLite && <GrainOverlay />}
+              </DeferredMount>
+            </Suspense>
+          </ErrorBoundary>
 
           {/* ── Floating chrome (z-30+) ─────────────────────────── */}
           <ScrollProgress />
@@ -249,27 +269,35 @@ export default function App() {
           {/* ── Cursor + interactive layer — deferred, all lazy.
               Heavy cursor effects skipped on touch + low-tier devices.   */}
           {!touch && !isLow && (
+            <ErrorBoundary label="cursor effects" fallback={null}>
+              <Suspense fallback={null}>
+                <DeferredMount delay={400}>
+                  <ClickRipple />
+                  <CursorParticles />
+                </DeferredMount>
+              </Suspense>
+            </ErrorBoundary>
+          )}
+          {!touch && (
+            <ErrorBoundary label="CustomCursor" fallback={null}>
+              <CustomCursor />
+            </ErrorBoundary>
+          )}
+
+          <ErrorBoundary label="floating tools" fallback={null}>
             <Suspense fallback={null}>
-              <DeferredMount delay={400}>
-                <ClickRipple />
-                <CursorParticles />
+              <DeferredMount delay={800}>
+                {!touch && <KeyboardHint />}
+                <KeyboardNavBridge />
+                <CommandPalette />
+                <KonamiEasterEgg />
+                <ReadingIndicator />
+                <BackToTop />
+                <WhatsAppButton />
+                {!isLow && <SoundToggle />}
               </DeferredMount>
             </Suspense>
-          )}
-          {!touch && <CustomCursor />}
-
-          <Suspense fallback={null}>
-            <DeferredMount delay={800}>
-              {!touch && <KeyboardHint />}
-              <KeyboardNavBridge />
-              <CommandPalette />
-              <KonamiEasterEgg />
-              <ReadingIndicator />
-              <BackToTop />
-              <WhatsAppButton />
-              {!isLow && <SoundToggle />}
-            </DeferredMount>
-          </Suspense>
+          </ErrorBoundary>
 
           {/* CV modal — mounted early (no delay) so the "My CV" button always
               has a live listener; renders nothing until the open-cv event. */}

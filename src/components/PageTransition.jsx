@@ -3,6 +3,7 @@ import { motion } from "motion/react";
 import { sections } from "../data/sections";
 import { experience } from "../store/experience";
 import { sfxWarp } from "../lib/ambientAudio";
+import { NAV_OFFSET, registerSectionTransition, scrollTo } from "../lib/navigation";
 
 const PANELS = 8;
 
@@ -20,16 +21,25 @@ export default function PageTransition() {
   const targetRef = useRef(null);
 
   useEffect(() => {
-    window.__goto = (id) => {
+    const timers = new Set();
+    const later = (fn, ms) => {
+      const id = window.setTimeout(() => {
+        timers.delete(id);
+        fn();
+      }, ms);
+      timers.add(id);
+      return id;
+    };
+
+    const travel = (id) => {
       const el = document.getElementById(id);
       if (!el) return;
       const section = sections.find((s) => s.id === id);
       targetRef.current = section || { id, num: "", label: id, color: "#aab4c4" };
       setStage("in");
       // Tightened cover/reveal window so navigation feels instant-but-cinematic.
-      window.setTimeout(() => {
-        if (window.__lenis) window.__lenis.scrollTo(el, { immediate: true, offset: -40 });
-        else el.scrollIntoView();
+      later(() => {
+        scrollTo(el, { immediate: true, offset: NAV_OFFSET });
         setStage("out");
         // Arrival shockwave — as the panels lift, the world lands the new
         // shot with an fov punch, CA spike and a nebula flash (decays there),
@@ -39,10 +49,16 @@ export default function PageTransition() {
       }, 430);
       // 1200ms lets the last staggered panel finish its lift (430 + 224 +
       // 480) before the instant reset — no mid-flight snap.
-      window.setTimeout(() => setStage("idle"), 1200);
+      later(() => setStage("idle"), 1200);
     };
+
+    const unregister = registerSectionTransition(travel);
     return () => {
-      window.__goto = null;
+      unregister();
+      // A transition still in flight when this unmounts would otherwise fire
+      // setStage on a dead component.
+      timers.forEach(window.clearTimeout);
+      timers.clear();
     };
   }, []);
 

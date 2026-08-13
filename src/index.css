@@ -1,5 +1,82 @@
 @import "tailwindcss";
 
+/* ══════════════════════════════════════════════════════════════════
+   SELF-HOSTED FONTS
+
+   These used to come from fonts.googleapis.com, which cost the critical
+   path two extra DNS lookups + TLS handshakes (googleapis for the CSS,
+   then gstatic for the files) before a single glyph could render — and
+   put a third party in the loading path of the first paint.
+
+   Now they are served from this origin, same connection as the HTML:
+     • Inter — ONE variable file covers every weight 100–900 (48 kB).
+     • Space Grotesk — five static latin weights the design actually uses.
+   Latin subset only; `font-display: swap` keeps text visible throughout.
+   The two files needed for first paint are preloaded from index.html.
+   ══════════════════════════════════════════════════════════════════ */
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url("/fonts/inter-latin-variable.woff2") format("woff2-variations");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Space Grotesk";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 300;
+  src: url("/fonts/space-grotesk-latin-300.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Space Grotesk";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url("/fonts/space-grotesk-latin-400.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Space Grotesk";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url("/fonts/space-grotesk-latin-500.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Space Grotesk";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 600;
+  src: url("/fonts/space-grotesk-latin-600.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Space Grotesk";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src: url("/fonts/space-grotesk-latin-700.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 @theme {
   --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
   --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
@@ -52,9 +129,13 @@ body {
   font-variant-numeric: tabular-nums lining-nums;
 }
 
-/* Hide the native cursor — we use a custom one (only on devices with a fine pointer) */
+/* Hide the native cursor only while the custom one is mounted and running.
+   `CustomCursor` adds `.has-custom-cursor` to <html> on mount and removes it
+   on unmount, so a JS error, a blocked chunk or a coarse pointer can never
+   strand the visitor with no pointer at all. */
 @media (pointer: fine) {
-  body {
+  html.has-custom-cursor,
+  html.has-custom-cursor body {
     cursor: none;
   }
 }

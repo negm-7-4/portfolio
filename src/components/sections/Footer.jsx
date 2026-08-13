@@ -2,6 +2,7 @@ import { useRef } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
 import { celebrate } from "../../lib/confetti";
 import { profile } from "../../data/content";
+import { goToSection } from "../../lib/navigation";
 import Signature from "../ui/Signature";
 import StarSignature from "../ui/StarSignature";
 
@@ -13,10 +14,7 @@ export default function Footer() {
   const clip = useTransform(scrollYProgress, [0.0, 0.6], ["inset(0 0 100% 0)", "inset(0 0 0% 0)"]);
   const titleY = useTransform(scrollYProgress, [0, 1], [120, -40]);
 
-  const goTop = () => {
-    if (window.__goto) return window.__goto("hero");
-    window.__lenis?.scrollTo(0, { duration: 1.6 });
-  };
+  const goTop = () => goToSection("hero");
 
   const links = [
     { label: "About",    id: "about"    },
@@ -26,11 +24,7 @@ export default function Footer() {
     { label: "Contact",  id: "contact"  },
   ];
 
-  const go = (id) => {
-    if (window.__goto) return window.__goto(id);
-    const el = document.getElementById(id);
-    window.__lenis?.scrollTo(el, { offset: -40 });
-  };
+  const go = (id) => goToSection(id);
 
   return (
     <footer

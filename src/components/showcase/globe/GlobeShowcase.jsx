@@ -14,6 +14,7 @@ import ShowcaseCta from "../ShowcaseCta";
 import ProjectVisual from "../ProjectVisual";
 import { destinations, formatCoords } from "./destinations";
 import { globeState } from "./globeState";
+import { scrollTo } from "../../../lib/navigation";
 
 /* eslint-disable react/no-unknown-property */
 
@@ -532,8 +533,7 @@ export default function GlobeShowcase() {
       el.getBoundingClientRect().top +
       window.scrollY +
       (i / (n - 1)) * TAIL * (el.offsetHeight - window.innerHeight);
-    if (window.__lenis) window.__lenis.scrollTo(top, { duration: 1.6 });
-    else window.scrollTo({ top, behavior: "smooth" });
+    scrollTo(top, { duration: 1.6 });
   };
 
   return (

@@ -164,8 +164,12 @@ function Card({ p, i, onFocus }) {
             <h3 className="mt-2 font-display text-xl font-bold tracking-tight text-white md:text-2xl">
               {p.title}
             </h3>
+            {/* Focusable because it scrolls — keyboard users need to be able
+                to reach and scroll it. That requires a role to match. */}
             <p
               tabIndex={flipped ? 0 : -1}
+              role="region"
+              aria-label={`${p.title} — description`}
               className="mt-3 flex-1 overflow-y-auto text-[13px] leading-[1.7] text-white/55 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/70"
             >
               {p.desc}

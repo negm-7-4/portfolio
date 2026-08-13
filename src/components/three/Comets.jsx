@@ -54,7 +54,10 @@ export default function Comets({ quality = "high" }) {
     () =>
       Array.from({ length: COUNT }, (_, i) => ({
         active: false,
-        next: 2 + i * 3 + Math.random() * 4, // first appearances, staggered
+        // Deterministic stagger instead of Math.random(): reading a random
+        // value during render is impure, and a fixed irrational step spreads
+        // the first appearances just as well.
+        next: 2 + i * 3 + ((i * 0.6180339887) % 1) * 4,
         t: 0,
         dur: 1.4,
         dist: 34,

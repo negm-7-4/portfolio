@@ -5,6 +5,7 @@ import { experience } from "../../store/experience";
 import MagneticButton from "../ui/MagneticButton";
 import MagneticText from "../ui/MagneticText";
 import { celebrate } from "../../lib/confetti";
+import { goToSection } from "../../lib/navigation";
 import { profile, heroTags } from "../../data/content";
 import { EASE_OUT, EASE_BACK } from "../../lib/motion";
 
@@ -141,16 +142,21 @@ function HeroFocus({ lite }) {
       {/* Interactive hotspot — hovering the orb energises it (store hover
           state → shell glow + spin) and morphs the custom cursor. This is the
           only place the otherwise pointer-events-none world accepts input. */}
-      <div
+      <button
+        type="button"
+        aria-label="Send a pulse through the particle field"
         className="absolute left-1/2 top-1/2 h-[62%] w-[62%] -translate-x-1/2 -translate-y-1/2 rounded-full"
         style={{ pointerEvents: "auto" }}
         data-cursor="hover"
         data-cursor-text="Pulse"
         onPointerEnter={() => experience.getState().setHovered(true)}
         onPointerLeave={() => experience.getState().setHovered(false)}
+        onFocus={() => experience.getState().setHovered(true)}
+        onBlur={() => experience.getState().setHovered(false)}
         // Clicking the orb detonates a radial shockwave through the whole
         // particle field (MorphField owns the decay) — touch the world and
-        // the world answers.
+        // the world answers. A real <button> so keyboard users can fire it
+        // too, instead of a div only a mouse can reach.
         onClick={() => experience.getState().setShock(1)}
       />
     </div>
@@ -179,11 +185,7 @@ export default function Hero() {
   const robotRotate = useTransform(sScroll, [0, 1], [0, -8]);
   const robotScale  = useTransform(sScroll, [0, 1], [1, 0.88]);
 
-  const scrollDown = () => {
-    if (window.__goto) return window.__goto("about");
-    const el = document.getElementById("about");
-    window.__lenis?.scrollTo(el, { offset: -40 });
-  };
+  const scrollDown = () => goToSection("about");
 
   return (
     <section
@@ -278,8 +280,10 @@ export default function Hero() {
             </span>
           </motion.div>
 
-          {/* MASSIVE NAME — locked single line per word */}
-          <h1
+          {/* MASSIVE NAME — locked single line per word.
+              An <h2>: the page's single <h1> is the cover statement in
+              PhotoIntro, which is first in the DOM and carries the name. */}
+          <h2
             className="font-display font-bold leading-[0.88] tracking-[-0.02em]"
             style={{
               fontSize: "clamp(2.8rem, 7vw, 7rem)",
@@ -320,7 +324,7 @@ export default function Hero() {
                 <MagneticText text={profile.lastName} radius={180} strength={24} />
               </motion.span>
             </span>
-          </h1>
+          </h2>
 
           {/* Role typewriter — bigger */}
           <motion.div
@@ -353,7 +357,7 @@ export default function Hero() {
             <MagneticButton
               onClick={(e) => {
                 celebrate(e.clientX, e.clientY);
-                window.__goto?.("projects");
+                goToSection("projects");
               }}
               className="group relative inline-flex items-center gap-3 overflow-hidden rounded-xl bg-white px-7 py-4 text-sm font-semibold text-black shadow-[0_18px_36px_-12px_rgba(255,255,255,0.35)]"
             >
@@ -376,7 +380,7 @@ export default function Hero() {
             <MagneticButton
               onClick={(e) => {
                 celebrate(e.clientX, e.clientY, "#aab4c4");
-                window.__goto?.("contact");
+                goToSection("contact");
               }}
               className="group relative inline-flex items-center gap-3 overflow-hidden rounded-xl glass px-7 py-4 text-sm font-semibold text-white"
             >

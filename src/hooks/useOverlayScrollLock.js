@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { getLenis } from "../lib/navigation";
 
 let activeLocks = 0;
 let previousBodyOverflow = "";
@@ -31,7 +32,7 @@ export default function useOverlayScrollLock(active) {
         document.body.style.paddingRight = `${currentPadding + scrollbarGap}px`;
       }
 
-      lockedLenis = window.__lenis ?? null;
+      lockedLenis = getLenis();
       shouldRestartLenis = Boolean(lockedLenis && !lockedLenis.isStopped);
       if (shouldRestartLenis) lockedLenis.stop();
     }

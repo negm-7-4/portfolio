@@ -10,6 +10,7 @@ import {
 import useDeviceProfile from "../../hooks/useDeviceProfile";
 import { profile } from "../../data/content";
 import { EASE_OUT } from "../../lib/motion";
+import { goToSection } from "../../lib/navigation";
 
 /**
  * ── PHOTO INTRO — the cover screen ────────────────────────────────────
@@ -296,9 +297,13 @@ export default function PhotoIntro() {
         </motion.div>
 
         {/* statement headline */}
+        {/* The page's one and only <h1>. The visible lines are the statement;
+            the visually hidden lead-in gives crawlers and screen readers the
+            identity that the decorative eyebrow above carries visually. */}
         <h1
           className="photo-intro-headline font-display text-[clamp(2.15rem,10.8vw,3.5rem)] font-bold uppercase leading-[0.92] tracking-[-0.02em] md:text-[clamp(3.4rem,8vw,7.5rem)]"
         >
+          <span className="sr-only">{profile.name} — {profile.role}. </span>
           {HEADLINE.map((l, i) => (
             <span key={i} className="block overflow-hidden">
               <motion.span
@@ -325,9 +330,7 @@ export default function PhotoIntro() {
       {/* ── Scroll cue ── */}
       <motion.button
         onClick={() => {
-          const el = document.getElementById("hero");
-          if (window.__lenis && el) window.__lenis.scrollTo(el, { offset: -20 });
-          else el?.scrollIntoView({ behavior: "smooth" });
+          goToSection("hero", { cinematic: false, offset: -20 });
         }}
         data-cursor="hover"
         initial={instant ? false : { opacity: 0 }}

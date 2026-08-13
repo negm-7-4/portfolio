@@ -7,7 +7,7 @@ import { useMemo } from "react";
  * transform-only animation, so it's basically free for the GPU.
  */
 function makeStars(count, size) {
-  let shadow = [];
+  const shadow = [];
   for (let i = 0; i < count; i++) {
     const x = Math.floor(Math.random() * 2000);
     const y = Math.floor(Math.random() * 2000);

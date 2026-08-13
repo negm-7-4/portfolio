@@ -1,9 +1,13 @@
 import { useEffect } from "react";
 import Lenis from "lenis";
+import { registerLenis } from "../lib/navigation";
 
 /**
  * Buttery smooth scrolling synced with the rAF loop.
- * Also exposes `window.__lenis` so other modules (GSAP, anchor links) can drive it.
+ *
+ * The instance is handed to `lib/navigation` rather than pinned on `window`,
+ * so every caller reaches it through one typed module instead of guessing
+ * whether a global happens to exist yet.
  */
 export default function useLenis() {
   useEffect(() => {
@@ -20,7 +24,7 @@ export default function useLenis() {
       touchMultiplier: 2,
     });
 
-    window.__lenis = lenis;
+    const unregister = registerLenis(lenis);
 
     let raf;
     const loop = (time) => {
@@ -31,8 +35,8 @@ export default function useLenis() {
 
     return () => {
       cancelAnimationFrame(raf);
+      unregister();
       lenis.destroy();
-      window.__lenis = null;
     };
   }, []);
 }

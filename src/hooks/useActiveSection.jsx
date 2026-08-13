@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useMotionValue } from "motion/react";
 import { sections } from "../data/sections";
+import { goToSection } from "../lib/navigation";
 
 /**
  * Tracks which section is currently most-in-view via IntersectionObserver.
@@ -27,6 +28,9 @@ export function ActiveSectionProvider({ children }) {
   const observedRef = useRef(new Map()); // id → element currently observed
 
   useEffect(() => {
+    // Captured once: cleanup must clear the same map this effect populated,
+    // not whatever the ref points at by the time React tears the effect down.
+    const observed = observedRef.current;
     const ratios = new Map(sections.map((s) => [s.id, 0]));
 
     const io = new IntersectionObserver(
@@ -51,7 +55,6 @@ export function ActiveSectionProvider({ children }) {
     /** Sync the IO with whatever section elements currently exist in DOM.
      *  Re-attaches observation when lazy sections swap in. */
     const sync = () => {
-      const observed = observedRef.current;
       for (const s of sections) {
         const el = document.getElementById(s.id);
         const prev = observed.get(s.id);
@@ -90,21 +93,14 @@ export function ActiveSectionProvider({ children }) {
     return () => {
       io.disconnect();
       mo.disconnect();
-      observedRef.current.clear();
+      observed.clear();
       window.removeEventListener("scroll", onScroll);
     };
   }, [progress]);
 
   const value = useMemo(() => {
     const index = sections.findIndex((s) => s.id === active.id);
-    const goto = (id) => {
-      if (window.__goto) return window.__goto(id);
-      const el = document.getElementById(id);
-      if (!el) return;
-      if (window.__lenis) window.__lenis.scrollTo(el, { offset: -40 });
-      else el.scrollIntoView({ behavior: "smooth" });
-    };
-    return { active, index, progress, goto };
+    return { active, index, progress, goto: goToSection };
   }, [active, progress]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

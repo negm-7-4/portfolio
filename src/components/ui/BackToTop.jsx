@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useScroll, useTransform } from "motion/react";
+import { scrollToTop } from "../../lib/navigation";
 
 /**
  * Floating "back to top" button in the bottom-left corner.
@@ -24,10 +25,7 @@ export default function BackToTop() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const goTop = () => {
-    if (window.__lenis) window.__lenis.scrollTo(0, { duration: 1.6 });
-    else window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+  const goTop = () => scrollToTop();
 
   return (
     <AnimatePresence>

@@ -2,13 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import { profile, resume } from "../../data/content";
 import useOverlayScrollLock from "../../hooks/useOverlayScrollLock";
+import { APP_EVENTS, onAppEvent } from "../../lib/appEvents";
 
 /**
  * CV MODAL — a cinematic, in-page résumé.
  *
- * Opened from anywhere by dispatching `window.dispatchEvent(new Event("open-cv"))`
- * (the Navbar / Contact / command palette all use this), so it stays fully
- * decoupled — no prop drilling, no shared store. It renders the résumé live
+ * Opened from anywhere by calling `openCv()` from lib/appEvents (the Navbar,
+ * Contact and command palette all use it), so it stays fully decoupled — no
+ * prop drilling, no shared store. It renders the résumé live
  * from `resume` in content.js (the same data the downloadable PDF was built
  * from), with a curtain entrance and staggered section reveals.
  *
@@ -48,8 +49,7 @@ export default function CvModal() {
       lastFocused.current = document.activeElement;
       setOpen(true);
     };
-    window.addEventListener("open-cv", onOpen);
-    return () => window.removeEventListener("open-cv", onOpen);
+    return onAppEvent(APP_EVENTS.openCv, onOpen);
   }, []);
 
   useOverlayScrollLock(open);

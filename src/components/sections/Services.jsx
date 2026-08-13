@@ -3,10 +3,13 @@ import { AnimatePresence, motion } from "motion/react";
 import SectionHeading from "../ui/SectionHeading";
 import { services } from "../../data/content";
 
-/* ─── Decorative shape per service (right edge of each row) ─── */
+/* ─── Decorative shape per service (right edge of each row) ───
+   These are render functions, not pre-built elements: JSX nodes held in an
+   array and rendered into a list each need a `key`, and building them lazily
+   costs nothing. */
 const SHAPES = [
   // 4-point star
-  (
+  () => (
     <svg viewBox="0 0 60 60" className="h-12 w-12 md:h-16 md:w-16">
       <path
         d="M30 4 L34 26 L56 30 L34 34 L30 56 L26 34 L4 30 L26 26 Z"
@@ -15,7 +18,7 @@ const SHAPES = [
     </svg>
   ),
   // amorphous blob
-  (
+  () => (
     <svg viewBox="0 0 60 60" className="h-12 w-12 md:h-16 md:w-16">
       <path
         d="M30 6 C44 6 56 16 54 30 C52 42 42 52 30 54 C18 52 6 44 8 30 C10 18 18 8 30 6 Z"
@@ -24,7 +27,7 @@ const SHAPES = [
     </svg>
   ),
   // octagon
-  (
+  () => (
     <svg viewBox="0 0 60 60" className="h-12 w-12 md:h-16 md:w-16">
       <path
         d="M20 4 L40 4 L56 20 L56 40 L40 56 L20 56 L4 40 L4 20 Z"
@@ -33,7 +36,7 @@ const SHAPES = [
     </svg>
   ),
   // diamond / squircle
-  (
+  () => (
     <svg viewBox="0 0 60 60" className="h-12 w-12 md:h-16 md:w-16">
       <path
         d="M30 4 C46 14 56 24 56 30 C56 36 46 46 30 56 C14 46 4 36 4 30 C4 24 14 14 30 4 Z"
@@ -111,7 +114,7 @@ function ServiceRow({ s, i, isOpen, onHover }) {
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           className="block"
         >
-          {SHAPES[i % SHAPES.length]}
+          {SHAPES[i % SHAPES.length]()}
         </motion.span>
       </div>
 

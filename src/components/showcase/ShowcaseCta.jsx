@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import MagneticButton from "../ui/MagneticButton";
 import { celebrate } from "../../lib/confetti";
 import { EASE_OUT } from "../../lib/motion";
+import { scrollTo } from "../../lib/navigation";
 
 /**
  * The showcase call-to-action row — GitHub (+ optional live) links with
@@ -35,9 +36,7 @@ function RippleLink({ href, accent, primary = false, children, label }) {
         celebrate(e.clientX, e.clientY, accent);
         if (!external && href.startsWith("#")) {
           e.preventDefault();
-          const target = document.querySelector(href);
-          if (window.__lenis && target) window.__lenis.scrollTo(target, { offset: -24 });
-          else target?.scrollIntoView({ behavior: "smooth" });
+          scrollTo(href, { offset: -24 });
         }
       }}
       className="group/cta relative inline-block rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/70"

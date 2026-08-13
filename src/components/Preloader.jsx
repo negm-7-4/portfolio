@@ -67,7 +67,6 @@ export default function Preloader({ onDone }) {
   const [greetIndex, setGreetIndex] = useState(0);
   const [phase,      setPhase]      = useState("loading");
   const [robotReady, setRobotReady] = useState(false);
-  const [scanDone,   setScanDone]   = useState(false);
   const [showSkip,   setShowSkip]   = useState(false);
   const finishedRef = useRef(false);
   const { tier } = useDeviceProfile();
@@ -209,9 +208,6 @@ export default function Preloader({ onDone }) {
         animate={{ opacity: phase === "done" ? 0 : 1 }}
         transition={{ duration: 0.35 }}
       >
-        {/* ── Cinematic atmosphere — drifting luminous dust behind it all ── */}
-        {/* <PreloaderAtmosphere /> */} {/* This component is not defined in the provided context, assuming it's commented out or removed */}
-
         {/* ── Top bar ── */}
         <motion.div
           className="flex items-center justify-between px-8 py-7 sm:px-12"
@@ -246,19 +242,6 @@ export default function Preloader({ onDone }) {
           className="pointer-events-none absolute left-1/2 top-1/2 h-[700px] w-[700px] -translate-x-1/2 -translate-y-1/2 rounded-full"
           style={{ background: "radial-gradient(circle, rgba(170,180,196,0.12) 0%, transparent 60%)" }}
         />
-
-        {/* ── Subtle 3D atmosphere — slow wireframe sculptures drifting behind ── */}
-        {/* <motion.div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 flex items-center justify-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: phase === "done" ? 0 : 1 }}
-          transition={{ duration: 1.2, delay: 0.2 }}
-        >
-          <Gyro size={460} dur={48} color="rgba(170,184,210,0.16)" className="absolute" />
-          <WireCube size={150} dur={40} color="rgba(170,184,210,0.14)" className="absolute left-[14%] top-[24%] hidden md:block" />
-          <WireCube size={110} dur={34} color="rgba(170,184,210,0.12)" className="absolute right-[16%] bottom-[26%] hidden md:block" />
-        </motion.div> */} {/* These components are not defined in the provided context, assuming they are commented out or removed */}
 
         {/* ══ LOADING PHASE ══ */}
         <AnimatePresence mode="wait">
@@ -355,7 +338,6 @@ export default function Preloader({ onDone }) {
                   initial={{ top: "0%", opacity: 0 }}
                   animate={{ top: "100%", opacity: [0, 1, 1, 0] }}
                   transition={{ duration: 1.4, delay: 0.3, ease: "linear" }}
-                  onAnimationComplete={() => setScanDone(true)}
                 />
 
                 <div className="flex flex-wrap justify-center overflow-visible">

@@ -24,7 +24,6 @@ export default function Stats() {
     let ctx;
     let canceled = false;
     let started = false;
-    let observer;
 
     const start = async () => {
       if (started) return;
@@ -52,7 +51,7 @@ export default function Stats() {
       }, root);
     };
 
-    observer = new IntersectionObserver(
+    const observer = new IntersectionObserver(
       ([entry]) => {
         if (!entry.isIntersecting) return;
         observer.disconnect();

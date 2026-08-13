@@ -3,6 +3,7 @@ import { motion } from "motion/react";
 import SectionHeading from "../ui/SectionHeading";
 import useDeviceProfile from "../../hooks/useDeviceProfile";
 import { SHOWCASE_MODE, SHOWCASE_FALLBACK } from "../../config/showcase";
+import { scrollTo } from "../../lib/navigation";
 
 /**
  * ── Projects — presentation dispatcher ────────────────────────────────
@@ -166,8 +167,7 @@ export default function Projects() {
     requestAnimationFrame(() => {
       const el = document.getElementById("projects");
       if (!el) return;
-      if (window.__lenis) window.__lenis.scrollTo(el, { offset: -50, duration: 0.9 });
-      else el.scrollIntoView({ behavior: "smooth" });
+      scrollTo(el, { offset: -50, duration: 0.9 });
     });
   };
 

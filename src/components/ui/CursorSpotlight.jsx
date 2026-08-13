@@ -1,4 +1,4 @@
-import { motion, useMotionTemplate, useSpring } from "motion/react";
+import { motion, useMotionTemplate, useMotionValue, useSpring } from "motion/react";
 import { useCursor } from "../../hooks/useCursor";
 
 /**
@@ -8,13 +8,21 @@ import { useCursor } from "../../hooks/useCursor";
  */
 export default function CursorSpotlight() {
   const c = useCursor();
-  // If there is no provider (touch device etc.) bail out cheaply
-  if (!c) return null;
 
-  const x = useSpring(c.mx, { stiffness: 120, damping: 22, mass: 0.6 });
-  const y = useSpring(c.my, { stiffness: 120, damping: 22, mass: 0.6 });
+  /* Every hook below runs unconditionally. The early `if (!c) return null`
+     that used to sit here left `useSpring` and `useMotionTemplate` behind a
+     branch — the moment a provider appeared or disappeared, React's hook
+     order changed and the component threw. Off-screen parking values stand in
+     when there is no cursor provider (touch devices), and the render bails
+     out afterwards. */
+  const idleX = useMotionValue(-9999);
+  const idleY = useMotionValue(-9999);
+  const x = useSpring(c?.mx ?? idleX, { stiffness: 120, damping: 22, mass: 0.6 });
+  const y = useSpring(c?.my ?? idleY, { stiffness: 120, damping: 22, mass: 0.6 });
 
   const bg = useMotionTemplate`radial-gradient(360px circle at ${x}px ${y}px, rgba(180,200,230,0.08), transparent 70%)`;
+
+  if (!c) return null;
 
   return (
     <motion.div

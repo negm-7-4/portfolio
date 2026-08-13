@@ -3,6 +3,8 @@ import { AnimatePresence, motion } from "motion/react";
 import { sections } from "../../data/sections";
 import { profile } from "../../data/content";
 import useOverlayScrollLock from "../../hooks/useOverlayScrollLock";
+import { goToSection, scrollToTop } from "../../lib/navigation";
+import { APP_EVENTS, onAppEvent } from "../../lib/appEvents";
 
 /**
  * Cmd/Ctrl-K command palette. Searchable list of sections + quick
@@ -28,10 +30,7 @@ export default function CommandPalette() {
       hint: `Jump to ${s.label} section`,
       num: s.num,
       color: s.color,
-      run: () => {
-        if (window.__goto) return window.__goto(s.id);
-        document.getElementById(s.id)?.scrollIntoView({ behavior: "smooth" });
-      },
+      run: () => goToSection(s.id),
     }));
 
     const actionCmds = [
@@ -61,7 +60,7 @@ export default function CommandPalette() {
         id: "top",
         label: "Scroll to Top",
         hint: "Hero section",
-        run: () => window.__lenis?.scrollTo(0, { duration: 1.4 }) ?? window.scrollTo({ top: 0, behavior: "smooth" }),
+        run: () => scrollToTop({ duration: 1.4 }),
       },
     ];
 
@@ -77,6 +76,10 @@ export default function CommandPalette() {
         c.hint?.toLowerCase().includes(term)
     );
   }, [q, commands]);
+
+  // The navbar's Search button asks for the palette by name instead of
+  // faking a Cmd+K keystroke.
+  useEffect(() => onAppEvent(APP_EVENTS.openCommandPalette, () => setOpen(true)), []);
 
   // open / close on Cmd+K
   useEffect(() => {
