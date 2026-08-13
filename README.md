@@ -65,9 +65,12 @@ import of three.js fails the build rather than quietly costing every visitor
 
 ### TypeScript
 
-Adopted from the logic layer outward rather than in one risky rename. `src/lib`,
-`src/config` and `src/data` are `.ts` today and type-checked under `strict` plus
-`noUncheckedIndexedAccess`; the `.jsx` components still compile through
+Adopted from the logic layer outward rather than in one risky rename. Navigation,
+app events, toast, motion tokens, error reporting, the site config and the
+section data are `.ts` today, type-checked under `strict` plus
+`noUncheckedIndexedAccess`. The rest — the `.jsx` components, and the handful of
+`.js` modules in `src/lib` that are mostly thin wrappers over third-party
+imports (`scrollSync`, `gsapPlugins`, `ambientAudio`) — still compile through
 `allowJs` with `checkJs: false`, and join the checked surface as they are
 touched. `npm run typecheck` runs in CI, so the typed part cannot rot while the
 migration finishes.
@@ -98,13 +101,13 @@ scripts/          image pipeline + bundle budget
 
 ### Navigation
 
-Everything that scrolls goes through `src/lib/navigation.js`. The Lenis
+Everything that scrolls goes through `src/lib/navigation.ts`. The Lenis
 instance and the cinematic page transition register themselves there on mount;
 callers just ask for `goToSection(id)` and get the best behaviour available —
 curtain transition, else Lenis, else native scroll. Nothing reads globals.
 
 Cross-tree commands (open the CV modal, open the command palette) go through
-named events in `src/lib/appEvents.js` rather than prop drilling.
+named events in `src/lib/appEvents.ts` rather than prop drilling.
 
 ### Resilience
 
@@ -237,6 +240,26 @@ Security headers (CSP, HSTS, `X-Frame-Options`, `X-Content-Type-Options`,
 inline scripts only because the JSON-LD blocks in `index.html` are inline;
 `connect-src` is locked to this origin plus the Vercel vitals endpoint, which
 is what actually constrains exfiltration.
+
+### Cache tiers
+
+Three of them, and the split is by whether a URL can ever change meaning:
+
+| Path                                | Policy                            | Why                                             |
+| ----------------------------------- | --------------------------------- | ----------------------------------------------- |
+| `/assets/`, `/fonts/`, `/textures/` | `max-age=31536000, immutable`     | content-hashed or never edited in place         |
+| `/projects/`, root images           | `max-age=86400` + a week of `swr` | stable names, contents can be regenerated       |
+| `sitemap`, `robots`, manifest       | `max-age=3600`                    | cheap, and staleness is visible to crawlers     |
+| `sw.js`, the CV                     | `max-age=0, must-revalidate`      | must never pin a visitor to an old build/résumé |
+
+The root-image rule is written `/([^/]+).(png|jpg|…)` rather than `/(.*).(…)`
+on purpose. The broad form also matches `/textures/earth/earth_day.jpg`, which
+already has an `immutable` rule — and Vercel merges every matching `headers`
+entry, so a second `Cache-Control` on the same URL is a coin flip you do not
+want to be holding. Restricting the match to a single path segment keeps the
+tiers disjoint, and if the pattern were ever misparsed the rule matches nothing
+and those files fall back to the platform default, which is the harmless
+direction to fail in.
 
 ## Licence
 
