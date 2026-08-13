@@ -2,6 +2,7 @@ import { useRef } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
 import { celebrate } from "../../lib/confetti";
 import { profile } from "../../data/content";
+import { goToSection } from "../../lib/navigation";
 import Signature from "../ui/Signature";
 import StarSignature from "../ui/StarSignature";
 
@@ -13,27 +14,21 @@ export default function Footer() {
   const clip = useTransform(scrollYProgress, [0.0, 0.6], ["inset(0 0 100% 0)", "inset(0 0 0% 0)"]);
   const titleY = useTransform(scrollYProgress, [0, 1], [120, -40]);
 
-  const goTop = () => {
-    if (window.__goto) return window.__goto("hero");
-    window.__lenis?.scrollTo(0, { duration: 1.6 });
-  };
+  const goTop = () => goToSection("hero");
 
   const links = [
-    { label: "About",    id: "about"    },
+    { label: "About", id: "about" },
     { label: "Services", id: "services" },
     { label: "Projects", id: "projects" },
-    { label: "Socials",  id: "socials"  },
-    { label: "Contact",  id: "contact"  },
+    { label: "Socials", id: "socials" },
+    { label: "Contact", id: "contact" },
   ];
 
-  const go = (id) => {
-    if (window.__goto) return window.__goto(id);
-    const el = document.getElementById(id);
-    window.__lenis?.scrollTo(el, { offset: -40 });
-  };
+  const go = (id) => goToSection(id);
 
   return (
     <footer
+      id="footer"
       ref={ref}
       className="relative w-full overflow-hidden border-t border-white/5 pt-28 md:pt-40"
     >
@@ -68,10 +63,7 @@ export default function Footer() {
             style={{ y: titleY }}
             className="font-display font-bold leading-[0.88] tracking-[-0.02em] text-white"
           >
-            <span
-              className="block"
-              style={{ fontSize: "clamp(3rem, 11vw, 11rem)" }}
-            >
+            <span className="block" style={{ fontSize: "clamp(3rem, 11vw, 11rem)" }}>
               Let&apos;s build
             </span>
             <motion.span
@@ -101,7 +93,9 @@ export default function Footer() {
                 animate={{ x: [0, 4, 0] }}
                 transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
                 className="inline-block"
-              >→</motion.span>
+              >
+                →
+              </motion.span>
             </span>
             <a
               href={`mailto:${profile.email}`}
@@ -113,7 +107,10 @@ export default function Footer() {
               {profile.email}
               <span
                 className="absolute -bottom-1 left-0 h-[2px] w-full origin-left scale-x-100 transition-all duration-500 group-hover:bg-white"
-                style={{ background: "linear-gradient(90deg, rgba(255,255,255,0.7), rgba(170,180,196,0.4), rgba(255,255,255,0.7))" }}
+                style={{
+                  background:
+                    "linear-gradient(90deg, rgba(255,255,255,0.7), rgba(170,180,196,0.4), rgba(255,255,255,0.7))",
+                }}
               />
             </a>
           </motion.div>
@@ -126,9 +123,7 @@ export default function Footer() {
           viewport={{ once: false }}
           className="my-12 flex items-center gap-6 border-t border-white/[0.08] pt-8"
         >
-          <span className="text-[10px] uppercase tracking-[0.3em] text-white/50">
-            Index
-          </span>
+          <span className="text-[10px] uppercase tracking-[0.3em] text-white/50">Index</span>
           <span className="shimmer-line h-px flex-1 bg-white/5" />
           <button
             onClick={goTop}
@@ -151,9 +146,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 gap-10 pb-10 md:grid-cols-3 md:gap-12">
           {/* navigation */}
           <div>
-            <h4 className="mb-5 text-[10px] uppercase tracking-[0.3em] text-white/55">
-              Navigate
-            </h4>
+            <h4 className="mb-5 text-[10px] uppercase tracking-[0.3em] text-white/55">Navigate</h4>
             <ul className="space-y-2.5">
               {links.map((l) => (
                 <li key={l.id}>
@@ -172,9 +165,7 @@ export default function Footer() {
 
           {/* contact */}
           <div>
-            <h4 className="mb-5 text-[10px] uppercase tracking-[0.3em] text-white/55">
-              Connect
-            </h4>
+            <h4 className="mb-5 text-[10px] uppercase tracking-[0.3em] text-white/55">Connect</h4>
             <ul className="space-y-2.5">
               <li>
                 <a
@@ -200,9 +191,7 @@ export default function Footer() {
 
           {/* socials */}
           <div>
-            <h4 className="mb-5 text-[10px] uppercase tracking-[0.3em] text-white/55">
-              Elsewhere
-            </h4>
+            <h4 className="mb-5 text-[10px] uppercase tracking-[0.3em] text-white/55">Elsewhere</h4>
             <ul className="space-y-2.5">
               {profile.socials.map((s) => (
                 <li key={s.label}>
@@ -214,7 +203,9 @@ export default function Footer() {
                     className="group inline-flex items-center gap-2 text-sm font-medium text-white/55 transition-colors hover:text-white"
                   >
                     {s.label}
-                    <span className="text-[10px] text-white/50 transition-transform duration-300 group-hover:translate-x-1">↗</span>
+                    <span className="text-[10px] text-white/50 transition-transform duration-300 group-hover:translate-x-1">
+                      ↗
+                    </span>
                   </a>
                 </li>
               ))}

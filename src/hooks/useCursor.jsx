@@ -18,11 +18,15 @@ export function CursorProvider({ children }) {
   const vy = useMotionValue(0);
   const lastX = useRef(-9999);
   const lastY = useRef(-9999);
-  const lastT = useRef(performance.now());
+  // Seeded on the first pointer event rather than during render: calling
+  // performance.now() while rendering is an impure read that can differ
+  // between a render and its replay.
+  const lastT = useRef(0);
 
   useEffect(() => {
     const onMove = (e) => {
       const now = performance.now();
+      if (!lastT.current) lastT.current = now;
       const dt = Math.max(1, now - lastT.current);
       vx.set((e.clientX - lastX.current) / dt);
       vy.set((e.clientY - lastY.current) / dt);
@@ -36,11 +40,7 @@ export function CursorProvider({ children }) {
     return () => window.removeEventListener("pointermove", onMove);
   }, [mx, my, vx, vy]);
 
-  return (
-    <CursorCtx.Provider value={{ mx, my, vx, vy }}>
-      {children}
-    </CursorCtx.Provider>
-  );
+  return <CursorCtx.Provider value={{ mx, my, vx, vy }}>{children}</CursorCtx.Provider>;
 }
 
 export function useCursor() {

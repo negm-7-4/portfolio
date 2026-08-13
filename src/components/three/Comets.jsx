@@ -54,7 +54,10 @@ export default function Comets({ quality = "high" }) {
     () =>
       Array.from({ length: COUNT }, (_, i) => ({
         active: false,
-        next: 2 + i * 3 + Math.random() * 4, // first appearances, staggered
+        // Deterministic stagger instead of Math.random(): reading a random
+        // value during render is impure, and a fixed irrational step spreads
+        // the first appearances just as well.
+        next: 2 + i * 3 + ((i * 0.6180339887) % 1) * 4,
         t: 0,
         dur: 1.4,
         dist: 34,
@@ -95,9 +98,7 @@ export default function Comets({ quality = "high" }) {
       Math.random() * 11 - 2,
       -18 - Math.random() * 14
     );
-    c.dir
-      .set(fromLeft ? 1 : -1, -(0.14 + Math.random() * 0.22), 0)
-      .normalize();
+    c.dir.set(fromLeft ? 1 : -1, -(0.14 + Math.random() * 0.22), 0).normalize();
     c.dist = 28 + Math.random() * 12;
     c.dur = 1.1 + Math.random() * 0.8;
     c.t = 0;
@@ -139,9 +140,7 @@ export default function Comets({ quality = "high" }) {
       }
 
       mesh.visible = true;
-      mesh.position
-        .copy(c.from)
-        .addScaledVector(c.dir, c.t * c.dist);
+      mesh.position.copy(c.from).addScaledVector(c.dir, c.t * c.dist);
       materials[i].uniforms.uAlpha.value = Math.sin(Math.PI * c.t) * 0.75;
     }
   });
@@ -149,12 +148,7 @@ export default function Comets({ quality = "high" }) {
   return (
     <group>
       {materials.map((m, i) => (
-        <mesh
-          key={i}
-          ref={(el) => (meshes.current[i] = el)}
-          material={m}
-          visible={false}
-        >
+        <mesh key={i} ref={(el) => (meshes.current[i] = el)} material={m} visible={false}>
           <planeGeometry args={[1, 1]} />
         </mesh>
       ))}

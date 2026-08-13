@@ -3,7 +3,6 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import {
   Environment,
   Lightformer,
-  Float,
   Sparkles,
   Stars,
   AdaptiveDpr,
@@ -24,7 +23,8 @@ import * as THREE from "three";
 
 import { experience } from "../../store/experience";
 import { sections } from "../../data/sections";
-import { FresnelMaterial } from "./materials/FresnelMaterial"; // registers <fresnelMaterial>
+// Side-effect import: the module calls extend() to register <fresnelMaterial>.
+import "./materials/FresnelMaterial";
 import MorphField from "./MorphField";
 import HeroModel from "./HeroModel";
 import Architecture from "./Architecture";
@@ -33,10 +33,6 @@ import Comets from "./Comets";
 
 /* eslint-disable react/no-unknown-property */
 
-const smoothstep = (a, b, x) => {
-  const t = Math.min(1, Math.max(0, (x - a) / (b - a)));
-  return t * t * (3 - 2 * t);
-};
 const smootherstep = (t) => {
   t = Math.min(1, Math.max(0, t));
   return t * t * t * (t * (t * 6 - 15) + 10);
@@ -45,8 +41,7 @@ const lerp = (a, b, t) => a + (b - a) * t;
 
 /* A real mouse is present — decided once, independent of the perf tier. */
 const HAS_FINE_POINTER =
-  typeof window !== "undefined" &&
-  !window.matchMedia?.("(pointer: coarse)").matches;
+  typeof window !== "undefined" && !window.matchMedia?.("(pointer: coarse)").matches;
 
 /* One composed camera shot per chapter (pos + lookAt + fov + dutch roll).
    Scroll eases between consecutive keys, so the journey reads as deliberate
@@ -190,83 +185,6 @@ function CameraRig() {
    THE CORE — chrome icosahedron wrapped in a glowing energy shell.
    The shell uses the hand-written Fresnel/displacement GLSL; the inner body
    is polished metal that mirrors the lightformers.
-   ─────────────────────────────────────────────────────────────────────── */
-function Core({ quality, heroFade }) {
-  const group = useRef(null);
-  const shell = useRef(null);
-  const spinRef = useRef(0.08);
-  const detail = quality === "high" ? 5 : 4;
-
-  useFrame((state, dt) => {
-    const { velocity, scroll, hovered } = experience.getState();
-    // Hover energises the orb — faster spin + brighter, rippling shell.
-    const spinTarget = hovered ? 0.24 : 0.08;
-    spinRef.current += (spinTarget - spinRef.current) * Math.min(1, dt * 4);
-
-    // Contact finale — the re-gathered core beats like a heart while the
-    // camera closes in for the outro: slow scale pulse + shell surges.
-    const finale = smoothstep(0.94, 1, scroll);
-    const beat = finale * (0.5 + 0.5 * Math.sin(state.clock.elapsedTime * 2.6));
-
-    if (group.current) {
-      group.current.rotation.y += dt * spinRef.current;
-      group.current.rotation.x += dt * 0.02;
-      // On high-tier the GLB hero model owns the top of the page, so the
-      // procedural core shrinks away at the hero beat and swells back for the
-      // body + contact outro. On mid-tier (no model) it stays full size.
-      const target =
-        (heroFade ? 0.24 + 0.76 * smoothstep(0.08, 0.28, scroll) : 1) *
-        (1 + beat * 0.06);
-      const cur = group.current.scale.x;
-      group.current.scale.setScalar(cur + (target - cur) * Math.min(1, dt * 3));
-    }
-    if (shell.current) {
-      shell.current.uTime = state.clock.elapsedTime;
-      // Scroll speed ripples the surface; hover adds a steady pulse; the
-      // orb-click shockwave slams the shell for the beat it lives.
-      const pulse = Math.min(Math.abs(velocity) * 12, 1);
-      const { shock } = experience.getState();
-      damp(shell.current, "uScrollPulse", Math.max(pulse, hovered ? 0.6 : 0, shock), 0.25, dt);
-      // Calm the glow through the text-heavy middle so copy stays readable;
-      // hover lifts it back up as a reward for interacting, and the finale
-      // heartbeat surges it into the bloom.
-      const base = 1 - Math.sin(scroll * Math.PI) * 0.5;
-      damp(shell.current, "uOpacity", base + (hovered ? 0.4 : 0) + beat * 0.45, 0.3, dt);
-      damp(shell.current, "uDisplace", (hovered ? 0.2 : 0.14) + beat * 0.07, 0.35, dt);
-    }
-  });
-
-  return (
-    <Float speed={1.1} rotationIntensity={0.25} floatIntensity={0.7}>
-      <group ref={group}>
-        {/* Polished metal body — reflects the environment lightformers. */}
-        <mesh>
-          <icosahedronGeometry args={[1.55, detail]} />
-          <meshStandardMaterial
-            color="#0e141d"
-            metalness={1}
-            roughness={0.22}
-            envMapIntensity={1.35}
-          />
-        </mesh>
-        {/* Energy shell — GLSL fresnel + displacement, glows into the bloom. */}
-        <mesh scale={1.04}>
-          <icosahedronGeometry args={[1.55, detail]} />
-          <fresnelMaterial
-            ref={shell}
-            transparent
-            depthWrite={false}
-            uFresnelPower={2.3}
-            uDisplace={0.14}
-            uFreq={1.5}
-            blending={THREE.AdditiveBlending}
-          />
-        </mesh>
-      </group>
-    </Float>
-  );
-}
-
 /* ── A vast, slow torus knot far behind — gives the scene a horizon. ── */
 function BackdropKnot() {
   const ref = useRef(null);
@@ -334,7 +252,9 @@ function SectionAccent() {
     }
   });
 
-  return <pointLight ref={light} position={[0, 3, 6]} intensity={11} color={colors[0]} distance={24} />;
+  return (
+    <pointLight ref={light} position={[0, 3, 6]} intensity={11} color={colors[0]} distance={24} />
+  );
 }
 
 /* ── Post stack. Bloom + vignette everywhere; chromatic aberration on high. ── */
@@ -347,8 +267,7 @@ function Post({ quality }) {
   useFrame(() => {
     if (quality !== "high") return;
     const { warp, velocity } = experience.getState();
-    const k =
-      0.0006 + warp * 0.0042 + Math.min(Math.abs(velocity) * 2, 1) * 0.001;
+    const k = 0.0006 + warp * 0.0042 + Math.min(Math.abs(velocity) * 2, 1) * 0.001;
     caOffset.set(k, k);
   });
 
@@ -363,12 +282,7 @@ function Post({ quality }) {
           crisp while the receding background + far particles soften. Subtle
           on purpose (small focal length / bokeh). High-tier only. */}
       {quality === "high" ? (
-        <DepthOfField
-          focusDistance={0.06}
-          focalLength={0.02}
-          bokehScale={2.2}
-          height={480}
-        />
+        <DepthOfField focusDistance={0.06} focalLength={0.02} bokehScale={2.2} height={480} />
       ) : null}
       <Bloom
         intensity={quality === "high" ? 0.62 : 0.42}
@@ -478,11 +392,7 @@ export default function CinematicWorld({ quality = "high" }) {
   const dprMax = live === "high" ? 1.8 : 1.3;
 
   return (
-    <div
-      className="fixed inset-0 -z-10"
-      aria-hidden="true"
-      style={{ pointerEvents: "none" }}
-    >
+    <div className="fixed inset-0 -z-10" aria-hidden="true" style={{ pointerEvents: "none" }}>
       <ProgressBridge />
       <Canvas
         frameloop={frameloop}
@@ -501,9 +411,7 @@ export default function CinematicWorld({ quality = "high" }) {
         style={{ pointerEvents: "none" }}
       >
         <Suspense fallback={null}>
-          <PerformanceMonitor
-            onDecline={() => setLive((c) => (c === "high" ? "mid" : c))}
-          >
+          <PerformanceMonitor onDecline={() => setLive((c) => (c === "high" ? "mid" : c))}>
             <Scene quality={live} />
           </PerformanceMonitor>
         </Suspense>

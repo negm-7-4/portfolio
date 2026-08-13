@@ -2,11 +2,38 @@ import { useEffect, useRef } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
 import { loadScrollSync } from "../../lib/scrollSync";
 
+/* Measured numbers, not adjectives.
+   These used to read "15+ projects · 2+ years · 12+ technologies · 100%
+   passion" — the sort of thing every portfolio says and none of them can
+   show. Every figure below came off a real run and can be pointed at:
+   the first two from the VÉRA API load test, the third from the Acoustic
+   Room Mapper's DSP loop, the fourth from this page's own CI budget. */
 const stats = [
-  { value: 15,  suffix: "+", label: "Projects shipped",   note: "From dashboards to 3D web." },
-  { value: 2,   suffix: "+", label: "Years coding",       note: "Daily craft & continuous learning." },
-  { value: 12,  suffix: "+", label: "Technologies",       note: "React, Three.js, motion & more." },
-  { value: 100, suffix: "%", label: "Passion",            note: "Always. Without exception." },
+  {
+    value: 2650,
+    suffix: "",
+    label: "Requests / second",
+    note: "VÉRA API under 50 concurrent users — zero errors.",
+  },
+  {
+    value: 46,
+    suffix: "ms",
+    label: "p99 latency",
+    note: "Ninety-ninth percentile, at that same sustained load.",
+  },
+  {
+    value: 50,
+    prefix: "<",
+    suffix: "ms",
+    label: "DSP round trip",
+    note: "Mic to live floor plan — FFT cross-correlation at 48 kHz.",
+  },
+  {
+    value: 172,
+    suffix: "kB",
+    label: "Critical path",
+    note: "This page, gzipped. Enforced by a build that fails if it grows.",
+  },
 ];
 
 export default function Stats() {
@@ -24,7 +51,6 @@ export default function Stats() {
     let ctx;
     let canceled = false;
     let started = false;
-    let observer;
 
     const start = async () => {
       if (started) return;
@@ -46,13 +72,16 @@ export default function Stats() {
               start: "top 85%",
               toggleActions: "restart none restart none",
             },
-            onUpdate: () => { el.textContent = Math.floor(obj.v); },
+            onUpdate: () => {
+              // Grouped so the biggest figure reads as 2,650 rather than 2650.
+              el.textContent = Math.floor(obj.v).toLocaleString("en-US");
+            },
           });
         });
       }, root);
     };
 
-    observer = new IntersectionObserver(
+    const observer = new IntersectionObserver(
       ([entry]) => {
         if (!entry.isIntersecting) return;
         observer.disconnect();
@@ -70,10 +99,7 @@ export default function Stats() {
   }, []);
 
   return (
-    <section
-      ref={root}
-      className="relative w-full overflow-hidden py-24 md:py-40"
-    >
+    <section ref={root} className="relative w-full overflow-hidden py-24 md:py-40">
       {/* gradient drift */}
       <motion.div
         style={{ y: bgY }}
@@ -131,10 +157,19 @@ export default function Stats() {
                   className="pointer-events-none absolute -inset-4 rounded-full blur-2xl"
                   animate={{ opacity: [0.22, 0.34, 0.22] }}
                   transition={{ duration: 4 + i * 0.5, repeat: Infinity, ease: "easeInOut" }}
-                  style={{ background: "radial-gradient(circle, rgba(170,180,196,0.4), transparent 70%)" }}
+                  style={{
+                    background: "radial-gradient(circle, rgba(170,180,196,0.4), transparent 70%)",
+                  }}
                 />
-                <span className="stat-num relative text-gradient" data-value={s.value}>0</span>
-                <span className="relative text-gradient">{s.suffix}</span>
+                {s.prefix && <span className="relative text-gradient">{s.prefix}</span>}
+                <span className="stat-num relative text-gradient" data-value={s.value}>
+                  0
+                </span>
+                {s.suffix && (
+                  <span className="relative text-gradient" style={{ fontSize: "0.42em" }}>
+                    {s.suffix}
+                  </span>
+                )}
 
                 {/* faint orbit dot in upper-right of each number */}
                 <motion.span
@@ -150,9 +185,7 @@ export default function Stats() {
               <p className="mt-4 text-[11px] font-semibold uppercase tracking-[0.28em] text-white/65 md:text-xs">
                 {s.label}
               </p>
-              <p className="mt-1.5 text-[13px] leading-relaxed text-white/55">
-                {s.note}
-              </p>
+              <p className="mt-1.5 text-[13px] leading-relaxed text-white/55">{s.note}</p>
 
               {/* hover underline that grows + accent dot at the end */}
               <div className="mt-4 flex items-center gap-2">
@@ -162,6 +195,20 @@ export default function Stats() {
             </motion.div>
           ))}
         </div>
+
+        {/* Where the figures come from. A number without a source is a slogan. */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: false, margin: "-10%" }}
+          transition={{ delay: 0.4, duration: 0.6 }}
+          className="mt-14 max-w-2xl text-[11px] leading-relaxed tracking-[0.08em] text-white/40"
+        >
+          Throughput and latency from a load test of the VÉRA storefront API (50 concurrent users,
+          2,650 req/s sustained, 0 errors, p99 ≈ 46&nbsp;ms). DSP figure from the Acoustic Room
+          Mapper&rsquo;s C++17 engine. Critical-path weight is this page&rsquo;s own gzipped entry
+          bundle, checked on every build.
+        </motion.p>
       </div>
     </section>
   );

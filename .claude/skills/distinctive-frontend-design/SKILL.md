@@ -5,7 +5,7 @@ description: Design-direction guidance for building distinctive, intentional UI 
 
 # Distinctive Frontend Design
 
-Make UI that looks deliberately designed for *this* subject — not a reskinned
+Make UI that looks deliberately designed for _this_ subject — not a reskinned
 template. Decide the aesthetic direction first; then reach for the motion/3D
 skills (`marketing-site-motion`, `web-animation`, `web-3d`,
 `animated-ui-components`) to execute it.
@@ -14,12 +14,14 @@ skills (`marketing-site-motion`, `web-animation`, `web-3d`,
 > condensed, original restatement — see the source for the canonical version.
 
 ## Process: two passes
+
 1. **Plan (compact):** before any code, write a 4-line design brief —
    color direction, type pairing, layout system, and the single signature element.
 2. **Critique:** ask "does this read as generic?" Cut anything templated.
    Only then build.
 
 ## Principles
+
 - **Ground it in the subject.** Identify the concrete subject, audience, and the
   page's one job. Source distinctive choices from the subject's own materials,
   vocabulary, and references — not generic SaaS conventions.
@@ -39,6 +41,7 @@ skills (`marketing-site-motion`, `web-animation`, `web-3d`,
   concept doesn't call for.
 
 ## Anti-"AI slop" checklist
+
 - [ ] Not a centered-hero + 3-feature-cards + generic gradient template.
 - [ ] Typography is a specific, intentional pairing (not one default sans).
 - [ ] Color comes from a real direction, not a random purple gradient.
@@ -48,11 +51,14 @@ skills (`marketing-site-motion`, `web-animation`, `web-3d`,
 - [ ] Copy is specific and active — each element does one job.
 
 ## Writing / microcopy
+
 Copy serves clarity and usability: active voice, specific over vague,
 conversational register, every element performs exactly one job.
 
 ## Then execute
+
 Once the direction is set, build it with:
+
 - **marketing-site-motion** — landing-page recipes & perf/a11y checklist.
 - **animated-ui-components** — Aceternity/Magic UI/etc. for flair.
 - **web-animation / scroll-effects / web-3d** — the underlying motion & 3D APIs.

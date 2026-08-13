@@ -45,7 +45,9 @@ function ExperienceRow({ e, i, total }) {
         {/* node */}
         <span
           className="absolute left-1/2 top-3 -translate-x-1/2 flex h-4 w-4 items-center justify-center rounded-full bg-[#aab4c4]"
-          style={{ boxShadow: "0 0 12px rgba(170,180,196,0.6), inset 0 1px 0 rgba(255,255,255,0.3)" }}
+          style={{
+            boxShadow: "0 0 12px rgba(170,180,196,0.6), inset 0 1px 0 rgba(255,255,255,0.3)",
+          }}
         >
           <span className="h-1.5 w-1.5 rounded-full bg-white" />
           {i === 0 && (
@@ -114,11 +116,7 @@ export default function Experience() {
   const bgY2 = useTransform(scrollYProgress, [0, 1], [-40, 40]);
 
   return (
-    <section
-      id="experience"
-      ref={ref}
-      className="relative w-full py-32 md:py-44"
-    >
+    <section id="experience" ref={ref} className="relative w-full py-32 md:py-44">
       {/* ambient layers */}
       <motion.div
         style={{ y: bgY1 }}
@@ -141,7 +139,10 @@ export default function Experience() {
         {/* timeline body */}
         <div className="relative mx-auto max-w-5xl">
           {/* GLOBAL scroll-progress line behind the column timeline */}
-          <div className="absolute left-[180px] top-2 hidden h-full w-px translate-x-3 md:block" aria-hidden>
+          <div
+            className="absolute left-[180px] top-2 hidden h-full w-px translate-x-3 md:block"
+            aria-hidden
+          >
             <span className="absolute inset-0 bg-white/[0.06]" />
             <motion.span
               style={{ height: lineHeight }}

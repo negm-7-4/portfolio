@@ -68,20 +68,11 @@ function mulberry32(seed) {
   };
 }
 
-/* ── Formation generators. Each fills `out` (Float32Array, N*3) in place and
-      uses the SAME particle index `k` as its through-line, so point k in one
-      shape maps to point k in the next → coherent, readable morphs. ── */
-function formSphere(out, N, R) {
-  for (let k = 0; k < N; k++) {
-    const t = N > 1 ? k / (N - 1) : 0;
-    const y = 1 - 2 * t;
-    const r = Math.sqrt(Math.max(0, 1 - y * y));
-    const phi = k * GOLDEN;
-    out[k * 3] = Math.cos(phi) * r * R;
-    out[k * 3 + 1] = y * R;
-    out[k * 3 + 2] = Math.sin(phi) * r * R;
-  }
-}
+/* ── Formation generators ───────────────────────────────────────────────
+   Each fills `out` (a Float32Array of N*3) in place and uses the SAME
+   particle index `k` as its through-line, so point k in one shape maps to
+   point k in the next — that is what makes the morphs read as one swarm
+   rearranging itself rather than a crossfade between two clouds. ── */
 
 /* ── SATURN RINGS — the hero formation. ────────────────────────────────
    A flat banded ring system (kept in the XZ plane; the group supplies the
@@ -128,30 +119,6 @@ function formRings(out, N, rIn, rOut, thickness, rng) {
     out[k * 3] = Math.cos(a) * rad;
     out[k * 3 + 1] = (rng() - 0.5) * th;
     out[k * 3 + 2] = Math.sin(a) * rad;
-  }
-}
-
-function formTorus(out, N, R, r) {
-  for (let k = 0; k < N; k++) {
-    const u = k / N;
-    const a = u * TAU * 6 + k * GOLDEN * 0.15; // major sweep (coiled)
-    const b = u * TAU * 23; // minor sweep (incommensurate → fills the surface)
-    const rr = R + r * Math.cos(b);
-    out[k * 3] = Math.cos(a) * rr;
-    out[k * 3 + 1] = r * Math.sin(b);
-    out[k * 3 + 2] = Math.sin(a) * rr;
-  }
-}
-
-function formHelix(out, N, radius, height, turns) {
-  for (let k = 0; k < N; k++) {
-    const u = k / N;
-    const strand = k % 2 === 0 ? 0 : Math.PI; // double helix
-    const a = u * turns * TAU;
-    const wobble = 0.12 * Math.sin(a * 3.0);
-    out[k * 3] = Math.cos(a + strand) * (radius + wobble);
-    out[k * 3 + 1] = (u - 0.5) * height;
-    out[k * 3 + 2] = Math.sin(a + strand) * (radius + wobble);
   }
 }
 
@@ -238,19 +205,6 @@ function formStar(out, N, R, rng) {
   }
 }
 
-function formWave(out, N, span, amp) {
-  const side = Math.max(1, Math.floor(Math.sqrt(N)));
-  for (let k = 0; k < N; k++) {
-    const col = k % side;
-    const row = Math.floor(k / side);
-    const x = (col / side - 0.5) * span;
-    const z = (row / side - 0.5) * span;
-    out[k * 3] = x;
-    out[k * 3 + 1] = Math.sin(x * 0.9) * Math.cos(z * 0.9) * amp;
-    out[k * 3 + 2] = z;
-  }
-}
-
 function formScatter(out, N, rMin, rMax, flatten, rng) {
   for (let k = 0; k < N; k++) {
     const theta = rng() * TAU;
@@ -291,114 +245,6 @@ function formAtom(out, N, R, rng) {
     out[k * 3 + 1] = ex * s + ey * c;
     out[k * 3 + 2] = (rng() - 0.5) * 0.24; // slight slab depth
   }
-}
-
-/* Rasterise text to an offscreen canvas and sample the letterforms — the
-   particles literally assemble the initials. Deterministic (seeded rng),
-   with a sphere fallback if the canvas is unavailable for any reason. */
-function formText(out, N, text, height, zCenter, rng) {
-  try {
-    const W = 360;
-    const H = 160;
-    const c = document.createElement("canvas");
-    c.width = W;
-    c.height = H;
-    const ctx = c.getContext("2d", { willReadFrequently: true });
-    if (!ctx) throw new Error("no 2d context");
-    ctx.fillStyle = "#000";
-    ctx.fillRect(0, 0, W, H);
-    ctx.fillStyle = "#fff";
-    ctx.font = "900 132px sans-serif";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(text, W / 2, H / 2 + 8);
-
-    const img = ctx.getImageData(0, 0, W, H).data;
-    const px = [];
-    for (let y = 0; y < H; y++) {
-      for (let x = 0; x < W; x++) {
-        if (img[(y * W + x) * 4] > 120) px.push(x, y);
-      }
-    }
-    if (px.length < 200) throw new Error("text sample too sparse");
-
-    const count = px.length / 2;
-    const scale = height / H;
-    for (let k = 0; k < N; k++) {
-      const p = Math.floor(rng() * count);
-      out[k * 3] = (px[p * 2] - W / 2) * scale + (rng() - 0.5) * 0.05;
-      out[k * 3 + 1] = (H / 2 - px[p * 2 + 1]) * scale + (rng() - 0.5) * 0.05;
-      out[k * 3 + 2] = zCenter + (rng() - 0.5) * 0.5;
-    }
-  } catch {
-    formSphere(out, N, 2.1); // never break the journey over a canvas quirk
-  }
-}
-
-/* Sample the real portrait photo into a particle formation. The shot is a
-   bright subject on a dark backdrop (measured: face ~90, corners ~20), so a
-   luminance-weighted CDF pulls every point onto the person; a bottom
-   falloff keeps the bright shirt from out-voting the face. Brightness also
-   drives a z relief — the face literally comes forward. Async (image
-   decode) → resolves null on any failure and the torus keeps the slot. */
-function buildPortrait(url, N, width, zCenter, seed) {
-  return new Promise((resolve) => {
-    const img = new Image();
-    img.onload = () => {
-      try {
-        const W = 132;
-        const H = Math.max(1, Math.round((img.height / img.width) * W));
-        const c = document.createElement("canvas");
-        c.width = W;
-        c.height = H;
-        const ctx = c.getContext("2d", { willReadFrequently: true });
-        if (!ctx) throw new Error("no 2d context");
-        ctx.drawImage(img, 0, 0, W, H);
-        const d = ctx.getImageData(0, 0, W, H).data;
-
-        const lumAt = (i4) =>
-          (0.299 * d[i4] + 0.587 * d[i4 + 1] + 0.114 * d[i4 + 2]) / 255;
-
-        const cdf = new Float32Array(W * H);
-        let acc = 0;
-        for (let y = 0; y < H; y++) {
-          const v = y / H;
-          const fall = v > 0.72 ? 1 - ((v - 0.72) / 0.28) * 0.65 : 1;
-          for (let x = 0; x < W; x++) {
-            acc += Math.pow(lumAt((y * W + x) * 4), 1.8) * fall;
-            cdf[y * W + x] = acc;
-          }
-        }
-        if (acc < 1) throw new Error("frame too dark to sample");
-
-        const rng = mulberry32(seed);
-        const out = new Float32Array(N * 3);
-        const scale = width / W;
-        for (let k = 0; k < N; k++) {
-          const target = rng() * acc;
-          let lo = 0;
-          let hi = cdf.length - 1;
-          while (lo < hi) {
-            const mid = (lo + hi) >> 1;
-            if (cdf[mid] < target) lo = mid + 1;
-            else hi = mid;
-          }
-          const x = lo % W;
-          const y = (lo / W) | 0;
-          const lum = lumAt((y * W + x) * 4);
-          out[k * 3] = (x - W / 2 + rng()) * scale;
-          out[k * 3 + 1] = (H / 2 - y + rng()) * scale;
-          // Relief: bright features float toward the camera.
-          out[k * 3 + 2] = zCenter + (lum - 0.35) * 1.4 + (rng() - 0.5) * 0.12;
-        }
-        resolve(out);
-      } catch {
-        resolve(null);
-      }
-    };
-    img.onerror = () => resolve(null);
-    img.src = url;
-  });
 }
 
 const VERT = /* glsl */ `
@@ -631,11 +477,7 @@ export default function MorphField({ quality = "high", interactive = false }) {
     // says the cursor is at any camera angle. Mouse only.
     if (interactive) {
       const cam = state.camera;
-      rayDir.current
-        .set(pointer.x, pointer.y, 0.5)
-        .unproject(cam)
-        .sub(cam.position)
-        .normalize();
+      rayDir.current.set(pointer.x, pointer.y, 0.5).unproject(cam).sub(cam.position).normalize();
       // Plane: passes through the origin (the field's centre), normal =
       // the camera's forward axis. Robust for every shot in the journey,
       // unlike a hard-coded z = 0 plane.
@@ -749,8 +591,7 @@ export default function MorphField({ quality = "high", interactive = false }) {
 
       group.current.rotation.order = "YXZ"; // spin in-plane, then tilt
       group.current.rotation.y = orbit * rm + ry * (1 - rm);
-      group.current.rotation.x =
-        RING_TILT * rm + Math.sin(scroll * Math.PI) * 0.15 * (1 - rm);
+      group.current.rotation.x = RING_TILT * rm + Math.sin(scroll * Math.PI) * 0.15 * (1 - rm);
       group.current.rotation.z = RING_ROLL * rm;
     }
   });

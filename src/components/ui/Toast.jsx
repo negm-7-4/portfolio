@@ -1,31 +1,44 @@
-import { createContext, useCallback, useContext, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
+import { registerToast } from "../../lib/toast";
 
 const ToastCtx = createContext(null);
 
+const DEFAULT_DURATION = 2500;
+
 /**
  * Tiny toast system. Wrap the app, then call useToast().show("text") from
- * anywhere. Stacks at the top-right; toasts auto-dismiss after 2.5s.
+ * anywhere inside it, or `toast()` from lib/toast for non-React callers.
+ * Stacks at the top-right; toasts auto-dismiss after 2.5s by default.
  */
 export function ToastProvider({ children }) {
   const [toasts, setToasts] = useState([]);
+  // Timers are tracked so unmounting mid-flight cannot leave a setState
+  // pointed at a dead component.
+  const timers = useRef(new Set());
 
   const show = useCallback((message, opts = {}) => {
-    const id = Date.now() + Math.random();
-    const toast = {
-      id,
-      message,
-      kind: opts.kind ?? "info", // info | success | warn
-      icon: opts.icon,
-    };
-    setToasts((t) => [...t, toast]);
-    setTimeout(() => {
+    const id = `${Date.now()}-${Math.random()}`;
+    const duration = opts.duration ?? DEFAULT_DURATION;
+    setToasts((t) => [...t, { id, message, kind: opts.kind ?? "info", icon: opts.icon, duration }]);
+    const timer = setTimeout(() => {
+      timers.current.delete(timer);
       setToasts((t) => t.filter((x) => x.id !== id));
-    }, opts.duration ?? 2500);
+    }, duration);
+    timers.current.add(timer);
   }, []);
 
-  // expose globally too for non-React callers (lib/*)
-  if (typeof window !== "undefined") window.__toast = show;
+  // Non-React callers (lib/*, event handlers outside the tree) reach the
+  // toast queue through lib/toast rather than a global on `window`.
+  useEffect(() => registerToast(show), [show]);
+
+  useEffect(() => {
+    const pending = timers.current;
+    return () => {
+      pending.forEach(clearTimeout);
+      pending.clear();
+    };
+  }, []);
 
   return (
     <ToastCtx.Provider value={{ show }}>
@@ -40,13 +53,17 @@ export function ToastProvider({ children }) {
         <AnimatePresence>
           {toasts.map((t) => {
             const tint =
-              t.kind === "success" ? "rgba(74,222,128,0.45)" :
-              t.kind === "warn"    ? "rgba(251,191,36,0.45)" :
-                                     "rgba(170,180,196,0.45)";
+              t.kind === "success"
+                ? "rgba(74,222,128,0.45)"
+                : t.kind === "warn"
+                  ? "rgba(251,191,36,0.45)"
+                  : "rgba(170,180,196,0.45)";
             const dot =
-              t.kind === "success" ? "rgb(74,222,128)" :
-              t.kind === "warn"    ? "rgb(251,191,36)" :
-                                     "rgb(170,180,196)";
+              t.kind === "success"
+                ? "rgb(74,222,128)"
+                : t.kind === "warn"
+                  ? "rgb(251,191,36)"
+                  : "rgb(170,180,196)";
             return (
               <motion.div
                 key={t.id}
@@ -85,12 +102,13 @@ export function ToastProvider({ children }) {
                   {t.message}
                 </span>
 
-                {/* tiny progress bar showing time remaining */}
+                {/* tiny progress bar showing time remaining — tracks this
+                    toast's own duration, not a hardcoded 2.5s */}
                 <motion.span
                   className="absolute bottom-0 left-0 h-[1.5px]"
                   initial={{ width: "100%" }}
                   animate={{ width: "0%" }}
-                  transition={{ duration: 2.5, ease: "linear" }}
+                  transition={{ duration: t.duration / 1000, ease: "linear" }}
                   style={{ background: dot, opacity: 0.35 }}
                 />
               </motion.div>

@@ -5,7 +5,7 @@ import { experience } from "../store/experience";
 import useDeviceProfile from "../hooks/useDeviceProfile";
 
 const greetings = ["Hello", "مرحبا", "Bonjour", "こんにちは", "Hola", "Ciao", "Hallo"];
-const PANELS    = 8;
+const PANELS = 8;
 const NAME_HOLD = 700;
 const MAX_DURATION = 3500;
 
@@ -35,7 +35,9 @@ function RingProgress({ progress }) {
       <circle cx="62" cy="62" r={R} fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth="1" />
       {/* fill */}
       <motion.circle
-        cx="62" cy="62" r={R}
+        cx="62"
+        cy="62"
+        r={R}
         fill="none"
         stroke="url(#ringGrad)"
         strokeWidth="1.5"
@@ -63,12 +65,11 @@ function RingProgress({ progress }) {
  *  - done phase:    8-panel alternating-direction curtain reveal
  */
 export default function Preloader({ onDone }) {
-  const [count,      setCount]      = useState(0);
+  const [count, setCount] = useState(0);
   const [greetIndex, setGreetIndex] = useState(0);
-  const [phase,      setPhase]      = useState("loading");
+  const [phase, setPhase] = useState("loading");
   const [robotReady, setRobotReady] = useState(false);
-  const [scanDone,   setScanDone]   = useState(false);
-  const [showSkip,   setShowSkip]   = useState(false);
+  const [showSkip, setShowSkip] = useState(false);
   const finishedRef = useRef(false);
   const { tier } = useDeviceProfile();
 
@@ -129,9 +130,10 @@ export default function Preloader({ onDone }) {
       setCount((c) => {
         // Ease toward the target, clamped so a sudden asset finish reads as a
         // confident acceleration rather than a teleport.
-        const step = target >= 100
-          ? Math.min(14, Math.max(5, (target - c) * 0.38))
-          : Math.min(9, Math.max(1, (target - c) * 0.22));
+        const step =
+          target >= 100
+            ? Math.min(14, Math.max(5, (target - c) * 0.38))
+            : Math.min(9, Math.max(1, (target - c) * 0.22));
         const n = Math.min(c + step, target, 100);
         rawProgress.set(n / 100);
         if (n >= 100 && !done) {
@@ -166,21 +168,27 @@ export default function Preloader({ onDone }) {
       if (Date.now() - nameStart >= NAME_HOLD && robotReady) finish();
     }, 150);
     const max = setTimeout(finish, MAX_DURATION);
-    return () => { clearInterval(poll); clearTimeout(max); };
+    return () => {
+      clearInterval(poll);
+      clearTimeout(max);
+    };
   }, [phase, robotReady, onDone]);
 
   const covering = phase !== "done";
 
   return (
-    <div
-      className="fixed inset-0 z-[10000] overflow-hidden"
-      role="progressbar"
-      aria-label="Loading portfolio"
-      aria-valuemin={0}
-      aria-valuemax={100}
-      aria-valuenow={count}
-    >
-
+    <div className="fixed inset-0 z-[10000] overflow-hidden">
+      {/* The progressbar role lives on its own node rather than the
+          full-screen wrapper: the wrapper also holds the Skip button, and a
+          progressbar is not allowed to contain interactive content. */}
+      <div
+        className="sr-only"
+        role="progressbar"
+        aria-label="Loading portfolio"
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={count}
+      />
       {/* ══ 8-panel exit curtain ══ */}
       <div className="absolute inset-0 flex">
         {Array.from({ length: PANELS }).map((_, i) => {
@@ -190,9 +198,7 @@ export default function Preloader({ onDone }) {
               key={i}
               className="h-full flex-1 bg-[#0b0d11]"
               initial={{ y: 0 }}
-              animate={phase === "done"
-                ? { y: even ? "-105%" : "105%" }
-                : { y: 0 }}
+              animate={phase === "done" ? { y: even ? "-105%" : "105%" } : { y: 0 }}
               transition={{
                 duration: 0.75,
                 ease: [0.76, 0, 0.24, 1],
@@ -209,9 +215,6 @@ export default function Preloader({ onDone }) {
         animate={{ opacity: phase === "done" ? 0 : 1 }}
         transition={{ duration: 0.35 }}
       >
-        {/* ── Cinematic atmosphere — drifting luminous dust behind it all ── */}
-        {/* <PreloaderAtmosphere /> */} {/* This component is not defined in the provided context, assuming it's commented out or removed */}
-
         {/* ── Top bar ── */}
         <motion.div
           className="flex items-center justify-between px-8 py-7 sm:px-12"
@@ -244,21 +247,10 @@ export default function Preloader({ onDone }) {
           animate={{ scale: [1, 1.08, 1], opacity: [0.7, 1, 0.7] }}
           transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
           className="pointer-events-none absolute left-1/2 top-1/2 h-[700px] w-[700px] -translate-x-1/2 -translate-y-1/2 rounded-full"
-          style={{ background: "radial-gradient(circle, rgba(170,180,196,0.12) 0%, transparent 60%)" }}
+          style={{
+            background: "radial-gradient(circle, rgba(170,180,196,0.12) 0%, transparent 60%)",
+          }}
         />
-
-        {/* ── Subtle 3D atmosphere — slow wireframe sculptures drifting behind ── */}
-        {/* <motion.div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 flex items-center justify-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: phase === "done" ? 0 : 1 }}
-          transition={{ duration: 1.2, delay: 0.2 }}
-        >
-          <Gyro size={460} dur={48} color="rgba(170,184,210,0.16)" className="absolute" />
-          <WireCube size={150} dur={40} color="rgba(170,184,210,0.14)" className="absolute left-[14%] top-[24%] hidden md:block" />
-          <WireCube size={110} dur={34} color="rgba(170,184,210,0.12)" className="absolute right-[16%] bottom-[26%] hidden md:block" />
-        </motion.div> */} {/* These components are not defined in the provided context, assuming they are commented out or removed */}
 
         {/* ══ LOADING PHASE ══ */}
         <AnimatePresence mode="wait">
@@ -301,8 +293,8 @@ export default function Preloader({ onDone }) {
                     key={greetIndex}
                     className="font-display text-5xl font-light tracking-wide text-white md:text-7xl"
                     initial={{ clipPath: "inset(0 100% 0 0)", opacity: 0 }}
-                    animate={{ clipPath: "inset(0 0% 0 0)",   opacity: 1 }}
-                    exit={{    clipPath: "inset(0 0 0 100%)",  opacity: 0 }}
+                    animate={{ clipPath: "inset(0 0% 0 0)", opacity: 1 }}
+                    exit={{ clipPath: "inset(0 0 0 100%)", opacity: 0 }}
                     transition={{ duration: 0.4, ease: [0.76, 0, 0.24, 1] }}
                   >
                     {greetings[greetIndex]}
@@ -312,7 +304,17 @@ export default function Preloader({ onDone }) {
 
               {/* corner decorations */}
               <motion.div
-                className="absolute left-8 bottom-20 text-white/10 font-mono text-xs tracking-[0.3em]"
+                /* Was text-white/10 — a 1.26:1 contrast ratio, which is not
+                   "subtle", it is invisible. /45 measures 4.53:1, which passes
+                   on paper but sits so close to the 4.5 threshold that the
+                   element's own opacity fade drops it under mid-animation —
+                   the audit caught it intermittently, which is exactly what a
+                   real user on a dim laptop screen experiences. /60 is 7.25:1
+                   and still reads as a quiet corner label. The sr-only
+                   progressbar carries this state for assistive tech, so the
+                   text itself stays decorative. */
+                aria-hidden
+                className="absolute left-8 bottom-20 font-mono text-xs tracking-[0.3em] text-white/60"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.5 }}
@@ -355,7 +357,6 @@ export default function Preloader({ onDone }) {
                   initial={{ top: "0%", opacity: 0 }}
                   animate={{ top: "100%", opacity: [0, 1, 1, 0] }}
                   transition={{ duration: 1.4, delay: 0.3, ease: "linear" }}
-                  onAnimationComplete={() => setScanDone(true)}
                 />
 
                 <div className="flex flex-wrap justify-center overflow-visible">
@@ -367,7 +368,14 @@ export default function Preloader({ onDone }) {
                         className={`font-display text-5xl font-bold md:text-8xl ${ch !== " " ? "text-gradient" : ""}`}
                         style={{ display: "inline-block" }}
                         initial={scatter}
-                        animate={{ x: 0, y: 0, rotate: 0, scale: 1, filter: "blur(0px)", opacity: 1 }}
+                        animate={{
+                          x: 0,
+                          y: 0,
+                          rotate: 0,
+                          scale: 1,
+                          filter: "blur(0px)",
+                          opacity: 1,
+                        }}
                         transition={{
                           duration: 0.9,
                           delay: i * 0.055,
@@ -392,7 +400,11 @@ export default function Preloader({ onDone }) {
                     className="block text-[11px] uppercase tracking-[0.38em] text-white/65 md:text-xs"
                     initial={{ clipPath: "inset(0 100% 0 0)" }}
                     animate={{ clipPath: "inset(0 0% 0 0)" }}
-                    transition={{ duration: 0.9, delay: profile.name.length * 0.055 + 0.2, ease: [0.76, 0, 0.24, 1] }}
+                    transition={{
+                      duration: 0.9,
+                      delay: profile.name.length * 0.055 + 0.2,
+                      ease: [0.76, 0, 0.24, 1],
+                    }}
                   >
                     {profile.role}
                   </motion.span>
@@ -430,7 +442,9 @@ export default function Preloader({ onDone }) {
             <span
               aria-hidden
               className="pointer-events-none absolute inset-0 -inset-x-4 rounded-full opacity-40 blur-2xl"
-              style={{ background: "radial-gradient(circle, rgba(170,180,196,0.4), transparent 70%)" }}
+              style={{
+                background: "radial-gradient(circle, rgba(170,180,196,0.4), transparent 70%)",
+              }}
             />
             <span className="relative">
               {String(count).padStart(3, "0")}
@@ -468,11 +482,11 @@ export default function Preloader({ onDone }) {
             style={{
               width: `${count}%`,
               transition: "width 200ms ease-out",
-              background: "linear-gradient(90deg, #8a93a6aa, #aab4c4, #ffffffaa, #aab4c4, #8a93a6aa)",
+              background:
+                "linear-gradient(90deg, #8a93a6aa, #aab4c4, #ffffffaa, #aab4c4, #8a93a6aa)",
             }}
           />
         </motion.div>
-
       </motion.div>
     </div>
   );

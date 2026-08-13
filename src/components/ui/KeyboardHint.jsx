@@ -55,12 +55,16 @@ export default function KeyboardHint() {
             animate={{ scale: [1, 1.08, 1] }}
             transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
             className="rounded-md border border-white/15 bg-white/[0.04] px-2 py-0.5 font-display text-white"
-          >←</motion.kbd>
+          >
+            ←
+          </motion.kbd>
           <motion.kbd
             animate={{ scale: [1, 1.08, 1] }}
             transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut", delay: 0.4 }}
             className="rounded-md border border-white/15 bg-white/[0.04] px-2 py-0.5 font-display text-white"
-          >→</motion.kbd>
+          >
+            →
+          </motion.kbd>
           <span className="text-white/55">to navigate</span>
         </motion.div>
       )}

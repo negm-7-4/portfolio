@@ -49,7 +49,10 @@ export default function MagneticText({ text, className = "", radius = 140, stren
   const rectsRef = useRef([]);
 
   const registerChar = (i, entry) => {
-    if (!entry) { charsRef.current[i] = null; return; }
+    if (!entry) {
+      charsRef.current[i] = null;
+      return;
+    }
     charsRef.current[i] = entry;
   };
 
@@ -77,7 +80,8 @@ export default function MagneticText({ text, className = "", radius = 140, stren
   useEffect(() => {
     if (!c) return;
     let raf = 0;
-    let prevMx = -1, prevMy = -1;
+    let prevMx = -1,
+      prevMy = -1;
 
     const tick = () => {
       const mx = c.mx.get();
@@ -88,7 +92,8 @@ export default function MagneticText({ text, className = "", radius = 140, stren
         raf = requestAnimationFrame(tick);
         return;
       }
-      prevMx = mx; prevMy = my;
+      prevMx = mx;
+      prevMy = my;
 
       const entries = charsRef.current;
       const rects = rectsRef.current;
@@ -121,11 +126,26 @@ export default function MagneticText({ text, className = "", radius = 140, stren
     return () => cancelAnimationFrame(raf);
   }, [c]);
 
+  /* Accessibility: `aria-label` on a generic <span> is ignored by most screen
+     readers, so the per-letter spans would be announced one character at a
+     time ("M — O — H — A — M — E — D"). Instead the split letters are hidden
+     from the accessibility tree entirely and the real word is exposed once,
+     visually hidden, beside them. */
   return (
-    <span className={className} aria-label={text} style={{ display: "inline-block" }}>
-      {text.split("").map((ch, i) => (
-        <Char key={i} ch={ch} idx={i} radius={radius} strength={strength} registerChar={registerChar} />
-      ))}
+    <span className={className} style={{ display: "inline-block" }}>
+      <span className="sr-only">{text}</span>
+      <span aria-hidden="true" style={{ display: "inline-block" }}>
+        {text.split("").map((ch, i) => (
+          <Char
+            key={i}
+            ch={ch}
+            idx={i}
+            radius={radius}
+            strength={strength}
+            registerChar={registerChar}
+          />
+        ))}
+      </span>
     </span>
   );
 }

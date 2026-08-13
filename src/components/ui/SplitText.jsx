@@ -24,40 +24,62 @@ export default function SplitText({
   const container = staggerContainer(stagger, delay);
   const child = foldChild({ blur });
 
+  // `as` is honoured so a split headline can be a real <h2>/<p> rather than
+  // always a <span>. Falls back to span for anything motion cannot proxy.
+  const MotionTag = motion[Tag] ?? motion.span;
+
   const Unit = ({ children }) => (
     <span
       className="inline-block overflow-hidden pb-[0.14em] mr-[0.28em] align-bottom"
       style={{ perspective: 600 }}
     >
-      <motion.span variants={child} className="inline-block" style={{ transformOrigin: "50% 100%" }}>
+      <motion.span
+        variants={child}
+        className="inline-block"
+        style={{ transformOrigin: "50% 100%" }}
+      >
         {children}
       </motion.span>
     </span>
   );
 
   return (
-    <motion.span
+    <MotionTag
       variants={container}
       initial="hidden"
       whileInView="show"
       viewport={{ once: false, margin: VIEWPORT.margin }}
       className={`inline-flex flex-wrap ${className}`}
-      aria-label={text}
     >
-      {perChar
-        ? words.map((word, wi) => (
-            // keep each word intact (no mid-word wrapping) but reveal its letters
-            <span key={wi} className="inline-flex mr-[0.28em] whitespace-nowrap" style={{ perspective: 600 }}>
-              {word.split("").map((ch, ci) => (
-                <span key={ci} className="inline-block overflow-hidden pb-[0.14em]">
-                  <motion.span variants={child} className="inline-block" style={{ transformOrigin: "50% 100%" }}>
-                    {ch}
-                  </motion.span>
-                </span>
-              ))}
-            </span>
-          ))
-        : words.map((word, i) => <Unit key={i}>{word}</Unit>)}
-    </motion.span>
+      {/* The split words/letters are decorative duplicates as far as assistive
+          tech is concerned — an `aria-label` on a generic element is widely
+          ignored, so the real sentence is exposed once, visually hidden, and
+          the animated fragments are hidden from the tree. */}
+      <span className="sr-only">{text}</span>
+      <span aria-hidden="true" className="contents">
+        {perChar
+          ? words.map((word, wi) => (
+              // keep each word intact (no mid-word wrapping) but reveal its letters
+              <span
+                key={wi}
+                className="inline-flex mr-[0.28em] whitespace-nowrap"
+                style={{ perspective: 600 }}
+              >
+                {word.split("").map((ch, ci) => (
+                  <span key={ci} className="inline-block overflow-hidden pb-[0.14em]">
+                    <motion.span
+                      variants={child}
+                      className="inline-block"
+                      style={{ transformOrigin: "50% 100%" }}
+                    >
+                      {ch}
+                    </motion.span>
+                  </span>
+                ))}
+              </span>
+            ))
+          : words.map((word, i) => <Unit key={i}>{word}</Unit>)}
+      </span>
+    </MotionTag>
   );
 }

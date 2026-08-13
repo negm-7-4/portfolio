@@ -1,0 +1,45 @@
+version: 2
+
+# The 3D stack is the reason this exists. three.js, drei and R3F move fast and
+# break each other in ways that only show up at runtime on real GPUs, so they
+# are grouped into one PR — bumping drei without three is how you get a blank
+# canvas and no error. Everything else is grouped by risk, monthly, so this
+# stays a signal rather than a stream of noise on a personal site.
+updates:
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 5
+    groups:
+      three-stack:
+        patterns:
+          - "three"
+          - "@react-three/*"
+          - "@types/three"
+          - "postprocessing"
+      animation:
+        patterns:
+          - "gsap"
+          - "motion"
+          - "lenis"
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "@types/react"
+          - "@types/react-dom"
+      tooling:
+        dependency-type: development
+        patterns:
+          - "*"
+    ignore:
+      # Pinned deliberately: typescript-eslint does not support the TS 7.0
+      # compiler API yet (see README). Unpin once it does.
+      - dependency-name: typescript
+        versions: ["7.x"]
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: monthly

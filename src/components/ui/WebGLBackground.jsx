@@ -107,7 +107,9 @@ export default function WebGLBackground() {
     const c = ref.current;
     if (!c) return;
     const gl = c.getContext("webgl2", {
-      alpha: false, antialias: false, powerPreference: "default",
+      alpha: false,
+      antialias: false,
+      powerPreference: "default",
     });
     if (!gl) return;
 
@@ -119,7 +121,7 @@ export default function WebGLBackground() {
 
     const buf = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,1,-1,-1,1,1,1]), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
     const aLoc = gl.getAttribLocation(prog, "a");
     gl.enableVertexAttribArray(aLoc);
     gl.vertexAttribPointer(aLoc, 2, gl.FLOAT, false, 0, 0);
@@ -131,7 +133,10 @@ export default function WebGLBackground() {
 
     let mx = window.innerWidth / 2;
     let my = window.innerHeight / 2;
-    let sy = 0, W = 0, H = 0, raf = 0;
+    let sy = 0,
+      W = 0,
+      H = 0,
+      raf = 0;
     let running = true;
     let lastActivity = performance.now();
     const t0 = performance.now();
@@ -141,13 +146,23 @@ export default function WebGLBackground() {
     const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
 
     const onResize = () => {
-      W = window.innerWidth; H = window.innerHeight;
-      c.width = Math.round(W * dpr); c.height = Math.round(H * dpr);
-      c.style.width = W + "px"; c.style.height = H + "px";
+      W = window.innerWidth;
+      H = window.innerHeight;
+      c.width = Math.round(W * dpr);
+      c.height = Math.round(H * dpr);
+      c.style.width = W + "px";
+      c.style.height = H + "px";
       gl.viewport(0, 0, c.width, c.height);
     };
-    const onMove   = (e) => { mx = e.clientX; my = e.clientY; lastActivity = performance.now(); };
-    const onScroll = () => { sy = window.scrollY; lastActivity = performance.now(); };
+    const onMove = (e) => {
+      mx = e.clientX;
+      my = e.clientY;
+      lastActivity = performance.now();
+    };
+    const onScroll = () => {
+      sy = window.scrollY;
+      lastActivity = performance.now();
+    };
 
     // Pause rendering when the tab is hidden — saves significant CPU/battery.
     const onVis = () => {
@@ -161,9 +176,9 @@ export default function WebGLBackground() {
     };
 
     onResize();
-    window.addEventListener("resize",    onResize);
-    window.addEventListener("mousemove", onMove,   { passive: true });
-    window.addEventListener("scroll",    onScroll, { passive: true });
+    window.addEventListener("resize", onResize);
+    window.addEventListener("mousemove", onMove, { passive: true });
+    window.addEventListener("scroll", onScroll, { passive: true });
     document.addEventListener("visibilitychange", onVis);
 
     // Throttle to ~30fps when there's been no cursor/scroll activity for
@@ -173,7 +188,7 @@ export default function WebGLBackground() {
     const tick = () => {
       const now = performance.now();
       const idle = now - lastActivity > 1500;
-      const minFrameMs = idle ? 40 : 0;  // ~24fps idle, otherwise full speed
+      const minFrameMs = idle ? 40 : 0; // ~24fps idle, otherwise full speed
       if (now - lastDraw >= minFrameMs) {
         lastDraw = now;
         gl.useProgram(prog);
@@ -189,9 +204,9 @@ export default function WebGLBackground() {
 
     return () => {
       cancelAnimationFrame(raf);
-      window.removeEventListener("resize",    onResize);
+      window.removeEventListener("resize", onResize);
       window.removeEventListener("mousemove", onMove);
-      window.removeEventListener("scroll",    onScroll);
+      window.removeEventListener("scroll", onScroll);
       document.removeEventListener("visibilitychange", onVis);
     };
   }, []);

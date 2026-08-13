@@ -13,7 +13,11 @@ export default function StarSignature({ className = "" }) {
 
   // points of a 5-point star centred at (40,40), outer r=30, inner r=12
   const starPath = (() => {
-    const cx = 40, cy = 40, outer = 30, inner = 12, pts = [];
+    const cx = 40,
+      cy = 40,
+      outer = 30,
+      inner = 12,
+      pts = [];
     for (let i = 0; i < 10; i++) {
       const r = i % 2 === 0 ? outer : inner;
       const a = (Math.PI / 5) * i - Math.PI / 2;
@@ -33,10 +37,17 @@ export default function StarSignature({ className = "" }) {
             animate={inView ? { rotate: 360 } : {}}
             transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
           >
-            <span className="absolute -top-[3px] left-1/2 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-[#aab4c4]" style={{ boxShadow: "0 0 10px #aab4c4" }} />
+            <span
+              className="absolute -top-[3px] left-1/2 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-[#aab4c4]"
+              style={{ boxShadow: "0 0 10px #aab4c4" }}
+            />
           </motion.span>
 
-          <svg viewBox="0 0 80 80" className="absolute inset-0 h-full w-full" aria-label="Najm star mark">
+          <svg
+            viewBox="0 0 80 80"
+            className="absolute inset-0 h-full w-full"
+            aria-label="Najm star mark"
+          >
             <defs>
               <linearGradient id="star-grad" x1="0" y1="0" x2="1" y2="1">
                 <stop offset="0%" stopColor="#ffffff" />
@@ -51,7 +62,10 @@ export default function StarSignature({ className = "" }) {
               initial={{ opacity: 0, scale: 0.6 }}
               animate={inView ? { opacity: 0.18, scale: 1 } : { opacity: 0, scale: 0.6 }}
               transition={{ delay: 1.4, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-              style={{ transformOrigin: "40px 40px", filter: "drop-shadow(0 0 12px rgba(170,180,196,0.6))" }}
+              style={{
+                transformOrigin: "40px 40px",
+                filter: "drop-shadow(0 0 12px rgba(170,180,196,0.6))",
+              }}
             />
             {/* drawn outline */}
             <motion.path

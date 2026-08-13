@@ -1,18 +1,28 @@
 /* Tiny service worker — cache-first for static assets, network-first for HTML.
    Makes repeat visits instant. */
 
-const VERSION = "v4";
+const VERSION = "v5";
 const STATIC_CACHE = `static-${VERSION}`;
 const RUNTIME_CACHE = `runtime-${VERSION}`;
 
 /* Precache just the shell. Vite-generated JS/CSS chunks have content hashes
    in their filenames so they'll be picked up on first request and cached
    forever by runtime caching below. */
-const SHELL = ["/", "/index.html", "/favicon.svg"];
+const SHELL = [
+  "/",
+  "/index.html",
+  "/favicon.svg",
+  // Self-hosted fonts: stable filenames, needed for the very first paint, and
+  // small enough that precaching them makes a repeat visit render instantly.
+  "/fonts/inter-latin-variable.woff2",
+  "/fonts/space-grotesk-latin-700.woff2",
+];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(
-    caches.open(STATIC_CACHE).then((c) => c.addAll(SHELL))
+    caches
+      .open(STATIC_CACHE)
+      .then((c) => c.addAll(SHELL))
       .catch(() => undefined)
   );
   self.skipWaiting();
@@ -20,13 +30,13 @@ self.addEventListener("install", (e) => {
 
 self.addEventListener("activate", (e) => {
   e.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(
-        keys
-          .filter((k) => k !== STATIC_CACHE && k !== RUNTIME_CACHE)
-          .map((k) => caches.delete(k))
+    caches
+      .keys()
+      .then((keys) =>
+        Promise.all(
+          keys.filter((k) => k !== STATIC_CACHE && k !== RUNTIME_CACHE).map((k) => caches.delete(k))
+        )
       )
-    )
   );
   self.clients.claim();
 });
@@ -37,13 +47,10 @@ self.addEventListener("fetch", (e) => {
 
   const url = new URL(request.url);
 
-  // Skip cross-origin requests except for fonts.gstatic and prod.spline
+  // Fonts are self-hosted now, so there is no third-party origin worth
+  // caching — anything cross-origin goes straight to the network.
   const sameOrigin = url.origin === self.location.origin;
-  const isFontFile =
-    url.host === "fonts.gstatic.com" || url.host === "fonts.googleapis.com";
-  const isSpline = url.host === "prod.spline.design";
-
-  if (!sameOrigin && !isFontFile && !isSpline) return;
+  if (!sameOrigin) return;
 
   // CVs change without a content-hashed filename. Always ask the network first
   // so returning visitors do not see a stale résumé after an update.

@@ -48,7 +48,7 @@ function StickyInfo({ p, idx, total }) {
             className="block font-display text-[11px] font-semibold uppercase tracking-[0.32em]"
             style={{ color: `${p.color}cc` }}
           >
-            ( {idx} / {String(total).padStart(2, "0")} )  ·  {p.category}
+            ( {idx} / {String(total).padStart(2, "0")} ) · {p.category}
           </motion.span>
 
           <motion.h3
@@ -119,10 +119,9 @@ export default function ClassicShowcase() {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const io = new IntersectionObserver(
-      ([e]) => setInView(e.isIntersecting),
-      { rootMargin: "-15% 0px -15% 0px" }
-    );
+    const io = new IntersectionObserver(([e]) => setInView(e.isIntersecting), {
+      rootMargin: "-15% 0px -15% 0px",
+    });
     io.observe(el);
     return () => io.disconnect();
   }, []);
@@ -143,7 +142,10 @@ export default function ClassicShowcase() {
         let bestIdx = 0;
         let bestRatio = -1;
         for (const [i, r] of ratios) {
-          if (r > bestRatio) { bestRatio = r; bestIdx = i; }
+          if (r > bestRatio) {
+            bestRatio = r;
+            bestIdx = i;
+          }
         }
         setActive(bestIdx);
       },
@@ -176,7 +178,9 @@ export default function ClassicShowcase() {
         {projects.map((p, i) => (
           <button
             key={p.title}
-            onClick={() => slotRefs.current[i]?.scrollIntoView({ behavior: "smooth", block: "center" })}
+            onClick={() =>
+              slotRefs.current[i]?.scrollIntoView({ behavior: "smooth", block: "center" })
+            }
             data-cursor="hover"
             className="group flex items-center gap-2"
             aria-label={`Go to project ${i + 1}`}
@@ -197,17 +201,16 @@ export default function ClassicShowcase() {
       <div className="grid grid-cols-1 gap-x-10 md:grid-cols-12">
         {/* LEFT: sticky info — sticky on the column itself, self-start so it doesn't stretch */}
         <aside className="md:col-span-5 md:sticky md:top-28 md:self-start">
-          <StickyInfo
-            p={projects[active]}
-            idx={padded(active)}
-            total={projects.length}
-          />
+          <StickyInfo p={projects[active]} idx={padded(active)} total={projects.length} />
         </aside>
 
         {/* RIGHT: stack of browser-framed previews — this scrolls */}
         <div className="mt-12 flex flex-col gap-24 md:col-span-7 md:col-start-6 md:mt-0 md:gap-40">
           {projects.map((p, i) => {
-            const url = (p.live || p.github || p.caseStudy || "Private build").replace(/https?:\/\//, "");
+            const url = (p.live || p.github || p.caseStudy || "Private build").replace(
+              /https?:\/\//,
+              ""
+            );
             return (
               <div
                 key={p.title}
@@ -222,14 +225,19 @@ export default function ClassicShowcase() {
                     ) : (
                       <div
                         className="absolute inset-0 flex items-center justify-center"
-                        style={{ background: `linear-gradient(135deg, ${p.color}22 0%, transparent 100%)` }}
+                        style={{
+                          background: `linear-gradient(135deg, ${p.color}22 0%, transparent 100%)`,
+                        }}
                       >
                         <div className="text-center">
                           <p
                             className="font-display text-7xl font-bold tracking-tight"
                             style={{ color: `${p.color}55` }}
                           >
-                            {p.title.split(" ").map((w) => w[0]).join("")}
+                            {p.title
+                              .split(" ")
+                              .map((w) => w[0])
+                              .join("")}
                           </p>
                           <p className="mt-3 text-[10px] uppercase tracking-[0.3em] text-white/50">
                             preview · soon

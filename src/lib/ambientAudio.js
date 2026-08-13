@@ -107,7 +107,11 @@ export function isAudioEnabled() {
 export async function enableAudio() {
   if (!built) build();
   enabled = true;
-  try { await ctx.resume(); } catch { /* ignore */ }
+  try {
+    await ctx.resume();
+  } catch {
+    /* ignore */
+  }
   ramp(TARGET_GAIN, 1.4);
 }
 
@@ -182,7 +186,10 @@ export function sfxWarp() {
   osc.start(t);
   osc.stop(t + 0.6);
 
-  noise.onended = () => { bp.disconnect(); ng.disconnect(); };
+  noise.onended = () => {
+    bp.disconnect();
+    ng.disconnect();
+  };
   osc.onended = () => og.disconnect();
 }
 

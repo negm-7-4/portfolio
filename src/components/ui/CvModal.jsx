@@ -2,13 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import { profile, resume } from "../../data/content";
 import useOverlayScrollLock from "../../hooks/useOverlayScrollLock";
+import { APP_EVENTS, onAppEvent } from "../../lib/appEvents";
 
 /**
  * CV MODAL — a cinematic, in-page résumé.
  *
- * Opened from anywhere by dispatching `window.dispatchEvent(new Event("open-cv"))`
- * (the Navbar / Contact / command palette all use this), so it stays fully
- * decoupled — no prop drilling, no shared store. It renders the résumé live
+ * Opened from anywhere by calling `openCv()` from lib/appEvents (the Navbar,
+ * Contact and command palette all use it), so it stays fully decoupled — no
+ * prop drilling, no shared store. It renders the résumé live
  * from `resume` in content.js (the same data the downloadable PDF was built
  * from), with a curtain entrance and staggered section reveals.
  *
@@ -48,8 +49,7 @@ export default function CvModal() {
       lastFocused.current = document.activeElement;
       setOpen(true);
     };
-    window.addEventListener("open-cv", onOpen);
-    return () => window.removeEventListener("open-cv", onOpen);
+    return onAppEvent(APP_EVENTS.openCv, onOpen);
   }, []);
 
   useOverlayScrollLock(open);
@@ -93,10 +93,7 @@ export default function CvModal() {
       ) {
         e.preventDefault();
         last.focus();
-      } else if (
-        !e.shiftKey &&
-        (activeElement === last || !panel.contains(activeElement))
-      ) {
+      } else if (!e.shiftKey && (activeElement === last || !panel.contains(activeElement))) {
         e.preventDefault();
         first.focus();
       }
@@ -125,17 +122,22 @@ export default function CvModal() {
           aria-label="Curriculum Vitae"
         >
           {/* Backdrop — blurred, dimmed */}
-          <div
-            aria-hidden
-            className="fixed inset-0 bg-black/70 backdrop-blur-md"
-          />
+          <div aria-hidden className="fixed inset-0 bg-black/70 backdrop-blur-md" />
 
           {/* Panel */}
           <motion.div
             ref={panelRef}
             onClick={(e) => e.stopPropagation()}
-            initial={reduce ? { opacity: 0 } : { opacity: 0, y: 40, scale: 0.96, clipPath: "inset(0 0 100% 0 round 24px)" }}
-            animate={reduce ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1, clipPath: "inset(0 0 0% 0 round 24px)" }}
+            initial={
+              reduce
+                ? { opacity: 0 }
+                : { opacity: 0, y: 40, scale: 0.96, clipPath: "inset(0 0 100% 0 round 24px)" }
+            }
+            animate={
+              reduce
+                ? { opacity: 1 }
+                : { opacity: 1, y: 0, scale: 1, clipPath: "inset(0 0 0% 0 round 24px)" }
+            }
             exit={reduce ? { opacity: 0 } : { opacity: 0, y: 30, scale: 0.97 }}
             transition={{ duration: 0.6, ease: EASE }}
             className="relative z-10 flex max-h-[calc(100dvh-2rem)] w-full max-w-3xl flex-col overflow-hidden rounded-3xl border border-white/12 bg-[rgba(13,16,22,0.92)] shadow-[0_40px_120px_-20px_rgba(0,0,0,0.8)] sm:max-h-[calc(100dvh-3rem)]"
@@ -147,7 +149,9 @@ export default function CvModal() {
             <div
               aria-hidden
               className="pointer-events-none absolute -top-24 left-1/2 h-48 w-2/3 -translate-x-1/2 rounded-full opacity-40 blur-3xl"
-              style={{ background: "radial-gradient(circle, rgba(170,180,196,0.5), transparent 70%)" }}
+              style={{
+                background: "radial-gradient(circle, rgba(170,180,196,0.5), transparent 70%)",
+              }}
             />
 
             {/* corner brackets */}
@@ -157,7 +161,11 @@ export default function CvModal() {
               "left-4 bottom-4 border-l border-b",
               "right-4 bottom-4 border-r border-b",
             ].map((c, i) => (
-              <span key={i} className={`pointer-events-none absolute ${c} h-4 w-4 border-white/15`} aria-hidden />
+              <span
+                key={i}
+                className={`pointer-events-none absolute ${c} h-4 w-4 border-white/15`}
+                aria-hidden
+              />
             ))}
 
             <div
@@ -172,13 +180,13 @@ export default function CvModal() {
                 className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"
               >
                 <div>
-                  <p className="mb-1 text-[10px] uppercase tracking-[0.4em] text-white/55">Curriculum Vitae</p>
+                  <p className="mb-1 text-[10px] uppercase tracking-[0.4em] text-white/55">
+                    Curriculum Vitae
+                  </p>
                   <h2 className="font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
                     {resume.name}
                   </h2>
-                  <p className="mt-1.5 text-sm font-medium text-[#aab4c4]">
-                    {resume.headline}
-                  </p>
+                  <p className="mt-1.5 text-sm font-medium text-[#aab4c4]">{resume.headline}</p>
                   <p className="text-xs text-white/65">{resume.subhead}</p>
                 </div>
 
@@ -245,14 +253,19 @@ export default function CvModal() {
                 <Block label="Selected Projects" index={1}>
                   <div className="flex flex-col gap-4">
                     {resume.projects.map((p) => (
-                      <div key={p.name} className="group/pr rounded-xl border border-white/8 bg-white/[0.02] p-4 transition-colors hover:border-white/20">
+                      <div
+                        key={p.name}
+                        className="group/pr rounded-xl border border-white/8 bg-white/[0.02] p-4 transition-colors hover:border-white/20"
+                      >
                         <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-3">
                           <h4 className="font-display text-sm font-bold text-white">{p.name}</h4>
                           <span className="text-[10px] text-white/55">{p.kind}</span>
                         </div>
                         <ul className="mt-2 space-y-1.5 pl-4 text-[11px] leading-relaxed text-white/55">
                           {p.bullets.map((bullet) => (
-                            <li key={bullet} className="list-disc marker:text-[#aab4c4]/70">{bullet}</li>
+                            <li key={bullet} className="list-disc marker:text-[#aab4c4]/70">
+                              {bullet}
+                            </li>
                           ))}
                         </ul>
                         <div className="mt-3 flex flex-wrap items-center gap-2">
@@ -278,10 +291,15 @@ export default function CvModal() {
 
               <div className="mt-6">
                 <Block label="Certifications" index={2}>
-                  <p className="text-[11px] font-semibold text-white/75">{resume.certifications.provider}</p>
+                  <p className="text-[11px] font-semibold text-white/75">
+                    {resume.certifications.provider}
+                  </p>
                   <div className="mt-2 flex flex-wrap gap-1.5">
                     {resume.certifications.items.map((item) => (
-                      <span key={item} className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[10px] text-white/60">
+                      <span
+                        key={item}
+                        className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[10px] text-white/60"
+                      >
                         {item}
                       </span>
                     ))}
@@ -291,7 +309,9 @@ export default function CvModal() {
 
               <div className="mt-6 grid gap-6 md:grid-cols-2">
                 <Block label="Education" index={3}>
-                  <p className="text-[12px] font-semibold text-white/80">{resume.education.degree}</p>
+                  <p className="text-[12px] font-semibold text-white/80">
+                    {resume.education.degree}
+                  </p>
                   <p className="mt-1 text-[11px] text-white/50">{resume.education.school}</p>
                   <p className="text-[11px] text-white/60">{resume.education.location}</p>
                   <p className="mt-1 text-[11px] text-[#aab4c4]">{resume.education.detail}</p>

@@ -53,11 +53,7 @@ export default function SoundToggle() {
           <motion.span
             key={b}
             className="w-[2px] rounded-full bg-[#aab4c4]"
-            animate={
-              on
-                ? { height: ["35%", "100%", "45%", "85%", "35%"] }
-                : { height: "30%" }
-            }
+            animate={on ? { height: ["35%", "100%", "45%", "85%", "35%"] } : { height: "30%" }}
             transition={
               on
                 ? { duration: 1 + b * 0.18, repeat: Infinity, ease: "easeInOut", delay: b * 0.08 }

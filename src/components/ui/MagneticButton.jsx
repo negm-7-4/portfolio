@@ -38,7 +38,8 @@ export default function MagneticButton({
 
   const reset = () => {
     rectRef.current = null;
-    x.set(0); y.set(0);
+    x.set(0);
+    y.set(0);
   };
 
   const MotionTag = motion[as] || motion.button;

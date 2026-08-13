@@ -14,6 +14,7 @@ import ShowcaseCta from "../ShowcaseCta";
 import ProjectVisual from "../ProjectVisual";
 import { destinations, formatCoords } from "./destinations";
 import { globeState } from "./globeState";
+import { scrollTo } from "../../../lib/navigation";
 
 /* eslint-disable react/no-unknown-property */
 
@@ -233,10 +234,7 @@ function GlobeScene({ compact }) {
         q: new THREE.Quaternion().setFromUnitVectors(p, face),
         sun: sunVec(d.sun.az, d.sun.el),
         markerPos: latLngToVec3(d.lat, d.lng, R * 1.004),
-        markerQ: new THREE.Quaternion().setFromUnitVectors(
-          new THREE.Vector3(0, 0, 1),
-          p
-        ),
+        markerQ: new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), p),
       };
     });
   }, [center, camZ]);
@@ -532,20 +530,12 @@ export default function GlobeShowcase() {
       el.getBoundingClientRect().top +
       window.scrollY +
       (i / (n - 1)) * TAIL * (el.offsetHeight - window.innerHeight);
-    if (window.__lenis) window.__lenis.scrollTo(top, { duration: 1.6 });
-    else window.scrollTo({ top, behavior: "smooth" });
+    scrollTo(top, { duration: 1.6 });
   };
 
   return (
-    <div
-      ref={wrapRef}
-      className="relative"
-      style={{ height: `${(n + 1) * 100}vh` }}
-    >
-      <div
-        className="sticky top-0 h-screen overflow-hidden"
-        onPointerMove={onPointerMove}
-      >
+    <div ref={wrapRef} className="relative" style={{ height: `${(n + 1) * 100}vh` }}>
+      <div className="sticky top-0 h-screen overflow-hidden" onPointerMove={onPointerMove}>
         {/* ── The Earth ── */}
         <div className="absolute inset-0" aria-hidden>
           <Boundary>
@@ -554,7 +544,12 @@ export default function GlobeShowcase() {
               dpr={[1, 1.6]}
               // Initial pose only — GlobeScene fits the exact distance to the
               // live viewport aspect each frame (see camZ there).
-              camera={{ position: [0, 0, isDesktop ? CAM_Z : 12], fov: isDesktop ? 42 : 44, near: 0.1, far: 60 }}
+              camera={{
+                position: [0, 0, isDesktop ? CAM_Z : 12],
+                fov: isDesktop ? 42 : 44,
+                near: 0.1,
+                far: 60,
+              }}
               gl={{
                 antialias: true,
                 alpha: true,

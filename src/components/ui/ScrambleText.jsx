@@ -15,9 +15,9 @@ const GLYPHS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#%&*/<>";
 export default function ScrambleText({
   text,
   className = "",
-  speed = 30,        // ms per frame
-  revealRate = 0.5,  // characters resolved per frame
-  auto = false,      // scramble once on mount instead of on hover
+  speed = 30, // ms per frame
+  revealRate = 0.5, // characters resolved per frame
+  auto = false, // scramble once on mount instead of on hover
 }) {
   const reduce = useReducedMotion();
   const [display, setDisplay] = useState(text);

@@ -58,8 +58,8 @@ export default function ReadingIndicator() {
                 <motion.span
                   key={active.id}
                   initial={{ y: 14, opacity: 0 }}
-                  animate={{ y: 0,  opacity: 1 }}
-                  exit={{    y: -14, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: -14, opacity: 0 }}
                   transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                   className="absolute left-0 top-0 whitespace-nowrap text-[12px] font-medium tracking-wide text-white/85"
                 >
@@ -73,7 +73,7 @@ export default function ReadingIndicator() {
             <div className="flex items-center gap-1">
               {sections.map((s, i) => {
                 const isHere = i === index;
-                const past   = i < index;
+                const past = i < index;
                 return (
                   <motion.span
                     key={s.id}

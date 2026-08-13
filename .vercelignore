@@ -1,10 +1,19 @@
 # Vercel builds from src/ + public/ — nothing else needs uploading.
 node_modules
 dist
+coverage
 .git
 .claude
 .vscode
-studio
+.github
+
+# Vercel turns EVERY file under api/ into a serverless function unless it is
+# excluded or prefixed with an underscore. Without this, api/contact.test.js
+# would deploy as a live /api/contact.test endpoint — test code, publicly
+# reachable, counting against the function limit. (_rateLimit.js is safe by
+# the underscore convention, but being explicit costs nothing.)
+api/**/*.test.js
+tests
 
 # Raw local asset originals (optimized copies live in public/)
 /image.png

@@ -11,11 +11,16 @@ import { burst } from "../../lib/confetti";
  * Press the sequence again to disable.
  */
 const SEQ = [
-  "ArrowUp", "ArrowUp",
-  "ArrowDown", "ArrowDown",
-  "ArrowLeft", "ArrowRight",
-  "ArrowLeft", "ArrowRight",
-  "b", "a",
+  "ArrowUp",
+  "ArrowUp",
+  "ArrowDown",
+  "ArrowDown",
+  "ArrowLeft",
+  "ArrowRight",
+  "ArrowLeft",
+  "ArrowRight",
+  "b",
+  "a",
 ];
 
 export default function KonamiEasterEgg() {
@@ -26,7 +31,9 @@ export default function KonamiEasterEgg() {
     let progress = 0;
     let timer;
 
-    const reset = () => { progress = 0; };
+    const reset = () => {
+      progress = 0;
+    };
 
     const onKey = (e) => {
       // Ignore while typing
@@ -35,9 +42,7 @@ export default function KonamiEasterEgg() {
 
       const want = SEQ[progress];
       const got = e.key;
-      const match =
-        want === got ||
-        (want.toLowerCase() === got.toLowerCase() && want.length === 1);
+      const match = want === got || (want.toLowerCase() === got.toLowerCase() && want.length === 1);
 
       if (match) {
         progress += 1;
@@ -121,7 +126,10 @@ export default function KonamiEasterEgg() {
               className="relative"
             >
               <p className="mb-2 flex items-center justify-center gap-2 text-[10px] font-semibold uppercase tracking-[0.4em] text-white/65">
-                <span className="block h-1 w-1 rounded-full bg-green-400" style={{ boxShadow: "0 0 6px rgba(74,222,128,0.8)" }} />
+                <span
+                  className="block h-1 w-1 rounded-full bg-green-400"
+                  style={{ boxShadow: "0 0 6px rgba(74,222,128,0.8)" }}
+                />
                 {active ? "Unlocked" : "Locked"}
               </p>
               <motion.p
@@ -144,13 +152,17 @@ export default function KonamiEasterEgg() {
                   animate={{ rotate: 360 }}
                   transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
                   className="inline-block text-[#aab4c4]"
-                >✦</motion.span>
+                >
+                  ✦
+                </motion.span>
                 Welcome, fellow code wanderer
                 <motion.span
                   animate={{ rotate: -360 }}
                   transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
                   className="inline-block text-[#aab4c4]"
-                >✦</motion.span>
+                >
+                  ✦
+                </motion.span>
               </p>
             </motion.div>
           </div>

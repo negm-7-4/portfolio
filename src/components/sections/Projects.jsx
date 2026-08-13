@@ -3,6 +3,7 @@ import { motion } from "motion/react";
 import SectionHeading from "../ui/SectionHeading";
 import useDeviceProfile from "../../hooks/useDeviceProfile";
 import { SHOWCASE_MODE, SHOWCASE_FALLBACK } from "../../config/showcase";
+import { scrollTo } from "../../lib/navigation";
 
 /**
  * ── Projects — presentation dispatcher ────────────────────────────────
@@ -17,10 +18,10 @@ import { SHOWCASE_MODE, SHOWCASE_FALLBACK } from "../../config/showcase";
  * experience.
  */
 const MODES = {
-  globe:    lazy(() => import("../showcase/globe/GlobeShowcase")),
+  globe: lazy(() => import("../showcase/globe/GlobeShowcase")),
   timeline: lazy(() => import("../showcase/timeline/TimelineShowcase")),
-  cards:    lazy(() => import("../showcase/cards/FlipCardsShowcase")),
-  classic:  lazy(() => import("../showcase/ClassicShowcase")),
+  cards: lazy(() => import("../showcase/cards/FlipCardsShowcase")),
+  classic: lazy(() => import("../showcase/ClassicShowcase")),
 };
 
 /* Modes that need real GPU headroom to feel premium. */
@@ -34,7 +35,14 @@ const MODE_OPTIONS = [
     key: "globe",
     label: "Globe",
     icon: (
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.2" className="h-3.5 w-3.5" aria-hidden>
+      <svg
+        viewBox="0 0 16 16"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        className="h-3.5 w-3.5"
+        aria-hidden
+      >
         <circle cx="8" cy="8" r="6.2" />
         <ellipse cx="8" cy="8" rx="2.8" ry="6.2" />
         <path d="M2 8h12" />
@@ -45,7 +53,14 @@ const MODE_OPTIONS = [
     key: "timeline",
     label: "Timeline",
     icon: (
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.2" className="h-3.5 w-3.5" aria-hidden>
+      <svg
+        viewBox="0 0 16 16"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        className="h-3.5 w-3.5"
+        aria-hidden
+      >
         <path d="M8 1.5v13" />
         <circle cx="8" cy="4" r="1.6" fill="currentColor" stroke="none" />
         <circle cx="8" cy="9" r="1.6" fill="currentColor" stroke="none" />
@@ -57,7 +72,14 @@ const MODE_OPTIONS = [
     key: "cards",
     label: "Cards",
     icon: (
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.2" className="h-3.5 w-3.5" aria-hidden>
+      <svg
+        viewBox="0 0 16 16"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        className="h-3.5 w-3.5"
+        aria-hidden
+      >
         <rect x="1.5" y="3.5" width="8.5" height="11" rx="1.6" />
         <path d="M11.5 2h1.7c.7 0 1.3.6 1.3 1.3v8.9" />
       </svg>
@@ -166,8 +188,7 @@ export default function Projects() {
     requestAnimationFrame(() => {
       const el = document.getElementById("projects");
       if (!el) return;
-      if (window.__lenis) window.__lenis.scrollTo(el, { offset: -50, duration: 0.9 });
-      else el.scrollIntoView({ behavior: "smooth" });
+      scrollTo(el, { offset: -50, duration: 0.9 });
     });
   };
 

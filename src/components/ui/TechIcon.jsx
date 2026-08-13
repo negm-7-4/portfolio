@@ -29,20 +29,58 @@ const ICONS = {
     <g>
       <circle cx="12" cy="12" r="2" fill="currentColor" />
       <ellipse cx="12" cy="12" rx="10" ry="4" fill="none" stroke="currentColor" strokeWidth="1.2" />
-      <ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)" fill="none" stroke="currentColor" strokeWidth="1.2" />
-      <ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)" fill="none" stroke="currentColor" strokeWidth="1.2" />
+      <ellipse
+        cx="12"
+        cy="12"
+        rx="10"
+        ry="4"
+        transform="rotate(60 12 12)"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.2"
+      />
+      <ellipse
+        cx="12"
+        cy="12"
+        rx="10"
+        ry="4"
+        transform="rotate(120 12 12)"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.2"
+      />
     </g>
   ),
   javascript: (
     <g>
       <rect x="2" y="2" width="20" height="20" rx="2" fill="currentColor" />
-      <text x="12" y="17" textAnchor="middle" fontFamily="system-ui" fontSize="9" fontWeight="900" fill="#000">JS</text>
+      <text
+        x="12"
+        y="17"
+        textAnchor="middle"
+        fontFamily="system-ui"
+        fontSize="9"
+        fontWeight="900"
+        fill="#000"
+      >
+        JS
+      </text>
     </g>
   ),
   typescript: (
     <g>
       <rect x="2" y="2" width="20" height="20" rx="2" fill="currentColor" />
-      <text x="12" y="17" textAnchor="middle" fontFamily="system-ui" fontSize="8" fontWeight="900" fill="#fff">TS</text>
+      <text
+        x="12"
+        y="17"
+        textAnchor="middle"
+        fontFamily="system-ui"
+        fontSize="8"
+        fontWeight="900"
+        fill="#fff"
+      >
+        TS
+      </text>
     </g>
   ),
   nextjs: (
@@ -58,35 +96,60 @@ const ICONS = {
       fill="currentColor"
     />
   ),
-  framer: (
-    <path
-      d="M5 3h14v6h-7L19 15h-7v6L5 15v-6h7L5 3z"
-      fill="currentColor"
-    />
-  ),
+  framer: <path d="M5 3h14v6h-7L19 15h-7v6L5 15v-6h7L5 3z" fill="currentColor" />,
   gsap: (
     <g>
       <rect x="2" y="2" width="20" height="20" rx="2" fill="currentColor" />
-      <text x="12" y="16" textAnchor="middle" fontFamily="system-ui" fontSize="6.5" fontWeight="900" fill="#000">GSAP</text>
+      <text
+        x="12"
+        y="16"
+        textAnchor="middle"
+        fontFamily="system-ui"
+        fontSize="6.5"
+        fontWeight="900"
+        fill="#000"
+      >
+        GSAP
+      </text>
     </g>
   ),
   three: (
     <g>
-      <path d="M12 3 L21 8 V16 L12 21 L3 16 V8 Z" fill="none" stroke="currentColor" strokeWidth="1.4" />
-      <path d="M12 3 L12 21 M3 8 L12 12 L21 8 M3 16 L12 12 L21 16" stroke="currentColor" strokeWidth="1" fill="none" opacity="0.7" />
+      <path
+        d="M12 3 L21 8 V16 L12 21 L3 16 V8 Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.4"
+      />
+      <path
+        d="M12 3 L12 21 M3 8 L12 12 L21 8 M3 16 L12 12 L21 16"
+        stroke="currentColor"
+        strokeWidth="1"
+        fill="none"
+        opacity="0.7"
+      />
     </g>
   ),
   python: (
     <g>
-      <path d="M9 3c-2 0-3 1-3 3v3h6v1H4c-2 0-3 1.5-3 4s1 4 3 4h2v-3c0-1.5 1-2.5 2.5-2.5h5C15 12.5 16 11.5 16 10V6c0-2-1-3-3-3zM9 5a1 1 0 110 2 1 1 0 010-2z" fill="currentColor" />
-      <path d="M15 21c2 0 3-1 3-3v-3h-6v-1h8c2 0 3-1.5 3-4s-1-4-3-4h-2v3c0 1.5-1 2.5-2.5 2.5h-5C9 11.5 8 12.5 8 14v4c0 2 1 3 3 3zM15 19a1 1 0 110-2 1 1 0 010 2z" fill="#FFD43B" />
+      <path
+        d="M9 3c-2 0-3 1-3 3v3h6v1H4c-2 0-3 1.5-3 4s1 4 3 4h2v-3c0-1.5 1-2.5 2.5-2.5h5C15 12.5 16 11.5 16 10V6c0-2-1-3-3-3zM9 5a1 1 0 110 2 1 1 0 010-2z"
+        fill="currentColor"
+      />
+      <path
+        d="M15 21c2 0 3-1 3-3v-3h-6v-1h8c2 0 3-1.5 3-4s-1-4-3-4h-2v3c0 1.5-1 2.5-2.5 2.5h-5C9 11.5 8 12.5 8 14v4c0 2 1 3 3 3zM15 19a1 1 0 110-2 1 1 0 010 2z"
+        fill="#FFD43B"
+      />
     </g>
   ),
   html: (
     <g>
       <path d="M3 3l1.5 17L12 22l7.5-2L21 3H3z" fill="currentColor" />
       <path d="M12 5v15l6-1.5L19.2 5H12z" fill="rgba(0,0,0,0.2)" />
-      <path d="M7 8h10l-.3 3H7.7l.2 2h8.5l-.5 4.5L12 18.5l-3.5-1L8.3 14h2l.2 2 1.5.5 1.5-.5.2-3H8L7 8z" fill="#fff" />
+      <path
+        d="M7 8h10l-.3 3H7.7l.2 2h8.5l-.5 4.5L12 18.5l-3.5-1L8.3 14h2l.2 2 1.5.5 1.5-.5.2-3H8L7 8z"
+        fill="#fff"
+      />
     </g>
   ),
   git: (
@@ -120,8 +183,19 @@ const ICONS = {
   ),
   threejs: (
     <g>
-      <path d="M12 3 L21 8 V16 L12 21 L3 16 V8 Z" fill="none" stroke="currentColor" strokeWidth="1.4" />
-      <path d="M12 3 L12 21 M3 8 L12 12 L21 8 M3 16 L12 12 L21 16" stroke="currentColor" strokeWidth="1" fill="none" opacity="0.7" />
+      <path
+        d="M12 3 L21 8 V16 L12 21 L3 16 V8 Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.4"
+      />
+      <path
+        d="M12 3 L12 21 M3 8 L12 12 L21 8 M3 16 L12 12 L21 16"
+        stroke="currentColor"
+        strokeWidth="1"
+        fill="none"
+        opacity="0.7"
+      />
     </g>
   ),
 
@@ -141,9 +215,35 @@ const ICONS = {
   r3f: (
     <g>
       <circle cx="12" cy="12" r="1.8" fill="currentColor" />
-      <ellipse cx="12" cy="12" rx="9.5" ry="3.6" fill="none" stroke="currentColor" strokeWidth="1.1" />
-      <ellipse cx="12" cy="12" rx="9.5" ry="3.6" transform="rotate(60 12 12)" fill="none" stroke="currentColor" strokeWidth="1.1" />
-      <ellipse cx="12" cy="12" rx="9.5" ry="3.6" transform="rotate(120 12 12)" fill="none" stroke="currentColor" strokeWidth="1.1" />
+      <ellipse
+        cx="12"
+        cy="12"
+        rx="9.5"
+        ry="3.6"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.1"
+      />
+      <ellipse
+        cx="12"
+        cy="12"
+        rx="9.5"
+        ry="3.6"
+        transform="rotate(60 12 12)"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.1"
+      />
+      <ellipse
+        cx="12"
+        cy="12"
+        rx="9.5"
+        ry="3.6"
+        transform="rotate(120 12 12)"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.1"
+      />
       <path d="M5 18 L9 14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
     </g>
   ),
@@ -152,7 +252,13 @@ const ICONS = {
     <g>
       <circle cx="7" cy="7" r="3" fill="currentColor" />
       <circle cx="17" cy="17" r="3" fill="currentColor" />
-      <path d="M9 9 C13 9 11 15 15 15" stroke="currentColor" strokeWidth="1.6" fill="none" strokeLinecap="round" />
+      <path
+        d="M9 9 C13 9 11 15 15 15"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        fill="none"
+        strokeLinecap="round"
+      />
     </g>
   ),
   babylon: txt("BJS", { size: 6 }),
@@ -180,7 +286,14 @@ const ICONS = {
   ),
   recharts: (
     <g>
-      <path d="M3 17 L9 11 L13 14 L21 5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      <path
+        d="M3 17 L9 11 L13 14 L21 5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
       <circle cx="3" cy="17" r="1.5" fill="currentColor" />
       <circle cx="9" cy="11" r="1.5" fill="currentColor" />
       <circle cx="13" cy="14" r="1.5" fill="currentColor" />
@@ -197,24 +310,24 @@ const ICONS = {
   ),
 
   /* ── Extra animation / 3D / viz / UI / XR libraries ─────────── */
-  motionone:   txt("M1"),
-  rive:        txt("rive", { size: 6 }),
-  theatre:     txt("TH"),
-  webgpu:      txt("GPU", { size: 6 }),
-  twojs:       txt("2.js", { size: 6 }),
-  matter:      txt("MJS", { size: 6 }),
+  motionone: txt("M1"),
+  rive: txt("rive", { size: 6 }),
+  theatre: txt("TH"),
+  webgpu: txt("GPU", { size: 6 }),
+  twojs: txt("2.js", { size: 6 }),
+  matter: txt("MJS", { size: 6 }),
   tsparticles: txt("tsP", { size: 6 }),
-  scrollama:   txt("SC"),
-  visx:        txt("visx", { size: 6 }),
-  nivo:        txt("nivo", { size: 6 }),
-  tremor:      txt("TR"),
-  deckgl:      txt("deck", { size: 6 }),
-  shadcn:      txt("sh"),
-  aceternity:  txt("AC"),
-  magicui:     txt("MUI", { size: 6 }),
-  vanta:       txt("V"),
-  aframe:      txt("A·F", { size: 6 }),
-  webxr:       txt("XR"),
+  scrollama: txt("SC"),
+  visx: txt("visx", { size: 6 }),
+  nivo: txt("nivo", { size: 6 }),
+  tremor: txt("TR"),
+  deckgl: txt("deck", { size: 6 }),
+  shadcn: txt("sh"),
+  aceternity: txt("AC"),
+  magicui: txt("MUI", { size: 6 }),
+  vanta: txt("V"),
+  aframe: txt("A·F", { size: 6 }),
+  webxr: txt("XR"),
   modelviewer: txt("MV"),
 
   /* ── Tooling ────────────────────────────────────────────────── */

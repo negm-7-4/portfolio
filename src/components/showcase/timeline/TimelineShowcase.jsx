@@ -69,7 +69,10 @@ function Slide({ p, i, onEnter }) {
           className="group relative aspect-video overflow-hidden rounded-2xl border border-white/10"
           data-cursor="hover"
         >
-          <ProjectVisual project={p} imgClassName="transition-transform duration-700 group-hover:scale-[1.04]" />
+          <ProjectVisual
+            project={p}
+            imgClassName="transition-transform duration-700 group-hover:scale-[1.04]"
+          />
           {/* accent wash + ghost number */}
           <div
             aria-hidden
@@ -87,7 +90,9 @@ function Slide({ p, i, onEnter }) {
       </motion.div>
 
       {/* ── Copy — staged in once the slide is seen. ── */}
-      <div className={`flex flex-col justify-center ${flip ? "md:order-1 md:items-end md:pr-14 md:text-right" : "md:pl-14"}`}>
+      <div
+        className={`flex flex-col justify-center ${flip ? "md:order-1 md:items-end md:pr-14 md:text-right" : "md:pl-14"}`}
+      >
         {seen && (
           <>
             <motion.span

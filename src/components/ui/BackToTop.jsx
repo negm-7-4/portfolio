@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useScroll, useTransform } from "motion/react";
+import { scrollToTop } from "../../lib/navigation";
 
 /**
  * Floating "back to top" button in the bottom-left corner.
@@ -24,10 +25,7 @@ export default function BackToTop() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const goTop = () => {
-    if (window.__lenis) window.__lenis.scrollTo(0, { duration: 1.6 });
-    else window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+  const goTop = () => scrollToTop();
 
   return (
     <AnimatePresence>
@@ -44,8 +42,7 @@ export default function BackToTop() {
           whileTap={{ scale: 0.92 }}
           className="group fixed bottom-6 left-6 z-[8500] hidden h-14 w-14 items-center justify-center rounded-full border border-white/10 bg-[rgba(15,18,24,0.85)] text-white backdrop-blur-md md:flex md:bottom-8 md:left-8 md:h-16 md:w-16"
           style={{
-            boxShadow:
-              "0 18px 36px -8px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.06)",
+            boxShadow: "0 18px 36px -8px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.06)",
           }}
           aria-label="Scroll to top"
         >
@@ -53,23 +50,25 @@ export default function BackToTop() {
           <span
             aria-hidden
             className="pointer-events-none absolute -inset-2 rounded-full opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-100"
-            style={{ background: "radial-gradient(circle, rgba(170,180,196,0.5), transparent 70%)" }}
+            style={{
+              background: "radial-gradient(circle, rgba(170,180,196,0.5), transparent 70%)",
+            }}
           />
 
           {/* progress ring */}
-          <svg
-            viewBox="0 0 100 100"
-            className="absolute inset-0 -rotate-90"
-            aria-hidden
-          >
+          <svg viewBox="0 0 100 100" className="absolute inset-0 -rotate-90" aria-hidden>
             <circle
-              cx="50" cy="50" r="45"
+              cx="50"
+              cy="50"
+              r="45"
               fill="none"
               stroke="rgba(255,255,255,0.08)"
               strokeWidth="2"
             />
             <motion.circle
-              cx="50" cy="50" r="45"
+              cx="50"
+              cy="50"
+              r="45"
               fill="none"
               stroke="url(#bttGrad)"
               strokeWidth="2"
@@ -94,7 +93,16 @@ export default function BackToTop() {
             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
             className="relative flex flex-col items-center transition-opacity duration-300 group-hover:opacity-0"
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M12 19V5" />
               <path d="M5 12l7-7 7 7" />
             </svg>

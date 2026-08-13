@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { motion, useMotionValue, useSpring, useTransform } from "motion/react";
+import { useEffect, useState } from "react";
+import { motion, useMotionValue, useSpring } from "motion/react";
 
 /**
  * Dot + magnetic ring + 6 trailing echoes that lag with increasing delay.
@@ -20,7 +20,12 @@ export default function CustomCursor() {
   const t4x = useSpring(x, { stiffness: 110, damping: 24, mass: 1.0 });
   const t4y = useSpring(y, { stiffness: 110, damping: 24, mass: 1.0 });
 
-  const [hidden, setHidden] = useState(false);
+  /* Resolved during the first render rather than in an effect: a coarse
+     pointer is knowable immediately, and setting it afterwards meant one
+     wasted render plus a frame where the custom cursor existed on a phone. */
+  const [hidden, setHidden] = useState(
+    () => typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches
+  );
   const [hovering, setHovering] = useState(false);
   const [pressing, setPressing] = useState(false);
   const [text, setText] = useState(null); // e.g. "View" on certain targets
@@ -33,9 +38,11 @@ export default function CustomCursor() {
 
   // Continuous idle rotation on the inner dot
   useEffect(() => {
-    let raf, last = performance.now();
+    let raf,
+      last = performance.now();
     const spin = (t) => {
-      const dt = t - last; last = t;
+      const dt = t - last;
+      last = t;
       rotate.set(rotate.get() + dt * 0.04);
       raf = requestAnimationFrame(spin);
     };
@@ -43,11 +50,23 @@ export default function CustomCursor() {
     return () => cancelAnimationFrame(raf);
   }, [rotate]);
 
+  /* Hide the native cursor only while this component is actually drawing one.
+     It used to be a static `body { cursor: none }` rule in index.css, which
+     meant a JS failure, a slow chunk or an ErrorBoundary catch left the
+     visitor with NO pointer at all. Owning the rule here makes the trade
+     self-healing: no custom cursor, no hidden native one. */
   useEffect(() => {
-    if (window.matchMedia("(pointer: coarse)").matches) {
-      setHidden(true);
-      return;
+    const root = document.documentElement;
+    if (hidden) {
+      root.classList.remove("has-custom-cursor");
+      return undefined;
     }
+    root.classList.add("has-custom-cursor");
+    return () => root.classList.remove("has-custom-cursor");
+  }, [hidden]);
+
+  useEffect(() => {
+    if (hidden) return undefined;
 
     // Cursor x/y update on every move (cheap — just motion value sets).
     // Hover-target detection runs at most once per animation frame and
@@ -82,8 +101,14 @@ export default function CustomCursor() {
         requestAnimationFrame(detectHover);
       }
     };
-    const down = () => { setPressing(true); ringScale.set(0.82); };
-    const up = () => { setPressing(false); ringScale.set(1); };
+    const down = () => {
+      setPressing(true);
+      ringScale.set(0.82);
+    };
+    const up = () => {
+      setPressing(false);
+      ringScale.set(1);
+    };
     const leave = () => setHidden(true);
     const enter = () => setHidden(false);
 
@@ -99,13 +124,7 @@ export default function CustomCursor() {
       document.removeEventListener("pointerleave", leave);
       document.removeEventListener("pointerenter", enter);
     };
-  }, [x, y, size, opacity, dotScale, ringScale]);
-
-  // Hide native cursor when ours is active
-  useEffect(() => {
-    document.documentElement.style.cursor = hidden ? "" : "none";
-    return () => { document.documentElement.style.cursor = ""; };
-  }, [hidden]);
+  }, [hidden, x, y, size, opacity, dotScale, ringScale]);
 
   if (hidden) return null;
 
@@ -114,20 +133,69 @@ export default function CustomCursor() {
   return (
     <>
       {/* trailing echoes (4 layers, increasing softness) */}
-      <motion.div className={trailBase} style={{ x: t4x, y: t4y, width: 80, height: 80, translateX: "-50%", translateY: "-50%", background: "radial-gradient(circle, rgba(180,200,230,0.10), transparent 70%)", filter: "blur(6px)" }} />
-      <motion.div className={trailBase} style={{ x: t3x, y: t3y, width: 56, height: 56, translateX: "-50%", translateY: "-50%", background: "radial-gradient(circle, rgba(200,215,235,0.14), transparent 70%)", filter: "blur(3px)" }} />
-      <motion.div className={trailBase} style={{ x: t2x, y: t2y, width: 28, height: 28, translateX: "-50%", translateY: "-50%", border: "1px solid rgba(255,255,255,0.18)" }} />
-      <motion.div className={trailBase} style={{ x: t1x, y: t1y, width: 16, height: 16, translateX: "-50%", translateY: "-50%", border: "1px solid rgba(255,255,255,0.32)" }} />
+      <motion.div
+        className={trailBase}
+        style={{
+          x: t4x,
+          y: t4y,
+          width: 80,
+          height: 80,
+          translateX: "-50%",
+          translateY: "-50%",
+          background: "radial-gradient(circle, rgba(180,200,230,0.10), transparent 70%)",
+          filter: "blur(6px)",
+        }}
+      />
+      <motion.div
+        className={trailBase}
+        style={{
+          x: t3x,
+          y: t3y,
+          width: 56,
+          height: 56,
+          translateX: "-50%",
+          translateY: "-50%",
+          background: "radial-gradient(circle, rgba(200,215,235,0.14), transparent 70%)",
+          filter: "blur(3px)",
+        }}
+      />
+      <motion.div
+        className={trailBase}
+        style={{
+          x: t2x,
+          y: t2y,
+          width: 28,
+          height: 28,
+          translateX: "-50%",
+          translateY: "-50%",
+          border: "1px solid rgba(255,255,255,0.18)",
+        }}
+      />
+      <motion.div
+        className={trailBase}
+        style={{
+          x: t1x,
+          y: t1y,
+          width: 16,
+          height: 16,
+          translateX: "-50%",
+          translateY: "-50%",
+          border: "1px solid rgba(255,255,255,0.32)",
+        }}
+      />
 
       {/* main magnetic ring */}
       <motion.div
         className="pointer-events-none fixed left-0 top-0 z-[9999] flex items-center justify-center rounded-full"
         style={{
-          x: t1x, y: t1y,
-          width: size, height: size,
+          x: t1x,
+          y: t1y,
+          width: size,
+          height: size,
           scale: ringScale,
           opacity,
-          translateX: "-50%", translateY: "-50%",
+          translateX: "-50%",
+          translateY: "-50%",
           border: hovering ? "1px solid rgba(255,255,255,0.95)" : "1px solid rgba(255,255,255,0.4)",
           background: hovering
             ? "radial-gradient(circle, rgba(255,255,255,0.10) 0%, rgba(170,180,196,0.05) 70%)"
@@ -153,12 +221,26 @@ export default function CustomCursor() {
       {/* instant inner dot — flips to small rotating cross when pressing */}
       <motion.div
         className="pointer-events-none fixed left-0 top-0 z-[9999] flex items-center justify-center"
-        style={{ x, y, scale: dotScale, rotate, translateX: "-50%", translateY: "-50%", willChange: "transform" }}
+        style={{
+          x,
+          y,
+          scale: dotScale,
+          rotate,
+          translateX: "-50%",
+          translateY: "-50%",
+          willChange: "transform",
+        }}
       >
         {pressing ? (
           <div className="h-3 w-3 relative">
-            <span className="absolute inset-0 m-auto h-3 w-px bg-white" style={{ boxShadow: "0 0 4px rgba(255,255,255,0.6)" }} />
-            <span className="absolute inset-0 m-auto h-px w-3 bg-white" style={{ boxShadow: "0 0 4px rgba(255,255,255,0.6)" }} />
+            <span
+              className="absolute inset-0 m-auto h-3 w-px bg-white"
+              style={{ boxShadow: "0 0 4px rgba(255,255,255,0.6)" }}
+            />
+            <span
+              className="absolute inset-0 m-auto h-px w-3 bg-white"
+              style={{ boxShadow: "0 0 4px rgba(255,255,255,0.6)" }}
+            />
           </div>
         ) : (
           <div className="h-2 w-2 rounded-full bg-white mix-blend-difference" />

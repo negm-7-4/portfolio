@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import ResponsiveImage from "../ui/ResponsiveImage";
 
 /**
  * Project artwork with two upgrades over a plain <img>:
@@ -55,16 +56,23 @@ export default function ProjectVisual({
     return (
       <div
         className={`flex h-full w-full items-center justify-center ${className}`}
-        style={{ background: `linear-gradient(135deg, ${project.color}26 0%, rgba(10,12,16,0.6) 100%)` }}
+        style={{
+          background: `linear-gradient(135deg, ${project.color}26 0%, rgba(10,12,16,0.6) 100%)`,
+        }}
       >
         <div className="text-center">
           <p
             className="font-display text-6xl font-bold tracking-tight md:text-7xl"
             style={{ color: `${project.color}66` }}
           >
-            {project.title.split(" ").map((w) => w[0]).join("")}
+            {project.title
+              .split(" ")
+              .map((w) => w[0])
+              .join("")}
           </p>
-          <p className="mt-3 text-[10px] uppercase tracking-[0.3em] text-white/55">preview · soon</p>
+          <p className="mt-3 text-[10px] uppercase tracking-[0.3em] text-white/55">
+            preview · soon
+          </p>
         </div>
       </div>
     );
@@ -80,12 +88,8 @@ export default function ProjectVisual({
       onPointerLeave={() => setHover(false)}
     >
       <AnimatePresence initial={false} mode="popLayout">
-        <motion.img
+        <motion.div
           key={active}
-          src={active}
-          alt={`${project.title} — ${project.tagline}`}
-          loading="lazy"
-          decoding="async"
           initial={multi ? { opacity: 0, scale: 1.06 } : false}
           animate={{ opacity: 1, scale: reduce ? 1 : 1.04 }}
           exit={{ opacity: 0, scale: 1.02 }}
@@ -93,8 +97,14 @@ export default function ProjectVisual({
             opacity: { duration: 0.9, ease: [0.16, 1, 0.3, 1] },
             scale: { duration: reduce ? 0 : interval / 1000 + 1, ease: "linear" },
           }}
-          className={`absolute inset-0 h-full w-full object-cover object-top ${imgClassName}`}
-        />
+          className="absolute inset-0 h-full w-full"
+        >
+          <ResponsiveImage
+            src={active}
+            alt={`${project.title} — ${project.tagline}`}
+            className={`absolute inset-0 h-full w-full object-cover object-top ${imgClassName}`}
+          />
+        </motion.div>
       </AnimatePresence>
 
       {/* Shot counter + dots — only when there's more than one to see. */}

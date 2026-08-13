@@ -34,7 +34,14 @@ import { experience } from "../../store/experience";
 const SLABS = [
   { pos: [-6.4, 2.6, -4.5], size: [1.6, 3.4, 0.12], spin: 0.1, phase: 0.0, rise: 1.7, glass: true },
   { pos: [6.8, -1.2, -6.0], size: [1.3, 2.8, 0.12], spin: -0.08, phase: 1.9, rise: -1.3 },
-  { pos: [-5.2, -3.2, -2.5], size: [1.1, 2.2, 0.1], spin: 0.13, phase: 3.7, rise: 1.0, glass: true },
+  {
+    pos: [-5.2, -3.2, -2.5],
+    size: [1.1, 2.2, 0.1],
+    spin: 0.13,
+    phase: 3.7,
+    rise: 1.0,
+    glass: true,
+  },
   { pos: [7.4, 3.2, -8.5], size: [2.0, 4.2, 0.14], spin: -0.06, phase: 5.1, rise: -2.0 },
 ];
 

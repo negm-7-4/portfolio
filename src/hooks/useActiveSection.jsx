@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useMotionValue } from "motion/react";
 import { sections } from "../data/sections";
+import { goToSection } from "../lib/navigation";
 
 /**
  * Tracks which section is currently most-in-view via IntersectionObserver.
@@ -27,6 +28,9 @@ export function ActiveSectionProvider({ children }) {
   const observedRef = useRef(new Map()); // id → element currently observed
 
   useEffect(() => {
+    // Captured once: cleanup must clear the same map this effect populated,
+    // not whatever the ref points at by the time React tears the effect down.
+    const observed = observedRef.current;
     const ratios = new Map(sections.map((s) => [s.id, 0]));
 
     const io = new IntersectionObserver(
@@ -34,11 +38,31 @@ export function ActiveSectionProvider({ children }) {
         for (const e of entries) {
           ratios.set(e.target.id, e.intersectionRatio);
         }
-        let bestId = sections[0].id;
-        let bestRatio = -1;
+
+        let bestId = null;
+        let bestRatio = 0;
         for (const [id, r] of ratios) {
-          if (r > bestRatio) { bestRatio = r; bestId = id; }
+          if (r > bestRatio) {
+            bestRatio = r;
+            bestId = id;
+          }
         }
+
+        /* Nothing is intersecting — the footer fills the viewport at the very
+           bottom of the page, and the -15% root margin can leave a gap between
+           two sections mid-scroll.
+
+           This used to fall back to sections[0], which silently teleported the
+           whole site's "you are here" state back to the intro every time the
+           visitor reached the end: the chapter rail said INTRO while the reader
+           was looking at the footer, and no nav link was marked aria-current.
+           (The navbar carries its own workaround for exactly this, which is
+           why its trail stayed lit and hid the bug.)
+
+           Holding the last resolved section is the honest answer: you are
+           still in the chapter you last entered. */
+        if (bestId === null) return;
+
         const next = sections.find((s) => s.id === bestId);
         if (next) setActive((cur) => (cur.id === next.id ? cur : next));
       },
@@ -51,7 +75,6 @@ export function ActiveSectionProvider({ children }) {
     /** Sync the IO with whatever section elements currently exist in DOM.
      *  Re-attaches observation when lazy sections swap in. */
     const sync = () => {
-      const observed = observedRef.current;
       for (const s of sections) {
         const el = document.getElementById(s.id);
         const prev = observed.get(s.id);
@@ -62,20 +85,43 @@ export function ActiveSectionProvider({ children }) {
           else observed.delete(s.id);
         }
       }
+      return observed.size === sections.length;
     };
 
-    sync();
+    const allResolved = sync();
 
-    // Re-sync whenever the main DOM changes (lazy section chunks loading).
-    // rAF-throttled so massive subtree updates don't pile up sync() calls.
-    let pending = false;
-    const scheduledSync = () => {
-      if (pending) return;
-      pending = true;
-      requestAnimationFrame(() => { pending = false; sync(); });
-    };
-    const mo = new MutationObserver(scheduledSync);
-    mo.observe(document.body, { childList: true, subtree: true });
+    /* Watch for lazy section chunks swapping their placeholders out.
+     *
+     * This used to observe document.body with subtree:true for the lifetime of
+     * the page. On a page whose entire premise is AnimatePresence adding and
+     * removing nodes constantly, that fired hundreds of times for the handful
+     * of mutations that actually mattered.
+     *
+     * Two changes: scope it to the <main> that actually contains the sections,
+     * and — since sections only ever appear, never disappear — disconnect for
+     * good once every one has been found. In practice the observer is alive
+     * for the first few seconds of the visit and then costs nothing.
+     */
+    let mo = null;
+    if (!allResolved) {
+      let pending = false;
+      const scheduledSync = () => {
+        if (pending) return;
+        pending = true;
+        requestAnimationFrame(() => {
+          pending = false;
+          if (sync()) {
+            mo?.disconnect();
+            mo = null;
+          }
+        });
+      };
+      mo = new MutationObserver(scheduledSync);
+      mo.observe(document.getElementById("main-content") ?? document.body, {
+        childList: true,
+        subtree: true,
+      });
+    }
 
     // Page progress 0–1 — written into a motion value so subscribers
     // (ChapterRail height, ReadingIndicator percentage, etc.) don't
@@ -89,22 +135,15 @@ export function ActiveSectionProvider({ children }) {
 
     return () => {
       io.disconnect();
-      mo.disconnect();
-      observedRef.current.clear();
+      mo?.disconnect();
+      observed.clear();
       window.removeEventListener("scroll", onScroll);
     };
   }, [progress]);
 
   const value = useMemo(() => {
     const index = sections.findIndex((s) => s.id === active.id);
-    const goto = (id) => {
-      if (window.__goto) return window.__goto(id);
-      const el = document.getElementById(id);
-      if (!el) return;
-      if (window.__lenis) window.__lenis.scrollTo(el, { offset: -40 });
-      else el.scrollIntoView({ behavior: "smooth" });
-    };
-    return { active, index, progress, goto };
+    return { active, index, progress, goto: goToSection };
   }, [active, progress]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

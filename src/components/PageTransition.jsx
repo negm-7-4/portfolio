@@ -3,6 +3,7 @@ import { motion } from "motion/react";
 import { sections } from "../data/sections";
 import { experience } from "../store/experience";
 import { sfxWarp } from "../lib/ambientAudio";
+import { NAV_OFFSET, registerSectionTransition, scrollTo } from "../lib/navigation";
 
 const PANELS = 8;
 
@@ -20,16 +21,25 @@ export default function PageTransition() {
   const targetRef = useRef(null);
 
   useEffect(() => {
-    window.__goto = (id) => {
+    const timers = new Set();
+    const later = (fn, ms) => {
+      const id = window.setTimeout(() => {
+        timers.delete(id);
+        fn();
+      }, ms);
+      timers.add(id);
+      return id;
+    };
+
+    const travel = (id) => {
       const el = document.getElementById(id);
       if (!el) return;
       const section = sections.find((s) => s.id === id);
       targetRef.current = section || { id, num: "", label: id, color: "#aab4c4" };
       setStage("in");
       // Tightened cover/reveal window so navigation feels instant-but-cinematic.
-      window.setTimeout(() => {
-        if (window.__lenis) window.__lenis.scrollTo(el, { immediate: true, offset: -40 });
-        else el.scrollIntoView();
+      later(() => {
+        scrollTo(el, { immediate: true, offset: NAV_OFFSET });
         setStage("out");
         // Arrival shockwave — as the panels lift, the world lands the new
         // shot with an fov punch, CA spike and a nebula flash (decays there),
@@ -39,10 +49,16 @@ export default function PageTransition() {
       }, 430);
       // 1200ms lets the last staggered panel finish its lift (430 + 224 +
       // 480) before the instant reset — no mid-flight snap.
-      window.setTimeout(() => setStage("idle"), 1200);
+      later(() => setStage("idle"), 1200);
     };
+
+    const unregister = registerSectionTransition(travel);
     return () => {
-      window.__goto = null;
+      unregister();
+      // A transition still in flight when this unmounts would otherwise fire
+      // setStage on a dead component.
+      timers.forEach(window.clearTimeout);
+      timers.clear();
     };
   }, []);
 
@@ -78,8 +94,7 @@ export default function PageTransition() {
           key={i}
           className="h-full flex-1"
           style={{
-            background:
-              "linear-gradient(180deg, #1c2028 0%, #0f1218 60%, #0b0d11 100%)",
+            background: "linear-gradient(180deg, #1c2028 0%, #0f1218 60%, #0b0d11 100%)",
             borderRight: i < PANELS - 1 ? "1px solid rgba(255,255,255,0.02)" : "none",
           }}
           initial={{ y: "100%" }}
@@ -137,7 +152,11 @@ export default function PageTransition() {
                 opacity: stage === "in" ? 1 : 0,
                 y: stage === "in" ? 0 : 12,
               }}
-              transition={{ duration: 0.48, delay: stage === "in" ? 0.4 : 0, ease: [0.16, 1, 0.3, 1] }}
+              transition={{
+                duration: 0.48,
+                delay: stage === "in" ? 0.4 : 0,
+                ease: [0.16, 1, 0.3, 1],
+              }}
               className="font-display text-base font-medium tracking-[0.18em]"
               style={{ color: target?.color || "#aab4c4" }}
             >
@@ -155,7 +174,11 @@ export default function PageTransition() {
               y: stage === "in" ? 0 : 18,
               filter: stage === "in" ? "blur(0px)" : "blur(8px)",
             }}
-            transition={{ duration: 0.52, delay: stage === "in" ? 0.44 : 0, ease: [0.16, 1, 0.3, 1] }}
+            transition={{
+              duration: 0.52,
+              delay: stage === "in" ? 0.44 : 0,
+              ease: [0.16, 1, 0.3, 1],
+            }}
             className="font-display text-5xl font-bold tracking-tight text-white md:text-7xl"
           >
             {target?.label || ""}
@@ -165,7 +188,11 @@ export default function PageTransition() {
           <motion.span
             initial={{ scaleX: 0 }}
             animate={{ scaleX: stage === "in" ? 1 : 0 }}
-            transition={{ duration: 0.55, delay: stage === "in" ? 0.56 : 0, ease: [0.16, 1, 0.3, 1] }}
+            transition={{
+              duration: 0.55,
+              delay: stage === "in" ? 0.56 : 0,
+              ease: [0.16, 1, 0.3, 1],
+            }}
             className="mt-3 block h-px w-16 origin-left bg-gradient-to-r from-transparent via-white/60 to-transparent"
           />
         </div>

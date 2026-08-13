@@ -41,7 +41,10 @@ export function burst(x, y, opts = {}) {
 export function celebrate(x, y, color) {
   const colors = color ? [color, "#ffffff"] : SILVER;
   burst(x, y, { particleCount: 80, spread: 90, colors, scalar: 1.05 });
-  setTimeout(() => burst(x, y, { particleCount: 30, spread: 140, startVelocity: 22, colors, scalar: 0.7 }), 120);
+  setTimeout(
+    () => burst(x, y, { particleCount: 30, spread: 140, startVelocity: 22, colors, scalar: 0.7 }),
+    120
+  );
 }
 
 /** Click burst that picks coords from a MouseEvent. */

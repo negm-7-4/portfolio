@@ -3,6 +3,8 @@ import { AnimatePresence, motion, useScroll, useTransform } from "motion/react";
 import SectionHeading from "../ui/SectionHeading";
 import MagneticButton from "../ui/MagneticButton";
 import { celebrate } from "../../lib/confetti";
+import { toast } from "../../lib/toast";
+import { openCv } from "../../lib/appEvents";
 import { profile } from "../../data/content";
 
 // Same-origin Vercel Function. If Resend is not configured in an environment,
@@ -60,7 +62,13 @@ function Field({ label, type = "text", name, required, multiline = false, value,
         onBlur={() => setFocused(false)}
         rows={multiline ? 4 : undefined}
         className={`peer w-full resize-none rounded-xl border border-white/10 bg-white/[0.03] px-4 pt-6 pb-2 text-[15px] text-white outline-none transition-all duration-300 hover:border-white/20 focus:border-white/40 focus:bg-white/[0.05] ${multiline ? "min-h-[120px]" : ""}`}
-        style={focused ? { boxShadow: "0 0 0 4px rgba(170,180,196,0.08), inset 0 1px 0 rgba(255,255,255,0.05)" } : {}}
+        style={
+          focused
+            ? {
+                boxShadow: "0 0 0 4px rgba(170,180,196,0.08), inset 0 1px 0 rgba(255,255,255,0.05)",
+              }
+            : {}
+        }
       />
       <label
         htmlFor={name}
@@ -78,7 +86,9 @@ function Field({ label, type = "text", name, required, multiline = false, value,
         className={`pointer-events-none absolute bottom-0 left-4 right-4 h-px origin-left transition-transform duration-500 ${
           focused ? "scale-x-100" : "scale-x-0"
         }`}
-        style={{ background: "linear-gradient(90deg, transparent, rgba(170,180,196,0.9), transparent)" }}
+        style={{
+          background: "linear-gradient(90deg, transparent, rgba(170,180,196,0.9), transparent)",
+        }}
       />
 
       {/* tiny corner accent on focus */}
@@ -102,9 +112,9 @@ function InfoRow({ icon: Icon, label, value, href, copyable, i }) {
     e.stopPropagation();
     try {
       await navigator.clipboard.writeText(value);
-      window.__toast?.(`${label} copied`, { kind: "success", icon: "✓" });
+      toast(`${label} copied`, { kind: "success", icon: "✓" });
     } catch {
-      window.__toast?.("Couldn't copy", { kind: "warn", icon: "⚠" });
+      toast("Couldn't copy", { kind: "warn", icon: "⚠" });
     }
   };
 
@@ -149,7 +159,16 @@ function InfoRow({ icon: Icon, label, value, href, copyable, i }) {
             className="ml-2 flex h-9 items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.04] px-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-white/55 opacity-0 transition-all duration-300 group-hover:opacity-100 hover:border-white/30 hover:text-white"
             aria-label={`Copy ${label}`}
           >
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="11"
+              height="11"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <rect x="9" y="9" width="13" height="13" rx="2" />
               <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
             </svg>
@@ -237,17 +256,25 @@ export default function Contact() {
   };
 
   const info = [
-    { label: "Email",    value: profile.email, href: `mailto:${profile.email}`,           icon: Mail,      copyable: true  },
-    { label: "Phone",    value: profile.phone, href: `tel:${profile.phone.replace(/\s/g, "")}`, icon: PhoneIcon, copyable: true  },
-    { label: "Location", value: profile.location,                                          icon: MapPin,    copyable: false },
+    {
+      label: "Email",
+      value: profile.email,
+      href: `mailto:${profile.email}`,
+      icon: Mail,
+      copyable: true,
+    },
+    {
+      label: "Phone",
+      value: profile.phone,
+      href: `tel:${profile.phone.replace(/\s/g, "")}`,
+      icon: PhoneIcon,
+      copyable: true,
+    },
+    { label: "Location", value: profile.location, icon: MapPin, copyable: false },
   ];
 
   return (
-    <section
-      id="contact"
-      ref={ref}
-      className="relative w-full py-32 md:py-44"
-    >
+    <section id="contact" ref={ref} className="relative w-full py-32 md:py-44">
       {/* ambient */}
       <motion.div
         style={{ y: bgY }}
@@ -275,10 +302,8 @@ export default function Contact() {
           transition={{ duration: 0.7 }}
           className="mx-auto mb-16 max-w-2xl text-center font-display font-light leading-[1.3] text-white/75"
         >
-          Have a project, an idea, or just want to say hi?{" "}
-          <br className="hidden sm:block" />
-          The inbox is{" "}
-          <span className="text-gradient italic font-medium">always open</span>.
+          Have a project, an idea, or just want to say hi? <br className="hidden sm:block" />
+          The inbox is <span className="text-gradient italic font-medium">always open</span>.
         </motion.p>
 
         <div className="grid grid-cols-1 gap-12 md:grid-cols-[1fr_1.2fr] md:gap-16">
@@ -349,12 +374,14 @@ export default function Contact() {
                 </span>
                 <div>
                   <p className="font-display text-sm font-semibold text-white">My Résumé</p>
-                  <p className="text-[11px] text-white/65">PDF · one page · updated {new Date().getFullYear()}</p>
+                  <p className="text-[11px] text-white/65">
+                    PDF · one page · updated {new Date().getFullYear()}
+                  </p>
                 </div>
               </div>
               <div className="relative flex shrink-0 items-center gap-2">
                 <button
-                  onClick={() => window.dispatchEvent(new Event("open-cv"))}
+                  onClick={openCv}
                   data-cursor="hover"
                   data-cursor-text="View"
                   className="rounded-lg border border-white/12 bg-white/[0.04] px-3 py-2 text-[10px] font-semibold uppercase tracking-widest text-white/70 transition-colors hover:bg-white/[0.09] hover:text-white"
@@ -386,7 +413,10 @@ export default function Contact() {
             transition={{ delay: 0.2, duration: 0.7 }}
             className="gradient-border relative rounded-3xl glass p-7 md:p-10"
           >
-            <div className="pointer-events-none absolute -left-[10000px] h-px w-px overflow-hidden" aria-hidden="true">
+            <div
+              className="pointer-events-none absolute -left-[10000px] h-px w-px overflow-hidden"
+              aria-hidden="true"
+            >
               <label htmlFor="contact-company">Company website</label>
               <input
                 id="contact-company"
@@ -413,15 +443,40 @@ export default function Contact() {
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="Full name"  name="name"    required value={fields.name}    onChange={set("name")}    />
-              <Field label="Email"      name="email"   type="email" required value={fields.email}   onChange={set("email")}   />
+              <Field
+                label="Full name"
+                name="name"
+                required
+                value={fields.name}
+                onChange={set("name")}
+              />
+              <Field
+                label="Email"
+                name="email"
+                type="email"
+                required
+                value={fields.email}
+                onChange={set("email")}
+              />
             </div>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
-              <Field label="Phone"      name="phone"   value={fields.phone}   onChange={set("phone")}   />
-              <Field label="Subject"    name="subject" value={fields.subject} onChange={set("subject")} />
+              <Field label="Phone" name="phone" value={fields.phone} onChange={set("phone")} />
+              <Field
+                label="Subject"
+                name="subject"
+                value={fields.subject}
+                onChange={set("subject")}
+              />
             </div>
             <div className="mt-4">
-              <Field label="Your message" name="message" multiline required value={fields.message} onChange={set("message")} />
+              <Field
+                label="Your message"
+                name="message"
+                multiline
+                required
+                value={fields.message}
+                onChange={set("message")}
+              />
             </div>
 
             {/* validation / error message — announced to screen readers */}
@@ -485,8 +540,13 @@ export default function Contact() {
               )}
             </MagneticButton>
 
-            <p className="mt-4 text-center text-[10px] uppercase tracking-[0.24em] text-white/50" aria-live="polite">
-              {status === "sent" ? "Delivered to my inbox." : (
+            <p
+              className="mt-4 text-center text-[10px] uppercase tracking-[0.24em] text-white/50"
+              aria-live="polite"
+            >
+              {status === "sent" ? (
+                "Delivered to my inbox."
+              ) : (
                 <>
                   Or email me directly / DM on{" "}
                   <a

@@ -24,17 +24,15 @@ function TechTile({ item, i, desktop }) {
   });
 
   // Unique float values for each tile
-  const dur   = 4 + ((i * 0.7) % 4);
+  const dur = 4 + ((i * 0.7) % 4);
   const delay = (i * 0.4) % 5;
-  const amp   = 8 + ((i * 3) % 12);
+  const amp = 8 + ((i * 3) % 12);
 
   const isBig = item.featured;
   // Mobile: every tile fills its 4-column grid cell as a uniform square, so
   // four sit side by side and the section needs far less scroll. Desktop keeps
   // the free-floating constellation with featured tiles enlarged.
-  const size = isBig
-    ? "h-full w-full md:h-56 md:w-56"
-    : "h-full w-full md:h-40 md:w-40";
+  const size = isBig ? "h-full w-full md:h-56 md:w-56" : "h-full w-full md:h-40 md:w-40";
   const iconSize = desktop ? (isBig ? 78 : 52) : 30;
   const textSize = isBig ? "text-[11px] md:text-2xl" : "text-[11px] md:text-base";
 
@@ -80,10 +78,7 @@ function TechTile({ item, i, desktop }) {
         {/* tile body — FULLY TRANSPARENT: the logos float in the space of the
             3D world instead of sitting in glass cards, so the constellation
             reads as one field of marks rather than a grid of boxes. */}
-        <motion.div
-          className={`relative z-10 flex flex-col items-center justify-center ${size}`}
-        >
-
+        <motion.div className={`relative z-10 flex flex-col items-center justify-center ${size}`}>
           {/* icon — with no card behind it, a soft drop shadow is what keeps
               the logo readable over the moving 3D world */}
           <motion.div
@@ -122,9 +117,9 @@ export default function Skills() {
     target: ref,
     offset: ["start end", "end start"],
   });
-  const bgY1   = useTransform(scrollYProgress, [0, 1], [140, -140]);
-  const bgY2   = useTransform(scrollYProgress, [0, 1], [-100, 100]);
-  const bgY3   = useTransform(scrollYProgress, [0, 1], [80, -80]);
+  const bgY1 = useTransform(scrollYProgress, [0, 1], [140, -140]);
+  const bgY2 = useTransform(scrollYProgress, [0, 1], [-100, 100]);
+  const bgY3 = useTransform(scrollYProgress, [0, 1], [80, -80]);
   const titleY = useTransform(scrollYProgress, [0, 1], [80, -80]);
   const wallTilt = useTransform(scrollYProgress, [0, 0.5, 1], [4, 0, -4]);
 
@@ -139,7 +134,10 @@ export default function Skills() {
       <div
         aria-hidden
         className="bg-dots pointer-events-none absolute inset-0 opacity-50"
-        style={{ maskImage: "radial-gradient(ellipse at center, black 30%, transparent 75%)", WebkitMaskImage: "radial-gradient(ellipse at center, black 30%, transparent 75%)" }}
+        style={{
+          maskImage: "radial-gradient(ellipse at center, black 30%, transparent 75%)",
+          WebkitMaskImage: "radial-gradient(ellipse at center, black 30%, transparent 75%)",
+        }}
       />
 
       {/* ── Layered ambient nebula ───────────────────────────── */}
@@ -222,7 +220,8 @@ export default function Skills() {
               className="inline-block italic font-light bar-shimmer"
               style={{
                 fontSize: "clamp(3.5rem, 11vw, 11rem)",
-                backgroundImage: "linear-gradient(110deg, #b8c4d6 0%, #ffffff 35%, #8a93a6 50%, #ffffff 65%, #6f7c8c 100%)",
+                backgroundImage:
+                  "linear-gradient(110deg, #b8c4d6 0%, #ffffff 35%, #8a93a6 50%, #ffffff 65%, #6f7c8c 100%)",
                 backgroundSize: "250% 100%",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",

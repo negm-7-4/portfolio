@@ -7,6 +7,7 @@ import { CursorProvider } from "./hooks/useCursor";
 import { ActiveSectionProvider } from "./hooks/useActiveSection";
 
 import Preloader from "./components/Preloader";
+import ErrorBoundary from "./components/ErrorBoundary";
 import DeferredMount from "./components/DeferredMount";
 import CustomCursor from "./components/CustomCursor";
 import KeyboardNavBridge from "./components/AppInner";
@@ -32,16 +33,16 @@ import Manifesto from "./components/sections/Manifesto";
 // Below-the-fold sections are code-split. Each one is wrapped in a
 // placeholder section element so the chapter-rail observer can keep
 // tracking it while the chunk loads.
-const Services      = lazy(() => import("./components/sections/Services"));
-const Skills        = lazy(() => import("./components/sections/Skills"));
-const Experience    = lazy(() => import("./components/sections/Experience"));
-const Process       = lazy(() => import("./components/sections/Process"));
-const Projects      = lazy(() => import("./components/sections/Projects"));
+const Services = lazy(() => import("./components/sections/Services"));
+const Skills = lazy(() => import("./components/sections/Skills"));
+const Experience = lazy(() => import("./components/sections/Experience"));
+const Process = lazy(() => import("./components/sections/Process"));
+const Projects = lazy(() => import("./components/sections/Projects"));
 const SamsCaseStudy = lazy(() => import("./components/sections/SamsCaseStudy"));
 const CapabilitiesGallery = lazy(() => import("./components/sections/CapabilitiesGallery"));
-const Socials       = lazy(() => import("./components/sections/Socials"));
-const Contact       = lazy(() => import("./components/sections/Contact"));
-const Footer        = lazy(() => import("./components/sections/Footer"));
+const Socials = lazy(() => import("./components/sections/Socials"));
+const Contact = lazy(() => import("./components/sections/Contact"));
+const Footer = lazy(() => import("./components/sections/Footer"));
 
 /* Skeleton placeholder used while a section chunk loads. Reserves space
    so scroll doesn't jump, carries the section id so the chapter rail's
@@ -57,7 +58,10 @@ function SectionPlaceholder({ id }) {
     >
       <div className="flex flex-col items-center gap-3">
         <div className="relative h-8 w-8 opacity-40">
-          <span className="absolute inset-0 animate-spin rounded-full border border-white/15 border-t-white/45" style={{ animationDuration: "2.4s" }} />
+          <span
+            className="absolute inset-0 animate-spin rounded-full border border-white/15 border-t-white/45"
+            style={{ animationDuration: "2.4s" }}
+          />
           <span className="absolute inset-2 rounded-full bg-white/20" />
         </div>
         <span className="text-[9px] uppercase tracking-[0.35em] text-white/70">Loading</span>
@@ -92,7 +96,15 @@ function ViewportSection({ id, children, minHeight = "70vh", rootMargin = "1200p
     return () => observer.disconnect();
   }, [ready, rootMargin]);
 
-  if (ready) return children;
+  if (ready) {
+    // One failing section should cost the visitor that section, not the site.
+    // The id stays in the DOM either way so the chapter rail keeps tracking.
+    return (
+      <ErrorBoundary label={`section:${id}`} fallback={<section id={id} hidden />}>
+        {children}
+      </ErrorBoundary>
+    );
+  }
   return (
     <div ref={markerRef} style={{ minHeight }}>
       <SectionPlaceholder id={id} />
@@ -104,25 +116,25 @@ function ViewportSection({ id, children, minHeight = "70vh", rootMargin = "1200p
 // The cinematic R3F world is the heaviest chunk on the site (three + drei +
 // postprocessing), so it's code-split and only ever requested on capable
 // (mid/high) devices — low-tier hardware never downloads it.
-const CinematicWorld    = lazy(() => import("./components/three/CinematicWorld"));
-const SpaceBackground   = lazy(() => import("./components/three/SpaceBackground"));
-const ChapterBackdrop   = lazy(() => import("./components/ui/ChapterBackdrop"));
-const AmbientField      = lazy(() => import("./components/ui/AmbientField"));
-const ChapterRail       = lazy(() => import("./components/ui/ChapterRail"));
-const ChapterIntro      = lazy(() => import("./components/ui/ChapterIntro"));
-const CursorParticles   = lazy(() => import("./components/ui/CursorParticles"));
-const CursorSpotlight   = lazy(() => import("./components/ui/CursorSpotlight"));
-const GrainOverlay      = lazy(() => import("./components/ui/GrainOverlay"));
-const VelocityVignette  = lazy(() => import("./components/ui/VelocityVignette"));
-const ClickRipple       = lazy(() => import("./components/ui/ClickRipple"));
-const KonamiEasterEgg   = lazy(() => import("./components/ui/KonamiEasterEgg"));
-const CommandPalette    = lazy(() => import("./components/ui/CommandPalette"));
-const KeyboardHint      = lazy(() => import("./components/ui/KeyboardHint"));
-const ReadingIndicator  = lazy(() => import("./components/ui/ReadingIndicator"));
-const BackToTop         = lazy(() => import("./components/ui/BackToTop"));
-const WhatsAppButton    = lazy(() => import("./components/ui/WhatsAppButton"));
-const SoundToggle       = lazy(() => import("./components/ui/SoundToggle"));
-const CvModal           = lazy(() => import("./components/ui/CvModal"));
+const CinematicWorld = lazy(() => import("./components/three/CinematicWorld"));
+const SpaceBackground = lazy(() => import("./components/three/SpaceBackground"));
+const ChapterBackdrop = lazy(() => import("./components/ui/ChapterBackdrop"));
+const AmbientField = lazy(() => import("./components/ui/AmbientField"));
+const ChapterRail = lazy(() => import("./components/ui/ChapterRail"));
+const ChapterIntro = lazy(() => import("./components/ui/ChapterIntro"));
+const CursorParticles = lazy(() => import("./components/ui/CursorParticles"));
+const CursorSpotlight = lazy(() => import("./components/ui/CursorSpotlight"));
+const GrainOverlay = lazy(() => import("./components/ui/GrainOverlay"));
+const VelocityVignette = lazy(() => import("./components/ui/VelocityVignette"));
+const ClickRipple = lazy(() => import("./components/ui/ClickRipple"));
+const KonamiEasterEgg = lazy(() => import("./components/ui/KonamiEasterEgg"));
+const CommandPalette = lazy(() => import("./components/ui/CommandPalette"));
+const KeyboardHint = lazy(() => import("./components/ui/KeyboardHint"));
+const ReadingIndicator = lazy(() => import("./components/ui/ReadingIndicator"));
+const BackToTop = lazy(() => import("./components/ui/BackToTop"));
+const WhatsAppButton = lazy(() => import("./components/ui/WhatsAppButton"));
+const SoundToggle = lazy(() => import("./components/ui/SoundToggle"));
+const CvModal = lazy(() => import("./components/ui/CvModal"));
 
 export default function App() {
   const { tier, touch } = useDeviceProfile();
@@ -158,131 +170,195 @@ export default function App() {
     // reducedMotion="user" — every <motion> element automatically drops
     // transform/layout animation when the OS "reduce motion" pref is on.
     <MotionConfig reducedMotion={useLite ? "always" : "user"}>
-    <CursorProvider>
-      <ActiveSectionProvider>
-        <ToastProvider>
-          {/* Keyboard skip-link — first focusable element on the page */}
-          <a
-            href="#main-content"
-            className="sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:left-4 focus-visible:top-4 focus-visible:z-[10000] focus-visible:rounded-lg focus-visible:bg-white focus-visible:px-4 focus-visible:py-2 focus-visible:text-sm focus-visible:font-semibold focus-visible:text-black"
-          >
-            Skip to content
-          </a>
+      <CursorProvider>
+        <ActiveSectionProvider>
+          <ToastProvider>
+            {/* Keyboard skip-link — first focusable element on the page */}
+            <a
+              href="#main-content"
+              className="sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:left-4 focus-visible:top-4 focus-visible:z-[10000] focus-visible:rounded-lg focus-visible:bg-white focus-visible:px-4 focus-visible:py-2 focus-visible:text-sm focus-visible:font-semibold focus-visible:text-black"
+            >
+              Skip to content
+            </a>
 
-          {/* ── Background layers ───────────────────────────────────
+            {/* ── Background layers ───────────────────────────────────
               Mid/high devices travel through the persistent cinematic R3F
               world (its own fog/stars own the backdrop). Low-tier / reduced-
               motion stays on the cheap GLSL aurora + CSS starfield.        */}
-          {useLite ? (
-            <Suspense fallback={null}><SpaceBackground /></Suspense>
-          ) : !worldEnabled ? (
-            <WebGLBackground />
-          ) : (
-            <Suspense fallback={null}>
-              <CinematicWorld quality={tier} />
-              <ExperienceBridge />
-            </Suspense>
-          )}
+            {useLite ? (
+              <ErrorBoundary label="SpaceBackground" fallback={null}>
+                <Suspense fallback={null}>
+                  <SpaceBackground />
+                </Suspense>
+              </ErrorBoundary>
+            ) : !worldEnabled ? (
+              <ErrorBoundary label="WebGLBackground" fallback={null}>
+                <WebGLBackground />
+              </ErrorBoundary>
+            ) : (
+              /* If the R3F world throws — a shader that will not compile on some
+               driver, a lost context, a failed asset — fall back to the cheap
+               GLSL aurora rather than letting React unmount the whole site. */
+              <ErrorBoundary label="CinematicWorld" fallback={<WebGLBackground />}>
+                <Suspense fallback={null}>
+                  <CinematicWorld quality={tier} />
+                  <ExperienceBridge />
+                </Suspense>
+              </ErrorBoundary>
+            )}
 
-          {/* Mobile readability veil — on phones the single-column layout puts
+            {/* Mobile readability veil — on phones the single-column layout puts
               copy directly over the full-width 3D world, so dim it to an
               ambient backdrop so text always stays crisp. Most visitors are on
               phones, so legibility wins over spectacle here. Desktop: none. */}
-          {!useLite && (
-            <div
-              aria-hidden
-              className="pointer-events-none fixed inset-0 md:hidden"
-              style={{
-                zIndex: -5,
-                background:
-                  "linear-gradient(180deg, rgba(6,8,12,0.6) 0%, rgba(6,8,12,0.74) 45%, rgba(6,8,12,0.68) 100%)",
-              }}
-            />
-          )}
+            {!useLite && (
+              <div
+                aria-hidden
+                className="pointer-events-none fixed inset-0 md:hidden"
+                style={{
+                  zIndex: -5,
+                  background:
+                    "linear-gradient(180deg, rgba(6,8,12,0.6) 0%, rgba(6,8,12,0.74) 45%, rgba(6,8,12,0.68) 100%)",
+                }}
+              />
+            )}
 
-          {/* These are visual but not critical for first paint.
+            {/* These are visual but not critical for first paint.
               Touched-down tiers skip the heaviest extras to stay smooth. */}
-          <Suspense fallback={null}>
-            <DeferredMount>
-              <ChapterBackdrop />
-              {!useLite && <AmbientField />}
-              {!useLite && <CursorSpotlight />}
-              {!useLite && <VelocityVignette />}
-              {!useLite && <GrainOverlay />}
-            </DeferredMount>
-          </Suspense>
+            <ErrorBoundary label="ambient chrome" fallback={null}>
+              <Suspense fallback={null}>
+                <DeferredMount>
+                  <ChapterBackdrop />
+                  {!useLite && <AmbientField />}
+                  {!useLite && <CursorSpotlight />}
+                  {!useLite && <VelocityVignette />}
+                  {!useLite && <GrainOverlay />}
+                </DeferredMount>
+              </Suspense>
+            </ErrorBoundary>
 
-          {/* ── Floating chrome (z-30+) ─────────────────────────── */}
-          <ScrollProgress />
-          <PageTransition />
-          <Navbar />
-          <Suspense fallback={null}>
-            <DeferredMount>
-              <ChapterRail />
-              <ChapterIntro />
-            </DeferredMount>
-          </Suspense>
-
-          {/* ── Page content ─────────────────────────────────────── */}
-          <main id="main-content" className="relative z-[2]">
-            {/* The opaque photo cover screen — hides the 3D world; the gem +
-                Hero reveal on scroll and carry the rest of the journey. */}
-            <PhotoIntro />
-            <Hero />
-            <Stats />
-            <About />
-            <ViewportSection id="services"><Suspense fallback={<SectionPlaceholder id="services" />}><Services /></Suspense></ViewportSection>
-            <VelocityMarquee text="REACT · NEXT.JS · THREE.JS · GSAP · FRAMER MOTION · LOTTIE · WEBGL · D3 · TAILWIND" baseVelocity={2.5} />
-            <ViewportSection id="skills"><Suspense fallback={<SectionPlaceholder id="skills" />}><Skills /></Suspense></ViewportSection>
-            <ViewportSection id="experience"><Suspense fallback={<SectionPlaceholder id="experience" />}><Experience /></Suspense></ViewportSection>
-            <ViewportSection id="process"><Suspense fallback={<SectionPlaceholder id="process" />}><Process /></Suspense></ViewportSection>
-            <Manifesto />
-            <VelocityMarquee text="LET'S BUILD SOMETHING GREAT" baseVelocity={3} />
-            <ViewportSection id="projects" minHeight="90vh"><Suspense fallback={<SectionPlaceholder id="projects" />}><Projects /></Suspense></ViewportSection>
-            <ViewportSection id="sams-case-study" minHeight="90vh"><Suspense fallback={<SectionPlaceholder id="sams-case-study" />}><SamsCaseStudy /></Suspense></ViewportSection>
-            <ViewportSection id="capabilities" minHeight="80vh"><Suspense fallback={<SectionPlaceholder id="capabilities" />}><CapabilitiesGallery /></Suspense></ViewportSection>
-            <ViewportSection id="socials"><Suspense fallback={<SectionPlaceholder id="socials" />}><Socials /></Suspense></ViewportSection>
-            <ViewportSection id="contact" minHeight="90vh"><Suspense fallback={<SectionPlaceholder id="contact" />}><Contact /></Suspense></ViewportSection>
-            <ViewportSection id="footer"><Suspense fallback={<SectionPlaceholder id="footer" />}><Footer /></Suspense></ViewportSection>
-          </main>
-
-          {/* ── Cursor + interactive layer — deferred, all lazy.
-              Heavy cursor effects skipped on touch + low-tier devices.   */}
-          {!touch && !isLow && (
+            {/* ── Floating chrome (z-30+) ─────────────────────────── */}
+            <ScrollProgress />
+            <PageTransition />
+            <Navbar />
             <Suspense fallback={null}>
-              <DeferredMount delay={400}>
-                <ClickRipple />
-                <CursorParticles />
+              <DeferredMount>
+                <ChapterRail />
+                <ChapterIntro />
               </DeferredMount>
             </Suspense>
-          )}
-          {!touch && <CustomCursor />}
 
-          <Suspense fallback={null}>
-            <DeferredMount delay={800}>
-              {!touch && <KeyboardHint />}
-              <KeyboardNavBridge />
-              <CommandPalette />
-              <KonamiEasterEgg />
-              <ReadingIndicator />
-              <BackToTop />
-              <WhatsAppButton />
-              {!isLow && <SoundToggle />}
-            </DeferredMount>
-          </Suspense>
+            {/* ── Page content ─────────────────────────────────────── */}
+            <main id="main-content" className="relative z-[2]">
+              {/* The opaque photo cover screen — hides the 3D world; the gem +
+                Hero reveal on scroll and carry the rest of the journey. */}
+              <PhotoIntro />
+              <Hero />
+              <Stats />
+              <About />
+              <ViewportSection id="services">
+                <Suspense fallback={<SectionPlaceholder id="services" />}>
+                  <Services />
+                </Suspense>
+              </ViewportSection>
+              <VelocityMarquee
+                text="REACT · NEXT.JS · THREE.JS · GSAP · FRAMER MOTION · LOTTIE · WEBGL · D3 · TAILWIND"
+                baseVelocity={2.5}
+              />
+              <ViewportSection id="skills">
+                <Suspense fallback={<SectionPlaceholder id="skills" />}>
+                  <Skills />
+                </Suspense>
+              </ViewportSection>
+              <ViewportSection id="experience">
+                <Suspense fallback={<SectionPlaceholder id="experience" />}>
+                  <Experience />
+                </Suspense>
+              </ViewportSection>
+              <ViewportSection id="process">
+                <Suspense fallback={<SectionPlaceholder id="process" />}>
+                  <Process />
+                </Suspense>
+              </ViewportSection>
+              <Manifesto />
+              <VelocityMarquee text="LET'S BUILD SOMETHING GREAT" baseVelocity={3} />
+              <ViewportSection id="projects" minHeight="90vh">
+                <Suspense fallback={<SectionPlaceholder id="projects" />}>
+                  <Projects />
+                </Suspense>
+              </ViewportSection>
+              <ViewportSection id="sams-case-study" minHeight="90vh">
+                <Suspense fallback={<SectionPlaceholder id="sams-case-study" />}>
+                  <SamsCaseStudy />
+                </Suspense>
+              </ViewportSection>
+              <ViewportSection id="capabilities" minHeight="80vh">
+                <Suspense fallback={<SectionPlaceholder id="capabilities" />}>
+                  <CapabilitiesGallery />
+                </Suspense>
+              </ViewportSection>
+              <ViewportSection id="socials">
+                <Suspense fallback={<SectionPlaceholder id="socials" />}>
+                  <Socials />
+                </Suspense>
+              </ViewportSection>
+              <ViewportSection id="contact" minHeight="90vh">
+                <Suspense fallback={<SectionPlaceholder id="contact" />}>
+                  <Contact />
+                </Suspense>
+              </ViewportSection>
+              <ViewportSection id="footer">
+                <Suspense fallback={<SectionPlaceholder id="footer" />}>
+                  <Footer />
+                </Suspense>
+              </ViewportSection>
+            </main>
 
-          {/* CV modal — mounted early (no delay) so the "My CV" button always
+            {/* ── Cursor + interactive layer — deferred, all lazy.
+              Heavy cursor effects skipped on touch + low-tier devices.   */}
+            {!touch && !isLow && (
+              <ErrorBoundary label="cursor effects" fallback={null}>
+                <Suspense fallback={null}>
+                  <DeferredMount delay={400}>
+                    <ClickRipple />
+                    <CursorParticles />
+                  </DeferredMount>
+                </Suspense>
+              </ErrorBoundary>
+            )}
+            {!touch && (
+              <ErrorBoundary label="CustomCursor" fallback={null}>
+                <CustomCursor />
+              </ErrorBoundary>
+            )}
+
+            <ErrorBoundary label="floating tools" fallback={null}>
+              <Suspense fallback={null}>
+                <DeferredMount delay={800}>
+                  {!touch && <KeyboardHint />}
+                  <KeyboardNavBridge />
+                  <CommandPalette />
+                  <KonamiEasterEgg />
+                  <ReadingIndicator />
+                  <BackToTop />
+                  <WhatsAppButton />
+                  {!isLow && <SoundToggle />}
+                </DeferredMount>
+              </Suspense>
+            </ErrorBoundary>
+
+            {/* CV modal — mounted early (no delay) so the "My CV" button always
               has a live listener; renders nothing until the open-cv event. */}
-          <Suspense fallback={null}>
-            <CvModal />
-          </Suspense>
+            <Suspense fallback={null}>
+              <CvModal />
+            </Suspense>
 
-          <AnimatePresence>
-            {!loaded && <Preloader key="preloader" onDone={() => setLoaded(true)} />}
-          </AnimatePresence>
-        </ToastProvider>
-      </ActiveSectionProvider>
-    </CursorProvider>
+            <AnimatePresence>
+              {!loaded && <Preloader key="preloader" onDone={() => setLoaded(true)} />}
+            </AnimatePresence>
+          </ToastProvider>
+        </ActiveSectionProvider>
+      </CursorProvider>
     </MotionConfig>
   );
 }

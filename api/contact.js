@@ -1,37 +1,23 @@
 import { createHash } from "node:crypto";
 import { Resend } from "resend";
-
-const WINDOW_MS = 10 * 60 * 1000;
-const MAX_REQUESTS = 5;
-const attempts = new Map();
+import { rateLimit } from "./_rateLimit.js";
 
 function clean(value, maxLength) {
   return typeof value === "string" ? value.trim().slice(0, maxLength) : "";
 }
 
 function escapeHtml(value) {
-  return value.replace(/[&<>'"]/g, (character) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    "'": "&#39;",
-    '"': "&quot;",
-  })[character]);
-}
-
-function isRateLimited(ip) {
-  const now = Date.now();
-  const recent = (attempts.get(ip) || []).filter((timestamp) => now - timestamp < WINDOW_MS);
-  recent.push(now);
-  attempts.set(ip, recent);
-
-  if (attempts.size > 500) {
-    for (const [key, timestamps] of attempts) {
-      if (!timestamps.some((timestamp) => now - timestamp < WINDOW_MS)) attempts.delete(key);
-    }
-  }
-
-  return recent.length > MAX_REQUESTS;
+  return value.replace(
+    /[&<>'"]/g,
+    (character) =>
+      ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "'": "&#39;",
+        '"': "&quot;",
+      })[character]
+  );
 }
 
 export default async function handler(request, response) {
@@ -50,9 +36,12 @@ export default async function handler(request, response) {
   const forwarded = request.headers["x-forwarded-for"];
   const forwardedIp = Array.isArray(forwarded) ? forwarded[0] : forwarded?.split(",")[0];
   const ip = clean(forwardedIp || request.socket?.remoteAddress || "unknown", 80);
-  if (isRateLimited(ip)) {
+  const { limited } = await rateLimit(ip);
+  if (limited) {
     response.setHeader("Retry-After", "600");
-    return response.status(429).json({ message: "Too many messages. Please try again in a few minutes." });
+    return response
+      .status(429)
+      .json({ message: "Too many messages. Please try again in a few minutes." });
   }
 
   const body = request.body && typeof request.body === "object" ? request.body : {};
@@ -117,7 +106,7 @@ export default async function handler(request, response) {
       `,
       tags: [{ name: "source", value: "portfolio_contact" }],
     },
-    { idempotencyKey: `portfolio-contact/${fingerprint}` },
+    { idempotencyKey: `portfolio-contact/${fingerprint}` }
   );
 
   if (error) {
