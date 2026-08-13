@@ -99,11 +99,57 @@ Sitemap: ${site}/sitemap.xml
   };
 }
 
+/**
+ * Injects per-project structured data into index.html at build time.
+ *
+ * The page already carried Person and WebSite JSON-LD, but the projects — the
+ * actual substance a recruiter or a search engine wants — were invisible to
+ * crawlers, since they only exist after React renders. Generating the graph
+ * from the same `projects` array the UI renders means the two can never drift:
+ * add a project to content.js and it appears in the structured data.
+ */
+function projectSchema(env) {
+  const site = (env.VITE_SITE_URL || SITE_DEFAULTS.VITE_SITE_URL).replace(/\/+$/, "");
+  return {
+    name: "portfolio-project-schema",
+    async transformIndexHtml(html) {
+      const { projects, profile } = await import("./src/data/content.js");
+
+      const graph = projects.map((project) => ({
+        "@context": "https://schema.org",
+        "@type": "CreativeWork",
+        name: project.title,
+        headline: project.tagline,
+        description: project.desc,
+        genre: project.category,
+        keywords: project.tech.join(", "),
+        url: project.live || project.github || `${site}/#projects`,
+        ...(project.image ? { image: `${site}${project.image}` } : {}),
+        ...(project.github ? { codeRepository: project.github } : {}),
+        author: { "@type": "Person", name: profile.name, url: `${site}/` },
+        inLanguage: "en",
+      }));
+
+      return {
+        html,
+        tags: [
+          {
+            tag: "script",
+            attrs: { type: "application/ld+json" },
+            children: JSON.stringify(graph),
+            injectTo: "head",
+          },
+        ],
+      };
+    },
+  };
+}
+
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "VITE_");
 
   return {
-    plugins: [react(), tailwindcss(), htmlEnv(env), sitemap(env)],
+    plugins: [react(), tailwindcss(), htmlEnv(env), sitemap(env), projectSchema(env)],
 
     // ── React-Three-Fiber + Vite interop ──────────────────────────────────
     // Without this, Vite's dep optimiser can resolve React through two module

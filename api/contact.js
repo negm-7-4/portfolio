@@ -1,9 +1,6 @@
 import { createHash } from "node:crypto";
 import { Resend } from "resend";
-
-const WINDOW_MS = 10 * 60 * 1000;
-const MAX_REQUESTS = 5;
-const attempts = new Map();
+import { rateLimit } from "./_rateLimit.js";
 
 function clean(value, maxLength) {
   return typeof value === "string" ? value.trim().slice(0, maxLength) : "";
@@ -23,21 +20,6 @@ function escapeHtml(value) {
   );
 }
 
-function isRateLimited(ip) {
-  const now = Date.now();
-  const recent = (attempts.get(ip) || []).filter((timestamp) => now - timestamp < WINDOW_MS);
-  recent.push(now);
-  attempts.set(ip, recent);
-
-  if (attempts.size > 500) {
-    for (const [key, timestamps] of attempts) {
-      if (!timestamps.some((timestamp) => now - timestamp < WINDOW_MS)) attempts.delete(key);
-    }
-  }
-
-  return recent.length > MAX_REQUESTS;
-}
-
 export default async function handler(request, response) {
   response.setHeader("Cache-Control", "no-store");
 
@@ -54,7 +36,8 @@ export default async function handler(request, response) {
   const forwarded = request.headers["x-forwarded-for"];
   const forwardedIp = Array.isArray(forwarded) ? forwarded[0] : forwarded?.split(",")[0];
   const ip = clean(forwardedIp || request.socket?.remoteAddress || "unknown", 80);
-  if (isRateLimited(ip)) {
+  const { limited } = await rateLimit(ip);
+  if (limited) {
     response.setHeader("Retry-After", "600");
     return response
       .status(429)

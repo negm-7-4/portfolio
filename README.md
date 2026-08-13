@@ -24,19 +24,20 @@ vercel dev
 
 ## Scripts
 
-| Command                 | What it does                                          |
-| ----------------------- | ----------------------------------------------------- |
-| `npm run dev`           | Vite dev server                                       |
-| `npm run build`         | Production build into `dist/`                         |
-| `npm run preview`       | Serve the production build locally                    |
-| `npm run lint`          | ESLint (flat config, with `jsx-a11y` and hooks rules) |
-| `npm run typecheck`     | `tsc --noEmit` over the typed surface                 |
-| `npm run format`        | Prettier, write                                       |
-| `npm run test`          | Vitest, single run                                    |
-| `npm run test:coverage` | Vitest with V8 coverage                               |
-| `npm run budget`        | Fail if the critical-path bundle exceeded its budget  |
-| `npm run images`        | Regenerate responsive AVIF/WebP derivatives           |
-| `npm run check`         | Everything CI runs, in order                          |
+| Command                 | What it does                                            |
+| ----------------------- | ------------------------------------------------------- |
+| `npm run dev`           | Vite dev server                                         |
+| `npm run build`         | Production build into `dist/`                           |
+| `npm run preview`       | Serve the production build locally                      |
+| `npm run lint`          | ESLint (flat config, with `jsx-a11y` and hooks rules)   |
+| `npm run typecheck`     | `tsc --noEmit` over the typed surface                   |
+| `npm run format`        | Prettier, write                                         |
+| `npm run test`          | Vitest, single run                                      |
+| `npm run test:coverage` | Vitest with V8 coverage                                 |
+| `npm run test:a11y`     | axe-core audit against the built site (needs `preview`) |
+| `npm run budget`        | Fail if the critical-path bundle exceeded its budget    |
+| `npm run images`        | Regenerate responsive AVIF/WebP derivatives             |
+| `npm run check`         | Everything CI runs, in order                            |
 
 ---
 
@@ -121,6 +122,18 @@ lazy section, the ambient chrome, the cursor layer, and the app root.
 - `prefers-reduced-motion` collapses the choreography site-wide via
   `MotionConfig`, and the low tier forces it.
 
+Enforced, not assumed: `npm run test:a11y` runs axe-core against the production
+build in a real browser, at desktop and mobile widths, scrolled through the
+whole page so the lazy sections have actually mounted — auditing first paint
+alone would miss most of this site. It runs as its own CI job.
+
+Three violations it caught, worth naming because they are the kinds that
+survive code review: the chapter rail was an `aria-hidden` `<aside>` full of
+focusable buttons (keyboard-reachable, invisible to screen readers); the
+preloader put `role="progressbar"` on the full-screen wrapper that also held
+the Skip button; and a corner label sat at 1.26:1 contrast, which is not
+subtle, it is invisible.
+
 ---
 
 ## Contact endpoint
@@ -142,9 +155,21 @@ Guards: POST-only, 20 kB payload cap, honeypot field answered with a fake
 success, per-IP rate limit, HTML escaping of all visitor input, and an
 idempotency key so a double submit cannot double-send.
 
-> **Known limitation:** the rate limit is an in-memory `Map`, so it is per
-> serverless instance rather than global. It stops casual abuse, not a
-> distributed flood. Moving it to Vercel KV / Upstash is the fix.
+### Rate limiting
+
+The limiter prefers a durable store and degrades honestly without one:
+
+| Configured                                            | Behaviour                                                                    |
+| ----------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` | Global counter across all serverless instances                               |
+| Neither                                               | Per-instance in-memory counter — stops casual abuse, not a distributed flood |
+
+Upstash is reached over its REST API rather than a Redis client: a serverless
+function's connection lifetime makes TCP pooling a liability. The window is a
+fixed counter (`INCR` + `EXPIRE … NX`) rather than a sliding log, so it is one
+round trip and cannot grow unbounded. **If Redis is unreachable the request
+still goes through** on the in-memory fallback — a limiter must never be the
+reason a genuine message fails to send.
 
 ## Configuration
 
@@ -160,6 +185,13 @@ canonical tag, the Open Graph and JSON-LD URLs in `index.html`, and the
 generated `sitemap.xml` and `robots.txt`. Moving to a custom domain is a
 one-line change. `vite.config.js` carries the same values as defaults so a
 clean checkout with no `.env` still builds correct URLs.
+
+## Structured data
+
+`index.html` carries Person and WebSite JSON-LD, plus a `CreativeWork` entry
+per project generated at build time from the same `projects` array the UI
+renders (see `projectSchema` in `vite.config.js`). Add a project to
+`data/content.js` and it appears in the structured data — the two cannot drift.
 
 ## Deployment notes
 

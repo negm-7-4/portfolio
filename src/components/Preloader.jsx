@@ -177,14 +177,18 @@ export default function Preloader({ onDone }) {
   const covering = phase !== "done";
 
   return (
-    <div
-      className="fixed inset-0 z-[10000] overflow-hidden"
-      role="progressbar"
-      aria-label="Loading portfolio"
-      aria-valuemin={0}
-      aria-valuemax={100}
-      aria-valuenow={count}
-    >
+    <div className="fixed inset-0 z-[10000] overflow-hidden">
+      {/* The progressbar role lives on its own node rather than the
+          full-screen wrapper: the wrapper also holds the Skip button, and a
+          progressbar is not allowed to contain interactive content. */}
+      <div
+        className="sr-only"
+        role="progressbar"
+        aria-label="Loading portfolio"
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={count}
+      />
       {/* ══ 8-panel exit curtain ══ */}
       <div className="absolute inset-0 flex">
         {Array.from({ length: PANELS }).map((_, i) => {
@@ -300,7 +304,17 @@ export default function Preloader({ onDone }) {
 
               {/* corner decorations */}
               <motion.div
-                className="absolute left-8 bottom-20 text-white/10 font-mono text-xs tracking-[0.3em]"
+                /* Was text-white/10 — a 1.26:1 contrast ratio, which is not
+                   "subtle", it is invisible. /45 measures 4.53:1, which passes
+                   on paper but sits so close to the 4.5 threshold that the
+                   element's own opacity fade drops it under mid-animation —
+                   the audit caught it intermittently, which is exactly what a
+                   real user on a dim laptop screen experiences. /60 is 7.25:1
+                   and still reads as a quiet corner label. The sr-only
+                   progressbar carries this state for assistive tech, so the
+                   text itself stays decorative. */
+                aria-hidden
+                className="absolute left-8 bottom-20 font-mono text-xs tracking-[0.3em] text-white/60"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.5 }}

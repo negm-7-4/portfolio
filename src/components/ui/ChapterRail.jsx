@@ -22,7 +22,11 @@ export default function ChapterRail() {
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: 1.6, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
       className="pointer-events-none fixed right-3 top-1/2 z-[40] hidden -translate-y-1/2 md:block"
-      aria-hidden
+      // A labelled secondary navigation, not decoration. It used to be
+      // aria-hidden — which hid a dozen real, focusable chapter buttons from
+      // assistive tech while leaving them in the tab order: the worst of both.
+      // Duplicating the navbar is fine as long as it says what it is.
+      aria-label="Chapters"
     >
       {/* top + bottom subtle vertical fade markers */}
       <span aria-hidden className="absolute -right-2 -top-3 h-px w-3 bg-white/15" />

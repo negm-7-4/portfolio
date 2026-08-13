@@ -108,25 +108,34 @@ function HeroFocus({ lite }) {
     // own column beside the copy. In the single-column phone layout its rings
     // drift into the corners and collide with the floating action buttons, so
     // it is hidden there — the 3D world itself still renders.
+    // aria-hidden belongs on the decorative rings, NOT on this wrapper: the
+    // wrapper also contains the real "Pulse" button, and hiding an element
+    // that holds a focusable control leaves it tabbable but unannounced.
     <div
       className="pointer-events-none relative hidden h-full w-full md:block"
       style={{ overflow: "visible" }}
-      aria-hidden
     >
       {/* focal glow — makes the sculpture behind read as a lit subject */}
       <div
+        aria-hidden
         className="glow-pulse absolute left-1/2 top-1/2 h-[62%] w-[62%] -translate-x-1/2 -translate-y-1/2 rounded-full"
         style={{ background: "radial-gradient(circle, rgba(170,180,196,0.12), transparent 70%)" }}
       />
       {/* outer framing ring with an orbiting node */}
-      <div className="spin-slower absolute left-1/2 top-1/2 h-[80%] w-[80%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/[0.06]">
+      <div
+        aria-hidden
+        className="spin-slower absolute left-1/2 top-1/2 h-[80%] w-[80%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/[0.06]"
+      >
         <span
           className="absolute left-1/2 top-0 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#aab4c4]/70"
           style={{ boxShadow: "0 0 8px rgba(170,180,196,0.6)" }}
         />
       </div>
       {/* inner dashed ring, counter-rotating */}
-      <div className="spin-rev absolute left-1/2 top-1/2 h-[56%] w-[56%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-white/[0.05]" />
+      <div
+        aria-hidden
+        className="spin-rev absolute left-1/2 top-1/2 h-[56%] w-[56%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-white/[0.05]"
+      />
       {/* corner crosshair ticks */}
       {[
         "left-[8%] top-[12%] border-l border-t",
@@ -134,7 +143,7 @@ function HeroFocus({ lite }) {
         "left-[8%] bottom-[14%] border-l border-b",
         "right-[8%] bottom-[14%] border-r border-b",
       ].map((c, i) => (
-        <span key={i} className={`absolute ${c} h-5 w-5 border-white/15`} />
+        <span key={i} aria-hidden className={`absolute ${c} h-5 w-5 border-white/15`} />
       ))}
       {/* live-render caption */}
       <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-2 text-[9px] uppercase tracking-[0.3em] text-white/55">

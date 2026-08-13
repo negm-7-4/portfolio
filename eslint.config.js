@@ -125,11 +125,18 @@ export default [
 
   /* ── Build tooling + tests ── */
   {
-    files: ["*.config.js", "scripts/**/*.{js,mjs}", "**/*.test.{js,jsx,ts,tsx}"],
+    files: [
+      "*.config.js",
+      "scripts/**/*.{js,mjs}",
+      "tests/**/*.{js,mjs}",
+      "**/*.test.{js,jsx,ts,tsx}",
+    ],
     languageOptions: {
       ecmaVersion: "latest",
       sourceType: "module",
-      globals: { ...globals.node },
+      // Node for the harness; browser globals because page.evaluate() bodies
+      // are serialised and executed inside the page.
+      globals: { ...globals.node, ...globals.browser },
     },
     rules: { "no-console": "off" },
   },
