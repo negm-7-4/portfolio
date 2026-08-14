@@ -139,6 +139,7 @@ const BackToTop = lazy(() => import("./components/ui/BackToTop"));
 const WhatsAppButton = lazy(() => import("./components/ui/WhatsAppButton"));
 const SoundToggle = lazy(() => import("./components/ui/SoundToggle"));
 const CvModal = lazy(() => import("./components/ui/CvModal"));
+const Lightbox = lazy(() => import("./components/ui/Lightbox"));
 
 export default function App() {
   const { tier, touch } = useDeviceProfile();
@@ -356,6 +357,15 @@ export default function App() {
             <Suspense fallback={null}>
               <CvModal />
             </Suspense>
+
+            {/* Image viewer. Same reasoning: it listens for clicks on any
+              zoomable image anywhere on the page, so it has to be listening
+              before the visitor reaches one. Renders nothing until opened. */}
+            <ErrorBoundary label="Lightbox" fallback={null}>
+              <Suspense fallback={null}>
+                <Lightbox />
+              </Suspense>
+            </ErrorBoundary>
 
             <AnimatePresence>
               {!loaded && <Preloader key="preloader" onDone={() => setLoaded(true)} />}

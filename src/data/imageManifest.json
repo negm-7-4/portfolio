@@ -34,6 +34,21 @@
     "height": 782,
     "widths": [640, 1024, 1600]
   },
+  "/projects/sams-agent.png": {
+    "width": 1905,
+    "height": 927,
+    "widths": [640, 1024, 1600]
+  },
+  "/projects/sams-factory.png": {
+    "width": 1906,
+    "height": 911,
+    "widths": [640, 1024, 1600]
+  },
+  "/projects/sams-office.png": {
+    "width": 1890,
+    "height": 915,
+    "widths": [640, 1024, 1600]
+  },
   "/projects/social.jpg": {
     "width": 835,
     "height": 460,

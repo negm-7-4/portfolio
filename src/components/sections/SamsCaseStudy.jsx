@@ -7,8 +7,105 @@ import ResponsiveImage from "../ui/ResponsiveImage";
 const proof = [
   { value: "859", label: "backend tests" },
   { value: "7 / 7", label: "evaluation score" },
+  { value: "8", label: "system blueprints" },
+  { value: "209", label: "citable laws" },
   { value: "0", label: "npm vulnerabilities" },
   { value: "0", label: "serious Axe issues" },
+];
+
+/* The three claims the project makes on its front page. Each one is listed
+   with the mechanism that enforces it, because "we prompt the agents not to"
+   is not an engineering guarantee and the distinction is the whole point. */
+const guarantees = [
+  {
+    what: "duplicated work",
+    how: "A locked task claim board. Two agents cannot hold the same work item, so the second one has nothing to duplicate.",
+  },
+  {
+    what: "unresolved conflicts",
+    how: "A deterministic tie-break. The same contested claim resolves the same way every time it is replayed.",
+  },
+  {
+    what: "infinite loops",
+    how: "A hard iteration ceiling. Hitting it force-halts the run and files a partial result report instead of burning tokens.",
+  },
+];
+
+/* The System Factory, end to end. The section's headline — "from contract to
+   rollback" — is this list. */
+const factoryChain = [
+  {
+    step: "Contract",
+    detail:
+      "Typed endpoints, events, errors and database schemas, compiled from the requirement register.",
+  },
+  {
+    step: "Graph",
+    detail:
+      "A validated work-item DAG. A missing dependency or a cycle is rejected rather than discovered later.",
+  },
+  {
+    step: "Gates",
+    detail:
+      "Test, lint, build, security, dependency policy, import cycles, migration replay, recovery drill.",
+  },
+  {
+    step: "Release",
+    detail:
+      "Immutable and content-addressed, carrying an SBOM, build provenance and a signed attestation.",
+  },
+  {
+    step: "Rollout",
+    detail:
+      "Canary, blue/green or rolling, through a weighted router that keeps a visitor on one version.",
+  },
+  {
+    step: "Rollback",
+    detail:
+      "A failed smoke proof against the deployed payload restores the previous release automatically.",
+  },
+];
+
+/* The most interesting engineering decisions in the project are all refusals.
+   Worth its own block: it is the part that separates the system from a demo. */
+const refusals = [
+  "Sign a release it cannot sign — the attestation is written unsigned and says so, because a fake signature is worse than none.",
+  "Start when a configured backend is unreachable — two divergent sets of checkpoints is worse than a process that will not boot.",
+  "Report a pass for a command the environment could not really run.",
+  "Deploy a release whose attestation does not match its own bytes.",
+  "Invent model output — with no provider configured, live mode stops and explains itself.",
+];
+
+/* The three surfaces the operator actually works in.
+   `image` is optional: a surface with one renders as a captioned screenshot,
+   one without renders as a spec card — so the gallery never shows a broken
+   frame for a screen nobody has captured yet. Add a file to public/projects/
+   and run `npm run images` to generate its AVIF/WebP derivatives. */
+const surfaces = [
+  {
+    name: "The living office",
+    meta: "Iso · CEO · Walk",
+    image: "/projects/sams-office.png",
+    alt: "SAMS isometric 3D office: agent desks, coloured pathing overlays, camera mode and weather controls",
+    detail:
+      "Isometric orbit, top-down and first-person walk over one navmesh. Day/night, weather, positional audio, and a status light per employee that follows the spec's lighting rules.",
+  },
+  {
+    name: "System Factory",
+    meta: "Contract → rollback",
+    image: "/projects/sams-factory.png",
+    alt: "SAMS System Factory: project scope, CEO brief, requirement register and the execution rail",
+    detail:
+      "Requirement register, compiled dependency graph, execution rail, traceability matrix and impact analysis — the blast radius of a change before anyone makes it.",
+  },
+  {
+    name: "Agent provisioning",
+    meta: "6 model backends",
+    image: "/projects/sams-agent.png",
+    alt: "SAMS Add AI Agent dialog offering GPT, Claude, Gemini, DeepSeek, Blackbox and the SAMS Core facilitator",
+    detail:
+      "A desk is provisioned with a named model — GPT, Claude, Gemini, DeepSeek, Blackbox or the in-house facilitator — routed per role behind a per-model circuit breaker.",
+  },
 ];
 
 const deliveryTrace = [
@@ -85,21 +182,21 @@ export default function SamsCaseStudy() {
                     <span className="h-2.5 w-2.5 rounded-full bg-white/10" />
                   </div>
                   <span className="text-[9px] uppercase tracking-[0.28em] text-white/45">
-                    SAMS · live office state
+                    SAMS · system factory
                   </span>
                   <span className="flex items-center gap-1.5 text-[9px] uppercase tracking-[0.2em] text-emerald-300/70">
                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-300" /> Verified
                   </span>
                 </div>
                 <ResponsiveImage
-                  src="/projects/sams-1.jpg"
-                  alt="SAMS isometric virtual AI office with agent workspaces and governance controls"
-                  className="aspect-[16/9] w-full object-cover"
+                  src="/projects/sams-factory.png"
+                  alt="SAMS System Factory: a brief compiled into a requirement register, dependency graph and gated execution rail"
+                  className="aspect-[16/9] w-full object-cover object-top"
                   sizes="(max-width: 768px) 100vw, 60vw"
                 />
                 <figcaption className="border-t border-white/8 px-5 py-4 text-xs leading-relaxed text-white/45">
-                  One operational surface for agent movement, mission status, security gates, code
-                  review and delivery decisions.
+                  A brief becomes a binding requirement register, then a compiled dependency graph.
+                  Nothing ships without green evidence and a Git revision.
                 </figcaption>
               </figure>
             </Reveal>
@@ -162,6 +259,119 @@ export default function SamsCaseStudy() {
                     </li>
                   ))}
                 </ol>
+              </div>
+            </Reveal>
+
+            {/* The three zeros. The claim is worthless without the mechanism
+                beside it, so they are always rendered as a pair. */}
+            <Reveal once>
+              <div className="rounded-3xl border border-white/10 bg-black/20 p-6 md:p-8">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-white/45">
+                  Guaranteed by code, not by prompt wording
+                </p>
+                <ul className="mt-6 space-y-5">
+                  {guarantees.map((g) => (
+                    <li key={g.what} className="grid gap-2 sm:grid-cols-[10rem_1fr] sm:gap-5">
+                      <p className="font-display text-lg font-semibold leading-tight text-white">
+                        <span className="text-[#c7bdf0]">Zero</span> {g.what}
+                      </p>
+                      <p className="text-xs leading-relaxed text-white/50">{g.how}</p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </Reveal>
+
+            {/* The factory chain — the section's own headline, itemised. */}
+            <Reveal once>
+              <div className="rounded-3xl border border-white/10 bg-black/20 p-6 md:p-8">
+                <div className="mb-7 flex items-center justify-between gap-4">
+                  <div>
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-white/45">
+                      System factory
+                    </p>
+                    <h4 className="mt-2 font-display text-2xl font-semibold text-white">
+                      From contract to rollback
+                    </h4>
+                  </div>
+                  <span className="shrink-0 rounded-full border border-white/10 px-3 py-1 text-[9px] uppercase tracking-[0.22em] text-white/45">
+                    8 blueprints
+                  </span>
+                </div>
+                <ol className="grid gap-x-6 gap-y-5 sm:grid-cols-2">
+                  {factoryChain.map((link, index) => (
+                    <li key={link.step}>
+                      <p className="flex items-baseline gap-2">
+                        <span className="font-display text-[10px] text-[#c7bdf0]">
+                          {String(index + 1).padStart(2, "0")}
+                        </span>
+                        <span className="text-sm font-semibold text-white/82">{link.step}</span>
+                      </p>
+                      <p className="mt-1 text-xs leading-relaxed text-white/45">{link.detail}</p>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            </Reveal>
+
+            {/* Three surfaces. A captured one shows its screenshot; the rest
+                stand on their spec until a capture exists. */}
+            <Reveal once>
+              <div>
+                <p className="mb-4 text-[10px] font-semibold uppercase tracking-[0.28em] text-white/45">
+                  Three surfaces, one system
+                </p>
+                <div className="grid gap-4 sm:grid-cols-3">
+                  {surfaces.map((surface) => (
+                    <figure
+                      key={surface.name}
+                      className="flex flex-col overflow-hidden rounded-2xl border border-white/9 bg-white/[0.025]"
+                    >
+                      {surface.image ? (
+                        <ResponsiveImage
+                          src={surface.image}
+                          alt={surface.alt}
+                          className="aspect-[16/10] w-full border-b border-white/8 object-cover"
+                          sizes="(max-width: 640px) 100vw, 20vw"
+                        />
+                      ) : null}
+                      <figcaption className="p-5">
+                        <p className="text-[9px] uppercase tracking-[0.22em] text-[#c7bdf0]">
+                          {surface.meta}
+                        </p>
+                        <p className="mt-2 font-display text-base font-semibold text-white">
+                          {surface.name}
+                        </p>
+                        <p className="mt-2 text-xs leading-relaxed text-white/45">
+                          {surface.detail}
+                        </p>
+                      </figcaption>
+                    </figure>
+                  ))}
+                </div>
+              </div>
+            </Reveal>
+
+            {/* The refusals. The reason this reads as engineering and not as a
+                demo, so it gets the accent treatment. */}
+            <Reveal once>
+              <div className="rounded-3xl border border-[#9a8ac8]/25 bg-[#9a8ac8]/[0.05] p-6 md:p-8">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#c7bdf0]">
+                  What it refuses to do
+                </p>
+                <h4 className="mt-2 max-w-lg font-display text-2xl font-semibold leading-snug text-white">
+                  The interesting decisions were all refusals.
+                </h4>
+                <ul className="mt-6 space-y-3">
+                  {refusals.map((line) => (
+                    <li key={line} className="flex gap-3 text-xs leading-relaxed text-white/58">
+                      <span aria-hidden className="mt-[0.35em] text-[#c7bdf0]">
+                        ✕
+                      </span>
+                      <span>{line}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </Reveal>
 
