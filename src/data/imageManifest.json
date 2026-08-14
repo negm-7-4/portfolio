@@ -2,61 +2,130 @@
   "/projects/acoustic-1.jpg": {
     "width": 909,
     "height": 512,
-    "widths": [640]
+    "widths": [
+      640
+    ]
   },
   "/projects/automation-1.jpg": {
     "width": 1600,
     "height": 774,
-    "widths": [640, 1024, 1600]
+    "widths": [
+      640,
+      1024,
+      1600
+    ]
   },
   "/projects/bascalscalar.png": {
     "width": 1918,
     "height": 1045,
-    "widths": [640, 1024, 1600]
+    "widths": [
+      640,
+      1024,
+      1600
+    ]
   },
   "/projects/nexora-2.jpg": {
     "width": 1600,
     "height": 774,
-    "widths": [640, 1024, 1600]
+    "widths": [
+      640,
+      1024,
+      1600
+    ]
   },
   "/projects/nexora-3.jpg": {
     "width": 1600,
     "height": 770,
-    "widths": [640, 1024, 1600]
+    "widths": [
+      640,
+      1024,
+      1600
+    ]
   },
   "/projects/nexora.jpg": {
     "width": 1280,
     "height": 622,
-    "widths": [640, 1024]
+    "widths": [
+      640,
+      1024
+    ]
   },
   "/projects/sams-1.jpg": {
     "width": 1600,
     "height": 782,
-    "widths": [640, 1024, 1600]
+    "widths": [
+      640,
+      1024,
+      1600
+    ]
+  },
+  "/projects/sams-agent.png": {
+    "width": 1905,
+    "height": 927,
+    "widths": [
+      640,
+      1024,
+      1600
+    ]
+  },
+  "/projects/sams-factory.png": {
+    "width": 1906,
+    "height": 911,
+    "widths": [
+      640,
+      1024,
+      1600
+    ]
+  },
+  "/projects/sams-office.png": {
+    "width": 1890,
+    "height": 915,
+    "widths": [
+      640,
+      1024,
+      1600
+    ]
   },
   "/projects/social.jpg": {
     "width": 835,
     "height": 460,
-    "widths": [640]
+    "widths": [
+      640
+    ]
   },
   "/projects/todo.jpg": {
     "width": 1080,
     "height": 482,
-    "widths": [640, 1024]
+    "widths": [
+      640,
+      1024
+    ]
   },
   "/projects/vera-1.jpg": {
     "width": 1600,
     "height": 773,
-    "widths": [640, 1024, 1600]
+    "widths": [
+      640,
+      1024,
+      1600
+    ]
   },
   "/projects/vera-2.jpg": {
     "width": 1600,
     "height": 772,
-    "widths": [640, 1024, 1600]
+    "widths": [
+      640,
+      1024,
+      1600
+    ]
   },
   "/projects/vera-3.jpg": {
     "width": 1600,
     "height": 698,
-    "widths": [640, 1024, 1600]
+    "widths": [
+      640,
+      1024,
+      1600
+    ]
   }
 }

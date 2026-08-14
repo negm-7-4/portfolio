@@ -27,9 +27,34 @@ export default function ResponsiveImage({
   loading = "lazy",
   fetchPriority,
   style,
+  /** Opt out for an image that should not open in the viewer. */
+  zoomable = true,
   ...rest
 }) {
   const entry = manifest[src];
+
+  /* Openable images announce themselves to `Lightbox`, which is wired by
+     delegation. The attributes live on the <img> rather than a wrapping
+     <button> on purpose: several of these images are absolutely positioned
+     inside their own layout, and introducing an element between them and
+     their parent would move them. role + tabIndex make it operable and
+     announced without changing a single box. */
+  const zoom = zoomable
+    ? {
+        "data-zoomable": "",
+        role: "button",
+        tabIndex: 0,
+        "aria-haspopup": "dialog",
+        // The custom cursor is the affordance on desktop: `cursor: zoom-in`
+        // is deliberately overridden site-wide by `cursor: none`, so a CSS
+        // cursor alone would leave these images looking inert. This makes the
+        // ring inflate and spell out what the click does. `cursor: zoom-in`
+        // stays for the fallback path where no custom cursor is drawn.
+        "data-cursor": "hover",
+        "data-cursor-text": "Open",
+        style: { cursor: "zoom-in", ...style },
+      }
+    : { style };
 
   // No derivatives (a new image added without re-running the script) — still
   // render something correct rather than nothing.
@@ -42,7 +67,7 @@ export default function ResponsiveImage({
         loading={loading}
         decoding="async"
         fetchPriority={fetchPriority}
-        style={style}
+        {...zoom}
         {...rest}
       />
     );
@@ -64,7 +89,7 @@ export default function ResponsiveImage({
         loading={loading}
         decoding="async"
         fetchPriority={fetchPriority}
-        style={style}
+        {...zoom}
         {...rest}
       />
     </picture>
