@@ -16,6 +16,7 @@
  * sharp being installable in the build environment.
  */
 import { mkdir, readdir, stat, writeFile } from "node:fs/promises";
+import prettier from "prettier";
 import path from "node:path";
 import sharp from "sharp";
 
@@ -83,7 +84,16 @@ async function main() {
     manifest[`/${SOURCE_DIR.replace("public/", "")}/${file}`] = entry;
   }
 
-  await writeFile("src/data/imageManifest.json", `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
+  /* Written through Prettier rather than straight out of JSON.stringify.
+     The two disagree about short arrays — `stringify` puts every element on
+     its own line, Prettier collapses `[640]` onto one — so a plain write
+     produced a file that `npm run format:check` rejected. That made
+     `npm run images` a command that silently broke CI for whoever ran it. */
+  const manifestPath = "src/data/imageManifest.json";
+  const raw = `${JSON.stringify(manifest, null, 2)}\n`;
+  const options = (await prettier.resolveConfig(manifestPath)) ?? {};
+  const formatted = await prettier.format(raw, { ...options, filepath: manifestPath });
+  await writeFile(manifestPath, formatted, "utf8");
 
   console.log(
     `\n${files.length} images · originals ${kb(before)} · derivatives ${kb(after)}` +
