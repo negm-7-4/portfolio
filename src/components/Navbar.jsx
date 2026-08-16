@@ -221,6 +221,7 @@ export default function Navbar() {
                 backgroundImage: "linear-gradient(110deg, #ffffff 0%, #aab4c4 50%, #ffffff 100%)",
                 backgroundSize: "200% 100%",
                 WebkitBackgroundClip: "text",
+                color: "#eef1f6", // fallback so the word is never invisible
                 WebkitTextFillColor: "transparent",
                 backgroundClip: "text",
               }}
@@ -279,7 +280,8 @@ export default function Navbar() {
             onClick={openCommandPalette}
             data-cursor="hover"
             data-cursor-text="Search"
-            className="gradient-border flex h-9 items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-2.5 py-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-white/55 transition-colors hover:bg-white/[0.06] hover:text-white sm:px-3"
+            // 44px tall on phones (thumb-friendly minimum); compact from md up.
+            className="gradient-border flex h-11 min-w-11 items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-white/55 transition-colors hover:bg-white/[0.06] hover:text-white md:h-9 md:min-w-0"
             aria-label="Open command palette"
           >
             {/* Narrow screens keep the control — it just drops to the icon
@@ -313,7 +315,7 @@ export default function Navbar() {
             data-cursor="hover"
             data-cursor-text="View CV"
             aria-label="View my CV"
-            className="group/cv relative flex h-9 items-center gap-2 overflow-hidden rounded-xl bg-white px-3 py-2 text-xs font-semibold uppercase tracking-widest text-black transition-all duration-300 hover:bg-white/95 sm:px-4"
+            className="group/cv relative flex h-11 min-w-11 items-center justify-center gap-2 overflow-hidden rounded-xl bg-white px-3 py-2 text-xs font-semibold uppercase tracking-widest text-black transition-all duration-300 hover:bg-white/95 md:h-9 md:min-w-0 md:px-4"
             style={{ boxShadow: "0 4px 12px -2px rgba(255,255,255,0.2)" }}
           >
             {/* hover shimmer sweep */}
@@ -341,7 +343,7 @@ export default function Navbar() {
           <button
             onClick={() => setOpen((o) => !o)}
             data-cursor="hover"
-            className="flex h-10 w-10 items-center justify-center rounded-xl glass md:hidden"
+            className="flex h-11 w-11 items-center justify-center rounded-xl glass md:hidden"
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
             aria-controls="mobile-menu"

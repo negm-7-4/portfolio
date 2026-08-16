@@ -35,7 +35,7 @@ export const resume = {
   headline: "Software Engineer",
   subhead: "React • TypeScript • 3D Web",
   summary:
-    "Junior front-end developer and Software Engineering student with hands-on experience building responsive web applications, interactive 3D product experiences, multi-agent AI systems, and full-stack business platforms. Skilled in React, TypeScript, JavaScript, WebGL animation, REST APIs, state management, and testing. Builds mobile-first interfaces with attention to performance, usability, and maintainable code.",
+    "Software engineer and third-year Software Engineering student who ships production web applications end to end — interactive 3D product experiences, multi-agent AI systems, and multi-tenant business platforms. Strong in React, TypeScript, WebGL animation, REST APIs, state management, and testing, with a bias toward mobile-first interfaces, measured performance, and maintainable code.",
   contact: [
     {
       label: "Email",
@@ -111,6 +111,7 @@ export const resume = {
         "Docker",
       ],
       github: "https://github.com/negm-7-4/vera-fragrances",
+      live: "https://vera-fragrances.vercel.app/",
     },
     {
       name: "SAMS",

@@ -106,7 +106,7 @@ function ModeSwitcher({ options, mode, onChange }) {
               onClick={() => onChange(o.key)}
               data-cursor="hover"
               aria-pressed={active}
-              className={`relative flex items-center gap-2 rounded-full px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.24em] transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/70 md:px-5 ${
+              className={`relative flex min-h-11 items-center gap-2 rounded-full px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.24em] transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/70 md:min-h-0 md:px-5 ${
                 active ? "text-black" : "text-white/55 hover:text-white"
               }`}
             >

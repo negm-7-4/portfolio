@@ -154,19 +154,26 @@ export default function App() {
   // reduced-motion/data-saver users get the lightweight path.
   const useLite = isLow;
 
-  /* The opening portrait is fully opaque, so downloading and executing the
-     3D world behind it only burns the critical path. Warm it when the visitor
-     starts leaving the cover, with a long idle fallback for stationary tabs. */
+  /* The 3D world must be ALREADY RUNNING by the time the visitor scrolls off
+     the cover — waiting for the scroll meant the ~340 kB chunk only started
+     downloading at that moment, so the hero appeared seconds late.
+     So: keep it off the critical path (the cover paints first), then build it
+     during the browser's first idle moment while the visitor is still reading
+     the cover. A scroll still enables it immediately for fast scrollers. */
   useEffect(() => {
     if (useLite || worldEnabled) return undefined;
-    const enable = () => {
-      if (window.scrollY < window.innerHeight * 0.35) return;
-      setWorldEnabled(true);
-    };
-    const idleFallback = window.setTimeout(() => setWorldEnabled(true), 30000);
-    window.addEventListener("scroll", enable, { passive: true });
+    const enable = () => setWorldEnabled(true);
+
+    // Warm as soon as the main thread is free after first paint.
+    const idle = window.requestIdleCallback
+      ? window.requestIdleCallback(enable, { timeout: 1200 })
+      : window.setTimeout(enable, 600);
+
+    // …and never later than the moment they actually start moving.
+    window.addEventListener("scroll", enable, { passive: true, once: true });
     return () => {
-      window.clearTimeout(idleFallback);
+      if (window.cancelIdleCallback && window.requestIdleCallback) window.cancelIdleCallback(idle);
+      else window.clearTimeout(idle);
       window.removeEventListener("scroll", enable);
     };
   }, [useLite, worldEnabled]);

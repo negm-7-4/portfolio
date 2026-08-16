@@ -280,6 +280,15 @@ h6 {
 /* Gradient text helper. Seven-stop gradient gives the highlight more
    "movement"; the slow loop reads as a living sheen rather than a strobe. */
 .text-gradient {
+  /* ALWAYS-VISIBLE BASE. `background-clip: text` + transparent fill makes the
+     glyphs invisible whenever the background fails to paint, which is exactly
+     what happened on phones: `will-change: background-position` promoted a
+     compositing layer that several mobile GPUs never painted the gradient
+     into, so accent words ("I Am", "Experience", "My …") vanished. Painting a
+     solid colour first means the worst case is a plain silver word, never a
+     missing one. */
+  color: #eef1f6;
+
   background: linear-gradient(
     110deg,
     #f5f6f8 0%,
@@ -294,8 +303,17 @@ h6 {
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: gradientShift 11s linear infinite;
-  will-change: background-position;
+  /* no `will-change` here — it was the layer-promotion that broke painting */
+}
+
+/* The travelling sheen is a desktop-only flourish. Animating
+   `background-position` repaints every frame (it is not compositor-friendly),
+   so phones get the static gradient: identical look, no repaint cost, and no
+   chance of the paint dropping out mid-animation. */
+@media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+  .text-gradient {
+    animation: gradientShift 11s linear infinite;
+  }
 }
 @keyframes gradientShift {
   to {
@@ -367,6 +385,30 @@ h6 {
   }
 }
 
+/* PHONES GET SOLID COLOUR, NOT CLIPPED GRADIENT.
+   `-webkit-text-fill-color: transparent` overrides `color`, so a fallback
+   colour alone cannot save the text — if the clipped background does not
+   paint (as it did not on real Android/iOS hardware here) the word is simply
+   gone. A heading that vanishes is a far worse outcome than one without a
+   sheen, so below md the accent word paints as solid brand silver: always
+   visible, and still clearly distinct from the white it sits beside. */
+@media (max-width: 767px) {
+  .text-gradient {
+    background: none;
+    -webkit-text-fill-color: currentColor;
+    color: #c8d2dd;
+  }
+}
+
+/* Last-resort safety net: if the engine cannot clip a background to text at
+   all, drop the transparent fill so the solid colour above shows through. */
+@supports not ((-webkit-background-clip: text) or (background-clip: text)) {
+  .text-gradient {
+    -webkit-text-fill-color: currentColor;
+    background: none;
+  }
+}
+
 /* Glassy card surface — refined: subtle gradient fill + inner highlight +
    light blur. Cheaper than full backdrop-filter, reads as frosted glass. */
 .glass {
@@ -421,6 +463,19 @@ h6 {
 .bar-shimmer {
   background-size: 250% 100%;
   animation: shimmer 2.5s linear infinite;
+}
+
+/* Same mobile rule as `.text-gradient`: these are clipped-background words
+   (the NEGM logo, the STACK headline). If the paint drops out on a phone the
+   word disappears entirely, so below md they render as solid silver and the
+   repainting shimmer is switched off. `!important` is required because the
+   transparent fill is set inline on the elements themselves. */
+@media (max-width: 767px) {
+  .bar-shimmer {
+    animation: none;
+    background: none !important;
+    -webkit-text-fill-color: currentColor !important;
+  }
 }
 
 /* ── 3D float ─────────────────────────────────────────────── */

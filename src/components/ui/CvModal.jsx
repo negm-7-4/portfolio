@@ -272,15 +272,31 @@ export default function CvModal() {
                           <p className="text-[10px] uppercase tracking-[0.12em] text-[#aab4c4]/80">
                             {p.tech.join(" · ")}
                           </p>
-                          {p.github && (
-                            <a
-                              href={p.github}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="ml-auto text-[10px] font-semibold uppercase tracking-wider text-white/65 underline decoration-white/20 underline-offset-4 transition-colors hover:text-white"
-                            >
-                              GitHub ↗
-                            </a>
+                          {/* A shipped, visitable URL is the strongest proof a
+                              CV can carry — so it leads, before the repo. */}
+                          {(p.live || p.github) && (
+                            <span className="ml-auto flex items-center gap-3">
+                              {p.live && (
+                                <a
+                                  href={p.live}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-[10px] font-semibold uppercase tracking-wider text-[#aab4c4] underline decoration-[#aab4c4]/40 underline-offset-4 transition-colors hover:text-white"
+                                >
+                                  Live ↗
+                                </a>
+                              )}
+                              {p.github && (
+                                <a
+                                  href={p.github}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-[10px] font-semibold uppercase tracking-wider text-white/65 underline decoration-white/20 underline-offset-4 transition-colors hover:text-white"
+                                >
+                                  GitHub ↗
+                                </a>
+                              )}
+                            </span>
                           )}
                         </div>
                       </div>

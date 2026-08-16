@@ -141,7 +141,8 @@ export default function KonamiEasterEgg() {
                     "linear-gradient(110deg, #b8c4d6 0%, #ffffff 35%, #aab4c4 50%, #ffffff 65%, #8a93a6 100%)",
                   backgroundSize: "250% 100%",
                   WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
+                  color: "#eef1f6", // fallback so the word is never invisible
+                WebkitTextFillColor: "transparent",
                   backgroundClip: "text",
                 }}
               >

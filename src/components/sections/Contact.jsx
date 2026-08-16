@@ -9,7 +9,23 @@ import { profile } from "../../data/content";
 
 // Same-origin Vercel Function. If Resend is not configured in an environment,
 // the API returns a typed 503 and the UI honestly falls back to the mail app.
-const FORM_ENDPOINT = "/api/contact";
+/* ── Where the contact form delivers ──────────────────────────────────
+ * FORMSPREE — the zero-setup path. Create a free form at formspree.io,
+ * copy the ID out of the endpoint it gives you
+ * (https://formspree.io/f/XXXXXXXX  →  "XXXXXXXX") and paste it below.
+ * Nothing else to configure: no API key, no env var, no redeploy secret.
+ * Delivery starts working the moment this string is filled in.
+ *
+ * Leave it empty and the form falls back to the bundled serverless route
+ * (/api/contact, which sends through Resend and needs RESEND_API_KEY set
+ * in the Vercel project). If neither is configured, the form still works:
+ * it opens the visitor's mail client pre-filled, so a message is never
+ * silently lost. */
+const FORMSPREE_ID = "";
+
+const FORM_ENDPOINT = FORMSPREE_ID
+  ? `https://formspree.io/f/${FORMSPREE_ID}`
+  : "/api/contact";
 
 /* Inline icon components — replaces lucide-react to drop ~12KB of dep. */
 const stroke = {
@@ -138,7 +154,7 @@ function InfoRow({ icon: Icon, label, value, href, copyable, i }) {
             href={href}
             data-cursor="hover"
             dir="auto"
-            className="block font-display text-xl font-semibold tracking-tight text-white transition-colors md:text-2xl"
+            className="flex min-h-11 items-center font-display text-xl font-semibold tracking-tight text-white transition-colors md:min-h-0 md:text-2xl"
           >
             {value}
           </a>
@@ -151,12 +167,15 @@ function InfoRow({ icon: Icon, label, value, href, copyable, i }) {
           </p>
         )}
 
+        {/* Reveal-on-hover would hide this button forever on a phone (touch
+            has no hover), so below md it stays visible and tall enough to tap;
+            from md up it keeps the quiet hover-reveal behaviour. */}
         {copyable && (
           <button
             onClick={onCopy}
             data-cursor="hover"
             data-cursor-text="Copy"
-            className="ml-2 flex h-9 items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.04] px-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-white/55 opacity-0 transition-all duration-300 group-hover:opacity-100 hover:border-white/30 hover:text-white"
+            className="ml-2 flex h-11 items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.04] px-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-white/55 transition-all duration-300 hover:border-white/30 hover:text-white md:h-9 md:opacity-0 md:group-hover:opacity-100"
             aria-label={`Copy ${label}`}
           >
             <svg
@@ -384,7 +403,7 @@ export default function Contact() {
                   onClick={openCv}
                   data-cursor="hover"
                   data-cursor-text="View"
-                  className="rounded-lg border border-white/12 bg-white/[0.04] px-3 py-2 text-[10px] font-semibold uppercase tracking-widest text-white/70 transition-colors hover:bg-white/[0.09] hover:text-white"
+                  className="inline-flex min-h-11 items-center rounded-lg border border-white/12 bg-white/[0.04] px-4 py-2 text-[10px] font-semibold uppercase tracking-widest text-white/70 transition-colors hover:bg-white/[0.09] hover:text-white md:min-h-0 md:px-3"
                 >
                   View
                 </button>
@@ -394,7 +413,7 @@ export default function Contact() {
                   data-cursor="hover"
                   data-cursor-text="Save"
                   onClick={(e) => celebrate(e.clientX, e.clientY, "#aab4c4")}
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-white px-3 py-2 text-[10px] font-semibold uppercase tracking-widest text-black"
+                  className="inline-flex min-h-11 items-center gap-1.5 rounded-lg bg-white px-4 py-2 text-[10px] font-semibold uppercase tracking-widest text-black md:min-h-0 md:px-3"
                   aria-label="Download CV as PDF"
                 >
                   CV
@@ -551,7 +570,7 @@ export default function Contact() {
                   Or email me directly / DM on{" "}
                   <a
                     href={`mailto:${profile.email}`}
-                    className="text-white/60 underline underline-offset-4 hover:text-white"
+                    className="inline-block py-2 text-white/60 underline underline-offset-4 hover:text-white"
                   >
                     Email
                   </a>{" "}
@@ -561,7 +580,7 @@ export default function Contact() {
                     target="_blank"
                     rel="noopener noreferrer"
                     data-cursor="hover"
-                    className="text-white/60 underline underline-offset-4 hover:text-white"
+                    className="inline-block py-2 text-white/60 underline underline-offset-4 hover:text-white"
                   >
                     LinkedIn
                   </a>
