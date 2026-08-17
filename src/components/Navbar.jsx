@@ -176,7 +176,9 @@ export default function Navbar() {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.96 }}
           transition={{ type: "spring", stiffness: 320, damping: 20 }}
-          className="group flex items-center gap-2.5 font-display text-lg font-bold tracking-tight text-white"
+          // min-h-11 on touch: the mark alone is only ~28px tall, under the 44px
+          // minimum, and this is the control that takes you back to the top.
+          className="group flex min-h-11 items-center gap-2.5 font-display text-lg font-bold tracking-tight text-white md:min-h-0"
           aria-label="Negm — back to top"
         >
           {/* ── The mark: NEGM means "star" (نجم) in Arabic, so the logo IS a

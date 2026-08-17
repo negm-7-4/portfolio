@@ -328,6 +328,10 @@ h6 {
    word disappears. This ramp never leaves the light end, so the glyphs keep
    their contrast at every phase of the loop while the sheen still travels. */
 .text-gradient-bright {
+  /* Same always-visible base as `.text-gradient` — this class sets the hero
+     surname, so a dropped paint costs the site its name, not just a flourish. */
+  color: #f2f6ff;
+
   background: linear-gradient(
     110deg,
     #ffffff 0%,
@@ -363,6 +367,9 @@ h6 {
   font-family: var(--font-serif);
   font-style: italic;
   letter-spacing: -0.01em;
+  /* Always-visible base: periwinkle, so the keyword keeps its chromatic role
+     even if the clipped gradient never paints. */
+  color: #b3c0ff;
   background: linear-gradient(
     102deg,
     #c2ccff 0%,
@@ -398,12 +405,36 @@ h6 {
     -webkit-text-fill-color: currentColor;
     color: #c8d2dd;
   }
+
+  /* The same treatment for the other two clipped-background helpers. These
+     were missed the first time round and still carried `will-change` plus a
+     running animation on phones — precisely the layer-promotion that made
+     accent words disappear. `.text-gradient-bright` sets the hero surname and
+     `.text-keyword` the one chromatic word per screen, so both are worth more
+     as solid colour than as a sheen that might not paint. */
+  .text-gradient-bright {
+    background: none;
+    -webkit-text-fill-color: currentColor;
+    color: #f2f6ff;
+    animation: none;
+    will-change: auto;
+  }
+
+  .text-keyword {
+    background: none;
+    -webkit-text-fill-color: currentColor;
+    color: #b3c0ff;
+    animation: none;
+    will-change: auto;
+  }
 }
 
 /* Last-resort safety net: if the engine cannot clip a background to text at
    all, drop the transparent fill so the solid colour above shows through. */
 @supports not ((-webkit-background-clip: text) or (background-clip: text)) {
-  .text-gradient {
+  .text-gradient,
+  .text-gradient-bright,
+  .text-keyword {
     -webkit-text-fill-color: currentColor;
     background: none;
   }
