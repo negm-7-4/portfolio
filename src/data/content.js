@@ -35,7 +35,7 @@ export const resume = {
   headline: "Software Engineer",
   subhead: "React • TypeScript • 3D Web",
   summary:
-    "Software engineer and third-year Software Engineering student who ships production web applications end to end — interactive 3D product experiences, multi-agent AI systems, and multi-tenant business platforms. Strong in React, TypeScript, WebGL animation, REST APIs, state management, and testing, with a bias toward mobile-first interfaces, measured performance, and maintainable code.",
+    "Software engineer and third-year Software Engineering student who ships production web applications end to end — a 3D storefront benchmarked at 2,650 req/s (p99 ~46 ms), a real-time acoustic mapper with sub-50 ms processing, and a multi-tenant ERP. Strong in React, TypeScript, WebGL and REST APIs, with a bias toward mobile-first UI and measured performance.",
   contact: [
     {
       label: "Email",
@@ -56,37 +56,40 @@ export const resume = {
       href: "https://mohamed-negm.vercel.app/",
     },
   ],
+  // Grouped the same way as the PDF CV: languages are listed on their own
+  // rather than mixed in with tooling, which is what recruiters scan for first.
   skillGroups: [
     {
+      label: "Languages",
+      items: ["JavaScript (ES6+)", "TypeScript", "Python", "C++17", "Dart", "HTML5", "CSS3"],
+    },
+    {
       label: "Front-End",
-      items: ["HTML5", "CSS3", "JavaScript (ES6+)", "TypeScript", "React", "Responsive Web Design"],
+      items: ["React", "Vite", "Tailwind CSS", "Zustand", "Responsive & Mobile-First UI"],
     },
     {
       label: "3D & Animation",
-      items: ["React Three Fiber", "Drei", "GSAP", "ScrollTrigger", "Framer Motion", "Lenis"],
+      items: [
+        "React Three Fiber",
+        "Drei",
+        "Three.js",
+        "GSAP",
+        "ScrollTrigger",
+        "Framer Motion",
+        "Lenis",
+      ],
     },
     {
       label: "Back-End & Data",
-      items: ["Node.js", "Express", "REST APIs", "SQLite", "MongoDB", "Firebase"],
+      items: ["Node.js", "Express", "FastAPI", "REST APIs", "MongoDB", "SQLite", "Firebase"],
     },
     {
       label: "AI & Real-Time",
       items: ["LangGraph", "Multi-Agent Orchestration", "AI Model Routing", "WebSockets"],
     },
     {
-      label: "Tools & Other",
-      items: [
-        "Vite",
-        "Tailwind CSS",
-        "Zustand",
-        "Git",
-        "GitHub",
-        "Vitest",
-        "Docker",
-        "Flutter",
-        "Python",
-        "C++",
-      ],
+      label: "Testing & Tooling",
+      items: ["Vitest", "Git", "GitHub", "Docker", "CMake", "Capacitor", "Flutter", "Figma"],
     },
   ],
   projects: [
@@ -94,9 +97,9 @@ export const resume = {
       name: "VÉRA Fragrances",
       kind: "Luxury 3D E-Commerce Experience",
       bullets: [
-        "Built a mobile-first perfume storefront with a scroll-driven 3D bottle film, a 13-product collection, interactive product pages, cart, cash-on-delivery checkout, and an owner dashboard.",
-        "Optimized rendering to no more than three WebGL contexts with device-tier quality scaling and API fallback.",
-        "Load-tested the backend at 50 concurrent users with 2,650 requests/second, 0 errors, and p99 around 46 ms.",
+        "Shipped a mobile-first storefront with a scroll-driven 3D bottle film, 13-product catalogue, cart, cash-on-delivery checkout and an owner dashboard for products, orders and analytics.",
+        "Load-tested the API at 2,650 requests/second across 50 concurrent users: 0 errors, p99 latency ~46 ms.",
+        "Capped rendering at three WebGL contexts with device-tier quality scaling, keeping low-end phones smooth.",
       ],
       tech: [
         "React",
@@ -117,8 +120,8 @@ export const resume = {
       name: "SAMS",
       kind: "Multi-Agent Virtual AI Office",
       bullets: [
-        "Orchestrated Claude for implementation, GPT for planning, and Gemini for testing. Agents discuss requirements, divide projects by expertise, exchange context, review outputs, and resolve blockers as one delivery team.",
-        "Designed an interactive virtual company with dedicated workstations, meeting rooms, a shared whiteboard, agent movement, coffee breaks, and real-time collaboration so each AI behaves like a digital employee.",
+        "Orchestrated three model families as one delivery team (Claude implements, GPT plans, Gemini tests) that exchange context, review each other's output and resolve blockers autonomously.",
+        "Built the virtual office around them: workstations, meeting rooms, a shared whiteboard, agent movement and real-time collaboration over WebSockets.",
       ],
       tech: ["React", "Three.js", "FastAPI", "LangGraph", "WebSockets", "Multi-Model AI Routing"],
     },
@@ -126,8 +129,8 @@ export const resume = {
       name: "Acoustic Room Mapper",
       kind: "Real-Time Acoustic Geometry Detection",
       bullets: [
-        "Built a cross-platform system that analyzes acoustic responses and generates live 2D room floor plans with sub-50 ms processing latency.",
-        "Connected a Flutter Material 3 interface to a Python Flask REST API and C++17 DSP engine using FFT and cross-correlation, with four visualization modes, Arabic RTL support, live metrics, and JSON export.",
+        "Generates live 2D room floor plans from acoustic responses with sub-50 ms processing latency.",
+        "Bridged a Flutter Material 3 client to a Python Flask API and C++17 DSP engine (FFT, cross-correlation); four visualization modes, Arabic RTL support and JSON export.",
       ],
       tech: ["Flutter", "Dart", "Python", "Flask", "C++17", "CMake", "FFT", "REST APIs"],
       github: "https://github.com/negm-7-4/Acoustic-Room-Mapper",
@@ -136,8 +139,8 @@ export const resume = {
       name: "Nexora ERP",
       kind: "Multi-Tenant Business Management Platform",
       bullets: [
-        "Built an ERP and SaaS platform covering sales, purchases, inventory, manufacturing, HR, CRM, logistics, treasury, finance reports, billing, and AI-assisted actions.",
-        "Implemented tenant isolation, role-based permissions, JWT authentication, offline-first storage, cloud sync, printable invoices, analytics, and Android packaging through Capacitor.",
+        "Built an ERP and SaaS platform spanning sales, inventory, manufacturing, HR, CRM, finance reporting and AI-assisted actions.",
+        "Implemented tenant isolation, role-based permissions, JWT auth, offline-first storage with cloud sync and Android packaging via Capacitor.",
       ],
       tech: [
         "React",

@@ -26,6 +26,9 @@ Thumbs.db
 .vercel
 .netlify
 
+# unrelated local Next.js scratch project that happens to sit in this folder
+studio/
+
 # misc large local assets (originals — optimized copies live in public/)
 image.png
 Recording*.mp4

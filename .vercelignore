@@ -7,6 +7,10 @@ coverage
 .vscode
 .github
 
+# Unrelated local Next.js scratch project (~29k files) — uploading it once
+# already blew the deploy payload past what the upload could handle.
+studio
+
 # Vercel turns EVERY file under api/ into a serverless function unless it is
 # excluded or prefixed with an underscore. Without this, api/contact.test.js
 # would deploy as a live /api/contact.test endpoint — test code, publicly
