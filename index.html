@@ -43,9 +43,17 @@
     />
     <meta property="og:site_name" content="Mohamed Negm" />
     <meta property="og:locale" content="en_US" />
-    <meta property="og:image" content="%VITE_SITE_URL%/og-mohamed-negm-2026.png" />
-    <meta property="og:image:secure_url" content="%VITE_SITE_URL%/og-mohamed-negm-2026.png" />
-    <meta property="og:image:type" content="image/png" />
+    <!-- Opaque JPEG, not PNG, and deliberately on a new filename.
+         The old card was an RGBA PNG: WhatsApp and X routinely refuse to render
+         link previews for images carrying an alpha channel, which is why no
+         preview appeared anywhere. The pixels are identical once flattened.
+         The rename matters too — this URL was first crawled while the project
+         still sat behind Vercel's SSO gate, so the scrapers cached a failure,
+         and those caches do not expire on their own. A new path forces a
+         fresh scrape. -->
+    <meta property="og:image" content="%VITE_SITE_URL%/og-mohamed-negm.jpg" />
+    <meta property="og:image:secure_url" content="%VITE_SITE_URL%/og-mohamed-negm.jpg" />
+    <meta property="og:image:type" content="image/jpeg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="Mohamed Negm — Software Engineer portfolio" />
@@ -57,7 +65,7 @@
       name="twitter:description"
       content="Software Engineering student crafting fast 3D web experiences, AI systems and full-stack products."
     />
-    <meta name="twitter:image" content="%VITE_SITE_URL%/og-mohamed-negm-2026.png" />
+    <meta name="twitter:image" content="%VITE_SITE_URL%/og-mohamed-negm.jpg" />
     <meta name="twitter:image:alt" content="Mohamed Negm — Software Engineer portfolio" />
 
     <!-- Fonts are self-hosted (see the @font-face block in src/index.css), so
@@ -97,7 +105,7 @@
         "@type": "Person",
         "name": "Mohamed Negm",
         "url": "%VITE_SITE_URL%/",
-        "image": "%VITE_SITE_URL%/og-mohamed-negm-2026.png",
+        "image": "%VITE_SITE_URL%/og-mohamed-negm.jpg",
         "jobTitle": "Software Engineer",
         "email": "mailto:%VITE_CONTACT_EMAIL%",
         "description": "Software Engineering student crafting fast 3D web experiences, AI systems and full-stack products.",
