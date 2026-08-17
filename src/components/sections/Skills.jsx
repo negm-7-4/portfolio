@@ -113,7 +113,7 @@ function TechTile({ item, i, desktop }) {
 
 /* ─── Section ─── */
 export default function Skills() {
-  const { skillCategories, t } = useContent();
+  const { skillCategories, t, tr } = useContent();
   const ref = useRef(null);
   const desktop = useMediaQuery("(min-width: 768px)");
   const { scrollYProgress } = useScroll({
@@ -182,7 +182,7 @@ export default function Skills() {
             </span>
             <span className="h-px w-14 bg-gradient-to-r from-transparent via-white/40 to-transparent" />
             <span className="text-[11px] font-semibold uppercase tracking-[0.32em] text-white/60">
-              Toolkit
+              {tr("Toolkit")}
             </span>
             <span className="h-px w-14 bg-gradient-to-r from-white/40 via-white/40 to-transparent" />
           </motion.div>
@@ -268,7 +268,7 @@ export default function Skills() {
         >
           <span className="h-px w-16 bg-white/15" />
           <span className="text-[10px] uppercase tracking-[0.35em] text-white/55">
-            and always learning more
+            {tr("and always learning more")}
           </span>
           <span className="h-px w-16 bg-white/15" />
         </motion.div>

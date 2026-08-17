@@ -28,7 +28,7 @@ const SHAPES = [
 const SCROLL_FACTOR = 0.88;
 
 export default function CapabilitiesGallery() {
-  const { services } = useContent();
+  const { services, tr } = useContent();
   const wrapRef = useRef(null);
   const trackRef = useRef(null);
   const [distance, setDistance] = useState(0);
@@ -67,17 +67,17 @@ export default function CapabilitiesGallery() {
               </span>
               <span className="h-px w-12 bg-gradient-to-r from-white/40 to-transparent" />
               <span className="text-[11px] font-semibold uppercase tracking-[0.32em] text-white/60">
-                Capabilities
+                {tr("Capabilities")}
               </span>
             </div>
             <h2 className="font-display text-4xl font-bold leading-[0.95] tracking-tight text-white sm:text-5xl md:text-6xl">
-              How I <span className="text-gradient italic font-light">can help</span>
+              {tr("How I")} <span className="text-gradient italic font-light">{tr("can help")}</span>
             </h2>
           </div>
 
           <div className="hidden shrink-0 flex-col items-end gap-2 md:flex">
             <span className="flex items-center gap-2 text-[10px] uppercase tracking-[0.3em] text-white/60">
-              Scroll
+              {tr("Scroll")}
               <motion.span
                 animate={{ x: [0, 6, 0] }}
                 transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
@@ -200,7 +200,7 @@ export default function CapabilitiesGallery() {
           <div className="flex h-[64vh] w-[64vw] shrink-0 flex-col items-center justify-center gap-4 sm:w-[42vw] lg:w-[30vw]">
             <span className="spin-slower font-display text-3xl text-[#aab4c4]">✦</span>
             <p className="max-w-[16rem] text-center text-[12px] uppercase leading-relaxed tracking-[0.28em] text-white/60">
-              Got something in mind?
+              {tr("Got something in mind?")}
             </p>
             <button
               onClick={() => goToSection("contact")}

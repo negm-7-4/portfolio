@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
 import { loadScrollSync } from "../../lib/scrollSync";
+import { useContent } from "../../i18n/useContent";
 
 /* Measured numbers, not adjectives.
    These used to read "15+ projects · 2+ years · 12+ technologies · 100%
@@ -37,6 +38,7 @@ const stats = [
 ];
 
 export default function Stats() {
+  const { tr } = useContent();
   const root = useRef(null);
   const { scrollYProgress } = useScroll({
     target: root,
@@ -123,7 +125,7 @@ export default function Stats() {
           </span>
           <span className="h-px w-14 bg-gradient-to-r from-white/40 to-white/0" />
           <span className="text-[11px] font-semibold uppercase tracking-[0.32em] text-white/60">
-            By the numbers
+            {tr("By the numbers")}
           </span>
         </motion.div>
 

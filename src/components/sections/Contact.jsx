@@ -122,6 +122,7 @@ function Field({ label, type = "text", name, required, multiline = false, value,
 
 /* ─── Big info row — phone / email / location, with copy button ─── */
 function InfoRow({ icon: Icon, label, value, href, copyable, i }) {
+  const { tr } = useContent();
   const onCopy = async (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -190,7 +191,7 @@ function InfoRow({ icon: Icon, label, value, href, copyable, i }) {
               <rect x="9" y="9" width="13" height="13" rx="2" />
               <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
             </svg>
-            Copy
+            {tr("Copy")}
           </button>
         )}
       </div>
@@ -200,7 +201,7 @@ function InfoRow({ icon: Icon, label, value, href, copyable, i }) {
 
 /* ─── Section ─── */
 export default function Contact() {
-  const { profile, t } = useContent();
+  const { profile, t, tr } = useContent();
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -327,7 +328,7 @@ export default function Contact() {
           className="mx-auto mb-16 max-w-2xl text-center font-display font-light leading-[1.3] text-white/75"
         >
           Have a project, an idea, or just want to say hi? <br className="hidden sm:block" />
-          The inbox is <span className="text-gradient italic font-medium">always open</span>.
+          {tr("The inbox is")} <span className="text-gradient italic font-medium">{tr("always open")}</span>.
         </motion.p>
 
         <div className="grid grid-cols-1 gap-12 md:grid-cols-[1fr_1.2fr] md:gap-16">
@@ -345,7 +346,7 @@ export default function Contact() {
               </span>
               <span className="h-px w-14 bg-gradient-to-r from-white/40 to-white/0" />
               <span className="text-[11px] font-semibold uppercase tracking-[0.32em] text-white/60">
-                Reach me directly
+                {tr("Reach me directly")}
               </span>
             </motion.div>
 
@@ -365,7 +366,7 @@ export default function Contact() {
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-green-400" />
               </span>
-              <span className="font-medium">Available for new projects</span>
+              <span className="font-medium">{tr("Available for new projects")}</span>
             </motion.div>
 
             {/* avg response time */}
@@ -376,7 +377,7 @@ export default function Contact() {
               transition={{ delay: 0.7 }}
               className="mt-2 text-[11px] uppercase tracking-[0.3em] text-white/50"
             >
-              Avg response · within 24h
+              {tr("Avg response \u00b7 within 24h")}
             </motion.p>
 
             {/* ── CV card — view the résumé or grab the PDF ── */}
@@ -397,7 +398,7 @@ export default function Contact() {
                   ▤
                 </span>
                 <div>
-                  <p className="font-display text-sm font-semibold text-white">My Résumé</p>
+                  <p className="font-display text-sm font-semibold text-white">{tr("My R\u00e9sum\u00e9")}</p>
                   <p className="text-[11px] text-white/65">
                     PDF · one page · updated {new Date().getFullYear()}
                   </p>
@@ -410,7 +411,7 @@ export default function Contact() {
                   data-cursor-text="View"
                   className="inline-flex min-h-11 items-center rounded-lg border border-white/12 bg-white/[0.04] px-4 py-2 text-[10px] font-semibold uppercase tracking-widest text-white/70 transition-colors hover:bg-white/[0.09] hover:text-white md:min-h-0 md:px-3"
                 >
-                  View
+                  {tr("View")}
                 </button>
                 <a
                   href={profile.resumeUrl}
@@ -441,7 +442,7 @@ export default function Contact() {
               className="pointer-events-none absolute -left-[10000px] h-px w-px overflow-hidden"
               aria-hidden="true"
             >
-              <label htmlFor="contact-company">Company website</label>
+              <label htmlFor="contact-company">{tr("Company website")}</label>
               <input
                 id="contact-company"
                 name="company"
@@ -459,7 +460,7 @@ export default function Contact() {
 
             <div className="mb-7 flex items-center justify-between">
               <p className="text-[11px] font-semibold uppercase tracking-[0.32em] text-white/55">
-                Send a message
+                {tr("Send a message")}
               </p>
               <span className="font-display text-[10px] tracking-widest text-white/50">
                 ( 01 / 01 )
@@ -552,7 +553,7 @@ export default function Contact() {
                 </span>
               ) : (
                 <>
-                  Send message
+                  {tr("Send message")}
                   <motion.span
                     className="inline-block"
                     animate={{ x: [0, 4, 0] }}
@@ -577,7 +578,7 @@ export default function Contact() {
                     href={`mailto:${profile.email}`}
                     className="inline-block py-2 text-white/60 underline underline-offset-4 hover:text-white"
                   >
-                    Email
+                    {tr("Email")}
                   </a>{" "}
                   ·{" "}
                   <a

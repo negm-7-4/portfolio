@@ -241,7 +241,7 @@ function DuotonePhoto({ lite, reduce }) {
 }
 
 export default function PhotoIntro() {
-  const { profile } = useContent();
+  const { profile, tr } = useContent();
   const ref = useRef(null);
   const { tier, touch } = useDeviceProfile();
   const reduce = useReducedMotion();
@@ -272,6 +272,12 @@ export default function PhotoIntro() {
     <section
       id="intro"
       ref={ref}
+      // Pinned LTR even in Arabic. This screen is an art-directed composition,
+      // not a document: the portrait cutout, the cursor spotlight masked to the
+      // silhouette and the diagonal light streaks are all positioned against a
+      // fixed frame. Mirroring it does not produce an Arabic cover, it produces
+      // a broken one. Arabic prose inside still sets RTL via .rtl-prose below.
+      dir="ltr"
       className="relative w-full overflow-hidden"
       style={{
         height: "100svh",
@@ -381,7 +387,7 @@ export default function PhotoIntro() {
         className="group absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-3 text-white/50"
         aria-label="Scroll to enter"
       >
-        <span className="text-[10px] uppercase tracking-[0.34em]">Enter</span>
+        <span className="text-[10px] uppercase tracking-[0.34em]">{tr("Enter")}</span>
         <span className="relative flex h-9 w-5 justify-center rounded-full border border-white/30 p-1 transition-colors group-hover:border-white/60">
           <motion.span
             className="h-2 w-[3px] rounded-full bg-white/60"

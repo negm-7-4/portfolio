@@ -614,6 +614,22 @@ h6 {
   direction: rtl;
 }
 
+/* Arabic prose sitting inside a section that is deliberately pinned LTR
+   (the cover and the hero are compositions, not documents). The text still
+   has to set right-to-left so punctuation, commas and any digits land
+   correctly — only the surrounding layout stays put. */
+[lang="ar"] .rtl-prose {
+  direction: rtl;
+  text-align: right;
+  letter-spacing: 0;
+  line-height: 1.85;
+}
+[lang="ar"] .rtl-prose-center {
+  direction: rtl;
+  text-align: center;
+  letter-spacing: 0;
+}
+
 /* Decorative arrows and chevrons point "forward", which is left in RTL. */
 [dir="rtl"] .dir-flip {
   transform: scaleX(-1);

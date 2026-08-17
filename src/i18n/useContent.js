@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useLanguage } from "../store/language";
 import ar from "./ar";
+import { translate } from "./strings";
 import * as en from "../data/content";
 
 /**
@@ -115,6 +116,7 @@ export function useContent() {
         lang,
         rtl: false,
         t: EN_UI,
+        tr: (x) => x,
         profile: en.profile,
         aboutCards: en.aboutCards,
         services: en.services,
@@ -132,6 +134,7 @@ export function useContent() {
       lang,
       rtl: true,
       t: ar.ui,
+      tr: (x) => translate("ar", x),
       profile: merge(en.profile, ar.profile),
       aboutCards: mergeList(en.aboutCards, ar.aboutCards),
       services: mergeList(en.services, ar.services),

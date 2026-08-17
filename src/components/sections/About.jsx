@@ -42,7 +42,7 @@ function StatLine({ label, value, i }) {
 
 /* ─── Section ─── */
 export default function About() {
-  const { profile, aboutCards, t } = useContent();
+  const { profile, aboutCards, t, tr } = useContent();
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -107,7 +107,7 @@ export default function About() {
               dir="auto"
             >
               I&apos;m <span className="font-semibold text-white">{profile.name}</span> — a{" "}
-              <span className="text-gradient italic font-medium">front-end developer</span> and{" "}
+              <span className="text-gradient italic font-medium">{tr("front-end developer")}</span> and{" "}
               <span className="font-semibold text-white">{profile.year} CS &amp; AI</span> student
               at {profile.university}, building the kind of websites I want to use.
             </motion.p>
@@ -134,7 +134,7 @@ export default function About() {
               transition={{ delay: 0.3, duration: 0.7 }}
               className="mt-6 max-w-2xl text-sm leading-relaxed text-white/55 italic md:text-base"
             >
-              Always learning. Always building.
+              {tr("Always learning. Always building.")}
             </motion.p>
 
             {/* signature — name + a GSAP DrawSVG swash that draws itself */}
@@ -168,7 +168,7 @@ export default function About() {
               {/* tiny header */}
               <div className="mb-5 flex items-center justify-between">
                 <span className="text-[10px] font-semibold uppercase tracking-[0.3em] text-white/55">
-                  ◆ Profile
+                  {tr("\u25c6 Profile")}
                 </span>
                 <motion.span
                   animate={{ rotate: 360 }}
@@ -195,7 +195,7 @@ export default function About() {
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
                   <span className="relative inline-flex h-2 w-2 rounded-full bg-green-400" />
                 </span>
-                <span className="font-medium">Open to opportunities</span>
+                <span className="font-medium">{tr("Open to opportunities")}</span>
               </motion.div>
             </TiltCard>
           </motion.div>
@@ -210,7 +210,7 @@ export default function About() {
           className="mt-20 mb-6 flex items-center gap-4 md:mt-28"
         >
           <span className="text-[10px] font-semibold uppercase tracking-[0.3em] text-white/55">
-            What I bring
+            {tr("What I bring")}
           </span>
           <span className="h-px flex-1 bg-white/10" />
         </motion.div>

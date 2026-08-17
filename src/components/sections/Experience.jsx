@@ -101,7 +101,7 @@ function ExperienceRow({ e, i, total }) {
 
 /* ─── Section ─── */
 export default function Experience() {
-  const { experience, t } = useContent();
+  const { experience, t, tr } = useContent();
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -169,7 +169,7 @@ export default function Experience() {
           className="mt-12 flex items-center justify-center gap-4 text-[10px] uppercase tracking-[0.35em] text-white/50"
         >
           <span className="h-px w-16 bg-white/15" />
-          <span>journey continues</span>
+          <span>{tr("journey continues")}</span>
           <span className="h-px w-16 bg-white/15" />
         </motion.div>
       </div>

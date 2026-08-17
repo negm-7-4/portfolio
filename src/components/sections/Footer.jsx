@@ -7,7 +7,7 @@ import Signature from "../ui/Signature";
 import StarSignature from "../ui/StarSignature";
 
 export default function Footer() {
-  const { profile } = useContent();
+  const { profile, tr } = useContent();
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end end"] });
 
@@ -55,7 +55,7 @@ export default function Footer() {
             </span>
             <span className="h-px w-14 bg-gradient-to-r from-white/40 to-white/0" />
             <span className="text-[11px] font-semibold uppercase tracking-[0.32em] text-white/60">
-              Until next time
+              {tr("Until next time")}
             </span>
           </motion.div>
 
@@ -71,7 +71,7 @@ export default function Footer() {
               style={{ clipPath: clip, fontSize: "clamp(3rem, 11vw, 11rem)" }}
               className="block italic font-light text-gradient"
             >
-              something great.
+              {tr("something great.")}
             </motion.span>
           </motion.h2>
 
@@ -89,7 +89,7 @@ export default function Footer() {
                 transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                 className="block h-1 w-1 rounded-full bg-[#aab4c4]"
               />
-              Drop me a line
+              {tr("Drop me a line")}
               <motion.span
                 animate={{ x: [0, 4, 0] }}
                 transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
@@ -124,7 +124,7 @@ export default function Footer() {
           viewport={{ once: false }}
           className="my-12 flex items-center gap-6 border-t border-white/[0.08] pt-8"
         >
-          <span className="text-[10px] uppercase tracking-[0.3em] text-white/50">Index</span>
+          <span className="text-[10px] uppercase tracking-[0.3em] text-white/50">{tr("Index")}</span>
           <span className="shimmer-line h-px flex-1 bg-white/5" />
           <button
             onClick={goTop}
@@ -139,7 +139,7 @@ export default function Footer() {
             >
               ↑
             </motion.span>
-            Back to top
+            {tr("Back to top")}
           </button>
         </motion.div>
 
@@ -147,7 +147,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 gap-10 pb-10 md:grid-cols-3 md:gap-12">
           {/* navigation */}
           <div>
-            <h4 className="mb-5 text-[10px] uppercase tracking-[0.3em] text-white/55">Navigate</h4>
+            <h4 className="mb-5 text-[10px] uppercase tracking-[0.3em] text-white/55">{tr("Navigate")}</h4>
             <ul className="space-y-2.5">
               {links.map((l) => (
                 <li key={l.id}>
@@ -166,7 +166,7 @@ export default function Footer() {
 
           {/* contact */}
           <div>
-            <h4 className="mb-5 text-[10px] uppercase tracking-[0.3em] text-white/55">Connect</h4>
+            <h4 className="mb-5 text-[10px] uppercase tracking-[0.3em] text-white/55">{tr("Connect")}</h4>
             <ul className="space-y-2.5">
               <li>
                 <a
@@ -192,7 +192,7 @@ export default function Footer() {
 
           {/* socials */}
           <div>
-            <h4 className="mb-5 text-[10px] uppercase tracking-[0.3em] text-white/55">Elsewhere</h4>
+            <h4 className="mb-5 text-[10px] uppercase tracking-[0.3em] text-white/55">{tr("Elsewhere")}</h4>
             <ul className="space-y-2.5">
               {profile.socials.map((s) => (
                 <li key={s.label}>
@@ -218,7 +218,7 @@ export default function Footer() {
         <div className="flex flex-col items-center gap-8 border-t border-white/[0.07] pt-12 pb-4">
           <div className="flex flex-col items-center gap-3">
             <p className="text-[10px] uppercase tracking-[0.35em] text-white/50">
-              With my own hand
+              {tr("With my own hand")}
             </p>
             <Signature />
           </div>
@@ -232,7 +232,7 @@ export default function Footer() {
             © {new Date().getFullYear()} {profile.name} · All rights reserved
           </span>
           <span className="flex items-center gap-3">
-            <span>Crafted with</span>
+            <span>{tr("Crafted with")}</span>
             <span className="text-white/60">React · Three.js · Motion</span>
           </span>
         </div>

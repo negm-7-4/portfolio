@@ -116,6 +116,7 @@ function ArrowCycle() {
    crosshair) so it reads as a deliberately-lit subject. On touch / low-tier
    the world is off, so we fall back to a branded floating mark. */
 function HeroFocus({ lite }) {
+  const { tr } = useContent();
   // Hover/focus state for the lens, so the otherwise-invisible hotspot can
   // show that it IS a control. `experience.setHovered` drives the 3D world;
   // this drives the DOM affordance. Both, or the button reads as decoration.
@@ -199,7 +200,7 @@ function HeroFocus({ lite }) {
             className="h-1 w-1 animate-pulse rounded-full bg-[#aab4c4]"
             style={{ boxShadow: "0 0 6px rgba(170,180,196,0.7)" }}
           />
-          Real-time · WebGL
+          {tr("Real-time \u00b7 WebGL")}
         </div>
 
         {/* Interactive hotspot — hovering the orb energises it (store hover
@@ -245,7 +246,7 @@ function HeroFocus({ lite }) {
               transform: `translateY(${armed ? 0 : 6}px)`,
             }}
           >
-            Pulse the field
+            {tr("Pulse the field")}
           </span>
         </button>
       </div>
@@ -278,7 +279,7 @@ function HeroFocus({ lite }) {
             className="h-1.5 w-1.5 rounded-full bg-[#aab4c4]"
             style={{ boxShadow: "0 0 8px rgba(170,180,196,0.8)" }}
           />
-          Pulse the field
+          {tr("Pulse the field")}
         </button>
         <p className="flex items-center gap-2 text-[9px] uppercase tracking-[0.3em] text-white/55">
           <span
@@ -286,7 +287,7 @@ function HeroFocus({ lite }) {
             className="h-1 w-1 animate-pulse rounded-full bg-[#aab4c4]"
             style={{ boxShadow: "0 0 6px rgba(170,180,196,0.7)" }}
           />
-          Real-time · WebGL
+          {tr("Real-time \u00b7 WebGL")}
         </p>
       </div>
     </>
@@ -294,7 +295,7 @@ function HeroFocus({ lite }) {
 }
 
 export default function Hero() {
-  const { profile, heroTags, t } = useContent();
+  const { profile, heroTags, t, tr } = useContent();
   const ref = useRef(null);
   const { tier } = useDeviceProfile();
   // Must match App's world gating: the fallback mark is only correct when the
@@ -327,6 +328,12 @@ export default function Hero() {
     <section
       id="hero"
       ref={ref}
+      // Pinned LTR for the same reason as the cover: the hero is composed
+      // against the live 3D world behind it, and the name lockup, orbiting
+      // shards and scroll cue are all placed in that frame. The Latin name
+      // "Mohamed Negm" is the subject of the composition and reads LTR in
+      // either language; only the prose around it needs to flip.
+      dir="ltr"
       className="relative w-full min-h-[100svh] pt-28 pb-28 md:pt-40 md:pb-32"
       style={{ overflow: "visible" }}
     >
@@ -404,7 +411,7 @@ export default function Hero() {
                 style={{ boxShadow: "0 0 6px rgba(74,222,128,0.8)" }}
               />
             </span>
-            <span className="text-green-400/90">Available</span>
+            <span className="text-green-400/90">{tr("Available")}</span>
             <span className="text-white/45">·</span>
             <span>{t.labels.forNewProjects}</span>
             {/* expanding hairline — reads as a "live" progress bar under the pill */}
@@ -646,7 +653,7 @@ export default function Hero() {
                 low-alpha type is the easiest contrast to lose and the easiest
                 to fix. */}
             <p className="mb-2.5 text-[9px] font-semibold uppercase tracking-[0.3em] text-white/75">
-              Crafting with
+              {tr("Crafting with")}
             </p>
             <ul className="flex flex-wrap gap-2">
               {heroTags.map((t, i) => (
@@ -703,7 +710,7 @@ export default function Hero() {
           animate={{ opacity: [0.8, 1, 0.8] }}
           transition={{ duration: 2.5, repeat: Infinity }}
         >
-          Scroll
+          {tr("Scroll")}
         </motion.span>
 
         {/* Mouse outline with falling dot */}

@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import useDeviceProfile from "../../hooks/useDeviceProfile";
 import { loadScrollSync } from "../../lib/scrollSync";
+import { useContent } from "../../i18n/useContent";
 
 /**
  * MANIFESTO — the pinned, scrubbed statement beat.
@@ -23,6 +24,7 @@ const LINES = [
 ];
 
 export default function Manifesto() {
+  const { tr } = useContent();
   const wrapRef = useRef(null);
   const { tier, reducedMotion } = useDeviceProfile();
   const still = reducedMotion || tier === "low";
@@ -110,7 +112,7 @@ export default function Manifesto() {
             </span>
             <span className="h-px w-14 bg-gradient-to-r from-white/40 to-transparent" />
             <span className="text-[11px] font-semibold uppercase tracking-[0.32em] text-white/60">
-              Manifesto
+              {tr("Manifesto")}
             </span>
           </div>
 
@@ -138,7 +140,7 @@ export default function Manifesto() {
           <div className="mf-sig mt-12 flex items-center gap-4">
             <span className="block h-px w-16 bg-gradient-to-r from-[#aab4c4] to-transparent" />
             <span className="text-[11px] uppercase tracking-[0.32em] text-white/60">
-              Every frame earns its place
+              {tr("Every frame earns its place")}
             </span>
           </div>
         </div>
