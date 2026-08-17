@@ -1,8 +1,7 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
 import SectionHeading from "../ui/SectionHeading";
-import { process as steps } from "../../data/content";
-
+import { useContent } from "../../i18n/useContent";
 /* ─── Process row — big horizontal step, alternating sides ─── */
 function StepRow({ step, i, total }) {
   const last = i === total - 1;
@@ -120,6 +119,7 @@ function StepRow({ step, i, total }) {
 
 /* ─── Section ─── */
 export default function Process() {
+  const { process: steps, t } = useContent();
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -147,7 +147,12 @@ export default function Process() {
       </motion.div>
 
       <div className="relative mx-auto w-[90%] max-w-7xl">
-        <SectionHeading num="05" eyebrow="Workflow" title="My" accent="Process" />
+        <SectionHeading
+          num="05"
+          eyebrow={t.headings.process.eyebrow}
+          title={t.headings.process.title}
+          accent={t.headings.process.accent}
+        />
 
         <div className="divide-y divide-white/[0.06]">
           {steps.map((step, i) => (

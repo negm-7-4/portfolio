@@ -2,6 +2,26 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+
+    <!-- Language/direction, applied before first paint.
+         React sets these too, but only after hydration — long enough for an
+         Arabic visitor to see a frame of left-to-right English. Reading
+         localStorage here is a few microseconds and removes the flash.
+         Kept dependency-free and inline so it cannot be deferred. -->
+    <script>
+      (function () {
+        try {
+          var l = localStorage.getItem("negm.lang");
+          if (l !== "ar" && l !== "en") {
+            l = (navigator.language || "").toLowerCase().indexOf("ar") === 0 ? "ar" : "en";
+          }
+          document.documentElement.lang = l;
+          document.documentElement.dir = l === "ar" ? "rtl" : "ltr";
+        } catch (e) {
+          /* storage blocked — English/LTR defaults in the markup already apply */
+        }
+      })();
+    </script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />

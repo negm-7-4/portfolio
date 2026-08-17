@@ -96,10 +96,55 @@
   src: url("/fonts/playfair-display-name-italic.woff2") format("woff2");
 }
 
+/* ── Arabic ────────────────────────────────────────────────────────────
+   IBM Plex Sans Arabic (OFL). `unicode-range` is the whole point of loading
+   it this way: the browser fetches these three files ONLY when it actually
+   has to draw a glyph in the Arabic block. An English visitor never pays the
+   ~130KB, even though the faces are declared for every page.
+   The range covers Arabic (0600–06FF), Supplement, Extended-A, presentation
+   forms, and the Arabic-Indic digits. */
+@font-face {
+  font-family: "IBM Plex Sans Arabic";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url("/fonts/ibm-plex-arabic-400.woff2") format("woff2");
+  unicode-range:
+    U+0600-06FF, U+0750-077F, U+0870-088E, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF,
+    U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FDFD;
+}
+@font-face {
+  font-family: "IBM Plex Sans Arabic";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 600;
+  src: url("/fonts/ibm-plex-arabic-600.woff2") format("woff2");
+  unicode-range:
+    U+0600-06FF, U+0750-077F, U+0870-088E, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF,
+    U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FDFD;
+}
+@font-face {
+  font-family: "IBM Plex Sans Arabic";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src: url("/fonts/ibm-plex-arabic-700.woff2") format("woff2");
+  unicode-range:
+    U+0600-06FF, U+0750-077F, U+0870-088E, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF,
+    U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FDFD;
+}
+
 @theme {
+  /* Deliberately NO Arabic webfont in the default (English) stacks.
+     `unicode-range` alone was not enough: the page carries a few Arabic
+     glyphs even in English — "نجم" in the logo, "ع" on the language toggle —
+     and that was sufficient to make every English visitor download all three
+     Arabic weights (~130KB) to draw four characters. Those few glyphs render
+     perfectly well in the platform's own Arabic face. */
   --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
   --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Playfair Display", "Georgia", "Times New Roman", serif;
+  --font-arabic: "Segoe UI", Tahoma, "Noto Sans Arabic", sans-serif;
 
   --color-ink: #0b0d11;
   --color-ink-soft: #0f1217;
@@ -507,6 +552,79 @@ h6 {
     background: none !important;
     -webkit-text-fill-color: currentColor !important;
   }
+}
+
+/* ── RTL ───────────────────────────────────────────────────────────────
+   `dir="rtl"` on <html> mirrors flow, flexbox, grid and logical properties
+   for free. What it does NOT mirror is the handful of places this site pins
+   things with physical values, and those are what actually break a layout.
+   Each rule below fixes one real class of breakage rather than blanket-
+   flipping everything, which would un-mirror the parts already correct. */
+
+/* Arabic sets noticeably smaller on the same font-size than Latin, and the
+   display face's tight tracking is a Latin-typography choice that reads as
+   cramped in Arabic — letters there are joined, not spaced. */
+[dir="rtl"] {
+  --tracking-display: 0;
+
+  /* The Arabic webfont is switched ON only here, so it is downloaded by the
+     visitors who actually read Arabic. It leads each stack; because its
+     @font-face declares only the Arabic unicode-range, Latin characters fall
+     straight through to the Latin face — one stack renders both scripts, so
+     a mixed string ("React" inside an Arabic sentence) needs no special case. */
+  --font-display: "IBM Plex Sans Arabic", "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "IBM Plex Sans Arabic", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "IBM Plex Sans Arabic", "Playfair Display", "Georgia", serif;
+  --font-arabic: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+}
+[dir="rtl"] h1,
+[dir="rtl"] h2,
+[dir="rtl"] h3,
+[dir="rtl"] .font-display {
+  letter-spacing: 0;
+  word-spacing: 0.02em;
+}
+/* Arabic ascenders/descenders need more room than Latin at the same size. */
+[dir="rtl"] p,
+[dir="rtl"] li {
+  line-height: 1.85;
+}
+
+/* Tracked-out micro-labels are a Latin device. Applied to Arabic they pull
+   joined letterforms apart into unreadable fragments. */
+[dir="rtl"] [class*="tracking-["],
+[dir="rtl"] [class*="tracking-wide"],
+[dir="rtl"] [class*="tracking-widest"] {
+  letter-spacing: 0 !important;
+}
+
+/* Latin-only ornaments that must not mirror: code, URLs, emails, numeric
+   readouts and the brand mark all stay left-to-right inside an RTL page. */
+[dir="rtl"] code,
+[dir="rtl"] pre,
+[dir="rtl"] .force-ltr,
+[dir="rtl"] a[href^="mailto:"],
+[dir="rtl"] a[href^="tel:"],
+[dir="rtl"] a[href^="http"] {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+/* …but a link whose text is Arabic prose should still read RTL. */
+[dir="rtl"] a[href^="http"].rtl-text {
+  direction: rtl;
+}
+
+/* Decorative arrows and chevrons point "forward", which is left in RTL. */
+[dir="rtl"] .dir-flip {
+  transform: scaleX(-1);
+}
+
+/* The 3D canvas is a fixed, full-bleed layer positioned in world space, not
+   document space. Mirroring it would flip the lighting and the camera's
+   composed shots, so it is explicitly pinned LTR. */
+[dir="rtl"] canvas,
+[dir="rtl"] .keep-ltr-layout {
+  direction: ltr;
 }
 
 /* ── 3D float ─────────────────────────────────────────────── */

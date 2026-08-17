@@ -3,6 +3,7 @@ import SectionHeading from "../ui/SectionHeading";
 import Reveal from "../ui/Reveal";
 import { goToSection } from "../../lib/navigation";
 import ResponsiveImage from "../ui/ResponsiveImage";
+import { useContent } from "../../i18n/useContent";
 
 const proof = [
   { value: "859", label: "backend tests" },
@@ -134,6 +135,7 @@ function ProofCard({ item, index }) {
 }
 
 export default function SamsCaseStudy() {
+  const { t } = useContent();
   return (
     <section id="sams-case-study" className="relative w-full py-32 md:py-44">
       <div
@@ -143,7 +145,12 @@ export default function SamsCaseStudy() {
       />
 
       <div className="relative mx-auto w-[90%] max-w-7xl">
-        <SectionHeading num="07" eyebrow="Flagship case study" title="Inside" accent="SAMS" />
+        <SectionHeading
+          num="07"
+          eyebrow={t.headings.sams.eyebrow}
+          title={t.headings.sams.title}
+          accent={t.headings.sams.accent}
+        />
 
         <div className="grid items-start gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
           <Reveal className="lg:sticky lg:top-28" dir="left" once>

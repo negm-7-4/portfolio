@@ -1,16 +1,18 @@
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
 import TechIcon from "../ui/TechIcon";
 import useMagneticPull from "../../hooks/useMagneticPull";
 import useMediaQuery from "../../hooks/useMediaQuery";
-import { skillCategories } from "../../data/content";
-
+import { useContent } from "../../i18n/useContent";
 /* ─── Flatten all categories into one wall, mark featured items ─── */
 const FEATURED = new Set(["React", "Next.js", "Tailwind CSS", "Three.js", "Framer Motion", "GSAP"]);
 
-const WALL = skillCategories.flatMap((cat) =>
-  cat.items.map((it) => ({ ...it, cat: cat.label, featured: FEATURED.has(it.name) }))
-);
+/* Built per-render rather than once at module load: the category LABELS are
+   translated, so the wall has to be rebuilt when the language changes. */
+const buildWall = (categories) =>
+  categories.flatMap((cat) =>
+    cat.items.map((it) => ({ ...it, cat: cat.label, featured: FEATURED.has(it.name) }))
+  );
 
 /* ─── Single floating tech tile — varies in size, cursor-reactive ─── */
 function TechTile({ item, i, desktop }) {
@@ -111,6 +113,7 @@ function TechTile({ item, i, desktop }) {
 
 /* ─── Section ─── */
 export default function Skills() {
+  const { skillCategories, t } = useContent();
   const ref = useRef(null);
   const desktop = useMediaQuery("(min-width: 768px)");
   const { scrollYProgress } = useScroll({
@@ -122,6 +125,7 @@ export default function Skills() {
   const bgY3 = useTransform(scrollYProgress, [0, 1], [80, -80]);
   const titleY = useTransform(scrollYProgress, [0, 1], [80, -80]);
   const wallTilt = useTransform(scrollYProgress, [0, 0.5, 1], [4, 0, -4]);
+  const WALL = useMemo(() => buildWall(skillCategories), [skillCategories]);
 
   return (
     <section
@@ -209,7 +213,7 @@ export default function Skills() {
               className="inline-block text-white"
               style={{ fontSize: "clamp(3.5rem, 11vw, 11rem)" }}
             >
-              MY
+              {t.headings.skills.title}
             </motion.span>
 
             <motion.span
@@ -229,7 +233,7 @@ export default function Skills() {
                 backgroundClip: "text",
               }}
             >
-              STACK
+              {t.headings.skills.accent}
             </motion.span>
           </h2>
 

@@ -2,8 +2,7 @@ import { useState } from "react";
 import { motion } from "motion/react";
 import SectionHeading from "../ui/SectionHeading";
 import { celebrate } from "../../lib/confetti";
-import { profile } from "../../data/content";
-
+import { useContent } from "../../i18n/useContent";
 /* ───────────────── Brand-accurate SVG icons ───────────────── */
 function GithubIcon({ size = 40 }) {
   return (
@@ -204,6 +203,7 @@ function SocialOrb({ s, i }) {
 
 /* ───────────────── Section ───────────────── */
 export default function Socials() {
+  const { profile, t } = useContent();
   return (
     <section id="socials" className="relative w-full py-28 md:py-40 overflow-hidden">
       {/* Ambient orbs that float behind */}
@@ -221,7 +221,12 @@ export default function Socials() {
       />
 
       <div className="mx-auto w-[85%] sm:w-[80%] max-w-4xl">
-        <SectionHeading num="08" eyebrow="Connect" title="Find Me" accent="Online" />
+        <SectionHeading
+          num="08"
+          eyebrow={t.headings.socials.eyebrow}
+          title={t.headings.socials.title}
+          accent={t.headings.socials.accent}
+        />
 
         <motion.p
           initial={{ opacity: 0, y: 18 }}

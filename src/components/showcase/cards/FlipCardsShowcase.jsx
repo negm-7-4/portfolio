@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useMotionValue, useSpring } from "motion/react";
 
-import { projects } from "../../../data/content";
+import { useContent } from "../../../i18n/useContent";
 import { EASE_OUT } from "../../../lib/motion";
 import useWorldDye from "../useWorldDye";
 import TechBadges from "../TechBadges";
@@ -207,6 +207,7 @@ function Card({ p, i, onFocus }) {
 }
 
 export default function FlipCardsShowcase() {
+  const { projects } = useContent();
   const ref = useRef(null);
   const [active, setActive] = useState(0);
   const [inView, setInView] = useState(false);

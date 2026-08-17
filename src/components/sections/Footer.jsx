@@ -1,12 +1,13 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
 import { celebrate } from "../../lib/confetti";
-import { profile } from "../../data/content";
+import { useContent } from "../../i18n/useContent";
 import { goToSection } from "../../lib/navigation";
 import Signature from "../ui/Signature";
 import StarSignature from "../ui/StarSignature";
 
 export default function Footer() {
+  const { profile } = useContent();
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end end"] });
 

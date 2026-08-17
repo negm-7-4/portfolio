@@ -3,7 +3,7 @@ import { AnimatePresence, motion, useScroll, useTransform } from "motion/react";
 import BrowserFrame from "../ui/BrowserFrame";
 import ScrubReveal from "../ui/ScrubReveal";
 import WebGLImage from "../ui/WebGLImage";
-import { projects } from "../../data/content";
+import { useContent } from "../../i18n/useContent";
 import useWorldDye from "./useWorldDye";
 import ShowcaseCta from "./ShowcaseCta";
 
@@ -117,6 +117,7 @@ function StickyInfo({ p, idx, total }) {
 
 /* ─── The gallery ─── */
 export default function ClassicShowcase() {
+  const { projects } = useContent();
   const ref = useRef(null);
   const [active, setActive] = useState(0);
   const [inView, setInView] = useState(false);

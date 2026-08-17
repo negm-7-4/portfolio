@@ -7,7 +7,7 @@ import MagneticButton from "../ui/MagneticButton";
 import MagneticText from "../ui/MagneticText";
 import { celebrate } from "../../lib/confetti";
 import { goToSection } from "../../lib/navigation";
-import { profile, heroTags } from "../../data/content";
+import { useContent } from "../../i18n/useContent";
 import { EASE_OUT, EASE_BACK } from "../../lib/motion";
 import { sfxTheme, isAudioEnabled } from "../../lib/ambientAudio";
 import { toast } from "../../lib/toast";
@@ -294,6 +294,7 @@ function HeroFocus({ lite }) {
 }
 
 export default function Hero() {
+  const { profile, heroTags, t } = useContent();
   const ref = useRef(null);
   const { tier } = useDeviceProfile();
   // Must match App's world gating: the fallback mark is only correct when the
@@ -405,7 +406,7 @@ export default function Hero() {
             </span>
             <span className="text-green-400/90">Available</span>
             <span className="text-white/45">·</span>
-            <span>For New Projects</span>
+            <span>{t.labels.forNewProjects}</span>
             {/* expanding hairline — reads as a "live" progress bar under the pill */}
             <motion.span
               aria-hidden
@@ -435,7 +436,7 @@ export default function Hero() {
               className="h-px w-10 origin-left bg-gradient-to-r from-white/40 to-transparent"
             />
             <span className="text-[11px] font-semibold uppercase tracking-[0.32em] text-white/55">
-              Hi there, I&apos;m
+              {t.labels.hiThereIm}
             </span>
           </motion.div>
 
@@ -603,7 +604,7 @@ export default function Hero() {
                 aria-hidden
                 className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-black/10 to-transparent transition-transform duration-500 ease-out group-hover:translate-x-full"
               />
-              <span className="relative">View My Work</span>
+              <span className="relative">{t.cta.viewMyWork}</span>
               <motion.span
                 className="relative inline-block"
                 aria-hidden
@@ -627,7 +628,7 @@ export default function Hero() {
                 aria-hidden
                 className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/12 to-transparent transition-transform duration-500 ease-out group-hover:translate-x-full"
               />
-              <span className="relative">Get In Touch</span>
+              <span className="relative">{t.cta.getInTouch}</span>
               <span className="relative text-white/55 transition-colors group-hover:text-white">
                 ↗
               </span>

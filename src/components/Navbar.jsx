@@ -1,19 +1,16 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence, useMotionValue, useSpring } from "motion/react";
 import MagneticButton from "./ui/MagneticButton";
+import LanguageToggle from "./ui/LanguageToggle";
+import { useContent } from "../i18n/useContent";
 import ScrambleText from "./ui/ScrambleText";
 import { useActiveSection } from "../hooks/useActiveSection";
 import { goToSection } from "../lib/navigation";
 import { openCv, openCommandPalette } from "../lib/appEvents";
 
-const links = [
-  { label: "About", id: "about" },
-  { label: "Services", id: "services" },
-  { label: "Process", id: "process" },
-  { label: "Projects", id: "projects" },
-  { label: "Socials", id: "socials" },
-  { label: "Contact", id: "contact" },
-];
+// `id` is the scroll target and never changes; only the label is translated,
+// so deep links and the active-section tracker keep working in both languages.
+const LINK_IDS = ["about", "services", "process", "projects", "socials", "contact"];
 
 /* ─── A star on the constellation trail ───────────────────────────────
    Each section is a star. The node sits ON the hairline that runs through
@@ -108,6 +105,8 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const { active } = useActiveSection();
+  const { t } = useContent();
+  const links = useMemo(() => LINK_IDS.map((id) => ({ id, label: t.nav[id] })), [t]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -277,6 +276,8 @@ export default function Navbar() {
 
         {/* right actions */}
         <div className="flex items-center gap-2">
+          <LanguageToggle />
+
           {/* Cmd+K hint */}
           <button
             onClick={openCommandPalette}
@@ -300,7 +301,7 @@ export default function Navbar() {
               <circle cx="11" cy="11" r="7" />
               <path d="m20 20-3.5-3.5" />
             </svg>
-            <span className="hidden lg:inline">Search</span>
+            <span className="hidden lg:inline">{t.cta.search}</span>
             <span className="hidden items-center gap-1 lg:flex">
               <kbd className="rounded border border-white/15 bg-white/[0.04] px-1.5 py-0.5 font-display">
                 {isMac ? "⌘" : "Ctrl"}
@@ -330,7 +331,7 @@ export default function Navbar() {
               ▤
             </span>
             {/* label collapses on narrow screens, but the button stays */}
-            <span className="relative hidden lg:inline">My CV</span>
+            <span className="relative hidden lg:inline">{t.cta.viewCv}</span>
             <motion.span
               className="relative hidden text-[10px] lg:inline-block"
               animate={{ y: [0, 2, 0] }}

@@ -5,8 +5,7 @@ import MagneticButton from "../ui/MagneticButton";
 import { celebrate } from "../../lib/confetti";
 import { toast } from "../../lib/toast";
 import { openCv } from "../../lib/appEvents";
-import { profile } from "../../data/content";
-
+import { useContent } from "../../i18n/useContent";
 // Same-origin Vercel Function. If Resend is not configured in an environment,
 // the API returns a typed 503 and the UI honestly falls back to the mail app.
 /* ── Where the contact form delivers ──────────────────────────────────
@@ -201,6 +200,7 @@ function InfoRow({ icon: Icon, label, value, href, copyable, i }) {
 
 /* ─── Section ─── */
 export default function Contact() {
+  const { profile, t } = useContent();
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -311,7 +311,12 @@ export default function Contact() {
       </motion.div>
 
       <div className="relative mx-auto w-[90%] max-w-7xl">
-        <SectionHeading num="09" eyebrow="Contact" title="Let's" accent="Talk" />
+        <SectionHeading
+          num="09"
+          eyebrow={t.headings.contact.eyebrow}
+          title={t.headings.contact.title}
+          accent={t.headings.contact.accent}
+        />
 
         <motion.p
           style={{ y: titleY, fontSize: "clamp(1.2rem, 2vw, 1.75rem)" }}

@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import SectionHeading from "../ui/SectionHeading";
-import { services } from "../../data/content";
-
+import { useContent } from "../../i18n/useContent";
 /* ─── Decorative shape per service (right edge of each row) ───
    These are render functions, not pre-built elements: JSX nodes held in an
    array and rendered into a list each need a `key`, and building them lazily
@@ -168,6 +167,7 @@ function ServiceRow({ s, i, isOpen, onHover }) {
 
 /* ─── Section ─── */
 export default function Services() {
+  const { services, t } = useContent();
   const [open, setOpen] = useState(0); // first row expanded by default
 
   return (
@@ -182,7 +182,12 @@ export default function Services() {
       />
 
       <div className="mx-auto w-[90%] max-w-7xl">
-        <SectionHeading num="02" eyebrow="Services" title="What I" accent="Do" />
+        <SectionHeading
+          num="02"
+          eyebrow={t.headings.services.eyebrow}
+          title={t.headings.services.title}
+          accent={t.headings.services.accent}
+        />
 
         <div onMouseLeave={() => setOpen(0)}>
           {services.map((s, i) => (

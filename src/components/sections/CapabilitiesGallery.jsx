@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useSpring, useTransform } from "motion/react";
-import { services } from "../../data/content";
+import { useContent } from "../../i18n/useContent";
 import { goToSection } from "../../lib/navigation";
 
 /**
@@ -28,6 +28,7 @@ const SHAPES = [
 const SCROLL_FACTOR = 0.88;
 
 export default function CapabilitiesGallery() {
+  const { services } = useContent();
   const wrapRef = useRef(null);
   const trackRef = useRef(null);
   const [distance, setDistance] = useState(0);

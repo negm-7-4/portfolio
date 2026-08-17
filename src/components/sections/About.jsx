@@ -4,8 +4,7 @@ import SectionHeading from "../ui/SectionHeading";
 import TiltCard from "../ui/TiltCard";
 import SignatureFlourish from "../ui/SignatureFlourish";
 import { Gyro, Diamond } from "../ui/Shapes3D";
-import { profile, aboutCards } from "../../data/content";
-
+import { useContent } from "../../i18n/useContent";
 /* ─── Subtle SVG glyphs for the trait cards ─── */
 const ICONS = {
   code: "M8 6L2 12l6 6M16 6l6 6-6 6",
@@ -43,6 +42,7 @@ function StatLine({ label, value, i }) {
 
 /* ─── Section ─── */
 export default function About() {
+  const { profile, aboutCards, t } = useContent();
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -86,7 +86,12 @@ export default function About() {
       <Diamond size={90} className="absolute left-[4%] bottom-[20%] hidden opacity-40 lg:block" />
 
       <div className="relative mx-auto w-[90%] max-w-7xl">
-        <SectionHeading num="01" eyebrow="About Me" title="Who" accent="I Am" />
+        <SectionHeading
+          num="01"
+          eyebrow={t.headings.about.eyebrow}
+          title={t.headings.about.title}
+          accent={t.headings.about.accent}
+        />
 
         {/* ── Two-column intro: huge bio left, stats right ── */}
         <div className="grid grid-cols-1 gap-10 md:grid-cols-12 md:gap-16">

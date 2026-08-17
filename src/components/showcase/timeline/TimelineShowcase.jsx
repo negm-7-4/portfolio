@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useSpring, useTransform } from "motion/react";
 
-import { projects } from "../../../data/content";
+import { useContent } from "../../../i18n/useContent";
 import { EASE_OUT } from "../../../lib/motion";
 import useWorldDye from "../useWorldDye";
 import DescriptionLines from "../DescriptionLines";
@@ -145,6 +145,7 @@ function Slide({ p, i, onEnter }) {
 }
 
 export default function TimelineShowcase() {
+  const { projects } = useContent();
   const ref = useRef(null);
   const [active, setActive] = useState(0);
   const [inView, setInView] = useState(false);

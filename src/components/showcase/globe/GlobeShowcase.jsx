@@ -4,7 +4,7 @@ import { useTexture } from "@react-three/drei";
 import { AnimatePresence, motion, useScroll } from "motion/react";
 import * as THREE from "three";
 
-import { projects } from "../../../data/content";
+import { useContent } from "../../../i18n/useContent";
 import { EASE_OUT } from "../../../lib/motion";
 import useMediaQuery from "../../../hooks/useMediaQuery";
 import useWorldDye from "../useWorldDye";
@@ -136,6 +136,7 @@ const ATMO_FRAG = /* glsl */ `
 `;
 
 function GlobeScene({ compact }) {
+  const { projects } = useContent();
   const globe = useRef(null);
   const clouds = useRef(null);
   const light = useRef(null);
@@ -398,6 +399,7 @@ function DestinationHud({ active }) {
 
 /* ── The per-project panel (right on desktop, bottom sheet on mobile). ── */
 function ProjectPanel({ active }) {
+  const { projects } = useContent();
   const p = projects[active];
   if (!p) return null;
   const num = String(active + 1).padStart(2, "0");
@@ -478,6 +480,7 @@ function ProjectPanel({ active }) {
 }
 
 export default function GlobeShowcase() {
+  const { projects } = useContent();
   const wrapRef = useRef(null);
   const [active, setActive] = useState(0);
   const [inView, setInView] = useState(false);

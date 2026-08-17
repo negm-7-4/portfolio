@@ -9,7 +9,7 @@ import {
 } from "motion/react";
 import useDeviceProfile from "../../hooks/useDeviceProfile";
 import useFadeGate from "../../hooks/useFadeGate";
-import { profile } from "../../data/content";
+import { useContent } from "../../i18n/useContent";
 import { EASE_OUT } from "../../lib/motion";
 import { goToSection } from "../../lib/navigation";
 
@@ -241,6 +241,7 @@ function DuotonePhoto({ lite, reduce }) {
 }
 
 export default function PhotoIntro() {
+  const { profile } = useContent();
   const ref = useRef(null);
   const { tier, touch } = useDeviceProfile();
   const reduce = useReducedMotion();

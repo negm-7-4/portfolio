@@ -1,8 +1,7 @@
 import { useRef } from "react";
 import { motion, useScroll, useSpring, useTransform } from "motion/react";
 import SectionHeading from "../ui/SectionHeading";
-import { experience } from "../../data/content";
-
+import { useContent } from "../../i18n/useContent";
 /* ─── A single experience entry on the timeline ─── */
 function ExperienceRow({ e, i, total }) {
   const num = String(i + 1).padStart(2, "0");
@@ -102,6 +101,7 @@ function ExperienceRow({ e, i, total }) {
 
 /* ─── Section ─── */
 export default function Experience() {
+  const { experience, t } = useContent();
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -134,7 +134,12 @@ export default function Experience() {
       </motion.div>
 
       <div className="relative mx-auto w-[90%] max-w-7xl">
-        <SectionHeading num="04" eyebrow="Journey" title="Experience &" accent="Education" />
+        <SectionHeading
+          num="04"
+          eyebrow={t.headings.experience.eyebrow}
+          title={t.headings.experience.title}
+          accent={t.headings.experience.accent}
+        />
 
         {/* timeline body */}
         <div className="relative mx-auto max-w-5xl">

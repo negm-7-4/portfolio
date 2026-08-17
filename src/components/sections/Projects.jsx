@@ -4,6 +4,7 @@ import SectionHeading from "../ui/SectionHeading";
 import useDeviceProfile from "../../hooks/useDeviceProfile";
 import { SHOWCASE_MODE, SHOWCASE_FALLBACK } from "../../config/showcase";
 import { scrollTo } from "../../lib/navigation";
+import { useContent } from "../../i18n/useContent";
 
 /**
  * ── Projects — presentation dispatcher ────────────────────────────────
@@ -150,6 +151,7 @@ function ShowcasePlaceholder() {
 }
 
 export default function Projects() {
+  const { t } = useContent();
   const { tier, reducedMotion } = useDeviceProfile();
   // Capable phones (tier "mid") get the globe too — it is one small Canvas
   // that pauses off-screen. Excluding all touch devices meant mobile silently
@@ -195,7 +197,12 @@ export default function Projects() {
   return (
     <section id="projects" className="relative w-full py-24 md:py-40">
       <div className="mx-auto w-[90%] max-w-7xl">
-        <SectionHeading num="06" eyebrow="Selected Work" title="Featured" accent="Projects" />
+        <SectionHeading
+          num="06"
+          eyebrow={t.headings.projects.eyebrow}
+          title={t.headings.projects.title}
+          accent={t.headings.projects.accent}
+        />
         <ModeSwitcher options={options} mode={mode} onChange={switchMode} />
       </div>
 
