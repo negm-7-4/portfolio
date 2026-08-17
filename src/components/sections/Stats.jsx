@@ -145,8 +145,15 @@ export default function Stats() {
                 / 0{i + 1}
               </span>
 
-              {/* huge number with subtle glow behind */}
+              {/* huge number with subtle glow behind.
+                  dir="ltr" is REQUIRED, not cosmetic. A measurement is a
+                  single LTR token: prefix, digits, then unit. Inside an RTL
+                  container the bidi algorithm reorders the three spans and
+                  mirrors the comparison operator, so "46ms" rendered as
+                  "ms46", "172kB" as "kB172", and "<50ms" as "50ms>" — the
+                  last one inverts the meaning of the claim. */}
               <div
+                dir="ltr"
                 className="relative flex items-baseline font-display font-bold leading-[0.8] tracking-tighter tabular-nums text-white"
                 style={{
                   fontSize: "clamp(3.5rem, 8vw, 7.5rem)",
@@ -184,10 +191,20 @@ export default function Stats() {
               </div>
 
               {/* label */}
-              <p className="mt-4 text-[11px] font-semibold uppercase tracking-[0.28em] text-white/65 md:text-xs">
+              {/* dir="auto" takes the direction from each string's own first
+                  strong character, so these follow the language they are
+                  actually written in. Left in the parent's RTL, the trailing
+                  full stop of an English sentence is a neutral character and
+                  bidi moved it to the head of the line — ".load", ".errors". */}
+              <p
+                dir="auto"
+                className="mt-4 text-[11px] font-semibold uppercase tracking-[0.28em] text-white/65 md:text-xs"
+              >
                 {s.label}
               </p>
-              <p className="mt-1.5 text-[13px] leading-relaxed text-white/55">{s.note}</p>
+              <p dir="auto" className="mt-1.5 text-[13px] leading-relaxed text-white/55">
+                {s.note}
+              </p>
 
               {/* hover underline that grows + accent dot at the end */}
               <div className="mt-4 flex items-center gap-2">

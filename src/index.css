@@ -630,6 +630,36 @@ h6 {
   letter-spacing: 0;
 }
 
+/* MIXED-LANGUAGE SAFETY NET.
+   Not every string on the page is translated, and an untranslated English
+   sentence sitting in an RTL container gets mangled by the bidi algorithm:
+   its trailing full stop is a neutral character and jumps to the head of the
+   line (".load", ".errors"), while a measurement like "46ms" splits into
+   reordered runs and renders "ms46".
+
+   `unicode-bidi: plaintext` resolves each block's direction from its OWN
+   first strong character — Arabic blocks stay RTL, English blocks go LTR and
+   keep their punctuation — and `text-align: start` then follows that
+   resolution instead of the parent's. */
+[dir="rtl"] p,
+[dir="rtl"] li,
+[dir="rtl"] dd,
+[dir="rtl"] figcaption,
+[dir="rtl"] blockquote {
+  unicode-bidi: plaintext;
+  text-align: start;
+}
+
+/* A number and its unit are ONE left-to-right token. Isolating them stops
+   bidi from reordering the parts or mirroring a comparison operator — "<50ms"
+   was rendering as "50ms>", which reverses what the figure claims. */
+[dir="rtl"] .tabular-nums,
+[dir="rtl"] time,
+[dir="rtl"] .measure {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
 /* Decorative arrows and chevrons point "forward", which is left in RTL. */
 [dir="rtl"] .dir-flip {
   transform: scaleX(-1);
