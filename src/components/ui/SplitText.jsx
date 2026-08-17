@@ -11,6 +11,18 @@ import { foldChild, staggerContainer, VIEWPORT } from "../../lib/motion";
  * Props (back-compatible): text, className, delay, stagger, blur, as.
  * New: `perChar` splits into letters for headline-grade reveals.
  */
+/**
+ * Arabic is a JOINING script: every letter takes an initial, medial, final or
+ * isolated form depending on its neighbours. Putting each letter in its own
+ * element severs those neighbours, so every glyph falls back to its isolated
+ * form and the word renders as disconnected stumps — "مين" became "م ي ن".
+ * Laying those pieces out in a flex row then reverses their visual order.
+ *
+ * So: per-character splitting is silently downgraded to per-word for any
+ * string containing Arabic. The reveal still animates, just in word units.
+ */
+const HAS_ARABIC = /[؀-ۿݐ-ݿࢠ-ࣿﭐ-﷿ﹰ-﻿]/;
+
 export default function SplitText({
   text,
   className = "",
@@ -21,6 +33,7 @@ export default function SplitText({
   as: Tag = "span",
 }) {
   const words = text.split(" ");
+  const splitChars = perChar && !HAS_ARABIC.test(text);
   const container = staggerContainer(stagger, delay);
   const child = foldChild({ blur });
 
@@ -57,7 +70,7 @@ export default function SplitText({
           the animated fragments are hidden from the tree. */}
       <span className="sr-only">{text}</span>
       <span aria-hidden="true" className="contents">
-        {perChar
+        {splitChars
           ? words.map((word, wi) => (
               // keep each word intact (no mid-word wrapping) but reveal its letters
               <span

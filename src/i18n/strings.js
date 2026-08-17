@@ -160,6 +160,50 @@ export const AR_STRINGS = {
   "With my own hand": "بخط إيدي",
   "· All rights reserved": "· كل الحقوق محفوظة",
   "Crafted with": "اتصنع بـ",
+  // ── SAMS case study ──
+  // Per the site owner's decision: the deep technical body (contracts, gates,
+  // rollback, SBOM, attestation) stays in English even in Arabic mode, the way
+  // most technical companies publish. Only the framing — headings, section
+  // labels, the summary and the closing call to action — is translated, so an
+  // Arabic reader can navigate and decide whether to read on.
+  "Multi-agent virtual AI office": "مكتب ذكاء اصطناعي افتراضي متعدد الوكلاء",
+  "Make the work visible — and the proof unavoidable.":
+    "خلّي الشغل مرئي — والدليل ميتهربش منه.",
+  "The problem": "المشكلة",
+  "The decision": "القرار",
+  "Delivery trace": "أثر التسليم",
+  "From intent to evidence": "من النية للدليل",
+  "System factory": "مصنع الأنظمة",
+  "System Factory": "مصنع الأنظمة",
+  "From contract to rollback": "من العقد للتراجع",
+  "Three surfaces, one system": "تلات واجهات، نظام واحد",
+  "The living office": "المكتب الحيّ",
+  "Agent provisioning": "تجهيز الوكلاء",
+  "What it refuses to do": "اللي بيرفض يعمله",
+  "The interesting decisions were all refusals.":
+    "أهم القرارات كلها كانت رفض.",
+  "Guaranteed by code, not by prompt wording":
+    "مضمون بالكود، مش بصياغة الأوامر",
+  "Need this depth in your next product?":
+    "محتاج العمق ده في منتجك الجاي؟",
+  "Let’s turn the complex part into the clearest part.":
+    "خلّينا نحوّل الجزء المعقّد لأوضح جزء.",
+  "Start a conversation →": "ابدأ محادثة ←",
+  "Verified project baseline · 31 July 2026":
+    "خط أساس موثّق للمشروع · ٣١ يوليو ٢٠٢٦",
+  Brief: "الموجز",
+  Negotiate: "التفاوض",
+  Build: "البناء",
+  Verify: "التحقق",
+  Deliver: "التسليم",
+  Contract: "العقد",
+  Graph: "الرسم البياني",
+  Gates: "البوابات",
+  Release: "الإصدار",
+  Rollout: "الطرح",
+  Rollback: "التراجع",
+  Zero: "صفر",
+
 };
 
 /** Look up a literal; fall back to the English source, which is the key. */

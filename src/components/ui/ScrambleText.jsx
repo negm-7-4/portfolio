@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "motion/react";
 
+const HAS_ARABIC = /[؀-ۿݐ-ݿࢠ-ࣿﭐ-﷿ﹰ-﻿]/;
+
+
 const GLYPHS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#%&*/<>";
 
 /**
@@ -25,6 +28,11 @@ export default function ScrambleText({
 
   const run = () => {
     if (reduce) return;
+    // Arabic is a joining script: swapping letters for Latin glyphs mid-word
+    // re-shapes every remaining letter on each frame, so the label thrashes
+    // between connected and disconnected forms instead of reading as a
+    // decode. Arabic labels are shown as-is.
+    if (HAS_ARABIC.test(text)) return;
     let pos = 0;
     clearInterval(intervalRef.current);
     intervalRef.current = setInterval(() => {

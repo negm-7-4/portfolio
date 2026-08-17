@@ -135,7 +135,7 @@ function ProofCard({ item, index }) {
 }
 
 export default function SamsCaseStudy() {
-  const { t } = useContent();
+  const { t, tr } = useContent();
   return (
     <section id="sams-case-study" className="relative w-full py-32 md:py-44">
       <div
@@ -155,7 +155,7 @@ export default function SamsCaseStudy() {
         <div className="grid items-start gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
           <Reveal className="lg:sticky lg:top-28" dir="left" once>
             <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-[#c7bdf0]">
-              Multi-agent virtual AI office
+              {tr("Multi-agent virtual AI office")}
             </p>
             <h3 className="mt-4 font-display text-4xl font-semibold leading-[1.02] tracking-tight text-white md:text-6xl">
               Make the work visible — and the proof unavoidable.
@@ -192,7 +192,7 @@ export default function SamsCaseStudy() {
                     SAMS · system factory
                   </span>
                   <span className="flex items-center gap-1.5 text-[9px] uppercase tracking-[0.2em] text-emerald-300/70">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-300" /> Verified
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-300" /> {tr("Verified")}
                   </span>
                 </div>
                 <ResponsiveImage
@@ -212,7 +212,7 @@ export default function SamsCaseStudy() {
               <div className="grid gap-4 sm:grid-cols-2">
                 <article className="rounded-2xl border border-white/9 bg-white/[0.025] p-6">
                   <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-white/45">
-                    The problem
+                    {tr("The problem")}
                   </p>
                   <p className="mt-3 text-sm leading-relaxed text-white/65">
                     Multi-agent demos often stop at conversation. Work overlaps, a model can claim
@@ -222,7 +222,7 @@ export default function SamsCaseStudy() {
                 </article>
                 <article className="rounded-2xl border border-[#9a8ac8]/25 bg-[#9a8ac8]/[0.055] p-6">
                   <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#c7bdf0]">
-                    The decision
+                    {tr("The decision")}
                   </p>
                   <p className="mt-3 text-sm leading-relaxed text-white/65">
                     Treat every model output as a proposal. Locked claims prevent duplicate work,
@@ -237,10 +237,10 @@ export default function SamsCaseStudy() {
                 <div className="mb-7 flex items-center justify-between gap-4">
                   <div>
                     <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-white/45">
-                      Delivery trace
+                      {tr("Delivery trace")}
                     </p>
                     <h4 className="mt-2 font-display text-2xl font-semibold text-white">
-                      From intent to evidence
+                      {tr("From intent to evidence")}
                     </h4>
                   </div>
                   <span className="rounded-full border border-white/10 px-3 py-1 text-[9px] uppercase tracking-[0.22em] text-white/45">
@@ -280,7 +280,7 @@ export default function SamsCaseStudy() {
                   {guarantees.map((g) => (
                     <li key={g.what} className="grid gap-2 sm:grid-cols-[10rem_1fr] sm:gap-5">
                       <p className="font-display text-lg font-semibold leading-tight text-white">
-                        <span className="text-[#c7bdf0]">Zero</span> {g.what}
+                        <span className="text-[#c7bdf0]">{tr("Zero")}</span> {g.what}
                       </p>
                       <p className="text-xs leading-relaxed text-white/50">{g.how}</p>
                     </li>
@@ -295,10 +295,10 @@ export default function SamsCaseStudy() {
                 <div className="mb-7 flex items-center justify-between gap-4">
                   <div>
                     <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-white/45">
-                      System factory
+                      {tr("System factory")}
                     </p>
                     <h4 className="mt-2 font-display text-2xl font-semibold text-white">
-                      From contract to rollback
+                      {tr("From contract to rollback")}
                     </h4>
                   </div>
                   <span className="shrink-0 rounded-full border border-white/10 px-3 py-1 text-[9px] uppercase tracking-[0.22em] text-white/45">
@@ -326,7 +326,7 @@ export default function SamsCaseStudy() {
             <Reveal once>
               <div>
                 <p className="mb-4 text-[10px] font-semibold uppercase tracking-[0.28em] text-white/45">
-                  Three surfaces, one system
+                  {tr("Three surfaces, one system")}
                 </p>
                 <div className="grid gap-4 sm:grid-cols-3">
                   {surfaces.map((surface) => (
@@ -364,7 +364,7 @@ export default function SamsCaseStudy() {
             <Reveal once>
               <div className="rounded-3xl border border-[#9a8ac8]/25 bg-[#9a8ac8]/[0.05] p-6 md:p-8">
                 <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#c7bdf0]">
-                  What it refuses to do
+                  {tr("What it refuses to do")}
                 </p>
                 <h4 className="mt-2 max-w-lg font-display text-2xl font-semibold leading-snug text-white">
                   The interesting decisions were all refusals.
@@ -400,7 +400,7 @@ export default function SamsCaseStudy() {
                   }}
                   className="rounded-full bg-white px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-black transition-transform hover:-translate-y-0.5"
                 >
-                  Start a conversation →
+                  {tr("Start a conversation →")}
                 </a>
               </div>
             </Reveal>

@@ -2,6 +2,11 @@ import { useEffect, useLayoutEffect, useRef } from "react";
 import { motion, useMotionValue, useSpring } from "motion/react";
 import { useCursor } from "../../hooks/useCursor";
 
+/* Arabic is a joining script — one letter per element forces every glyph into
+   its isolated form and the word renders as disconnected stumps. Arabic text
+   is therefore rendered whole, without the per-character effect. */
+const HAS_ARABIC = /[؀-ۿݐ-ݿࢠ-ࣿﭐ-﷿ﹰ-﻿]/;
+
 /**
  * Splits text into per-character motion spans. Each letter is pulled toward
  * the cursor when it's near. Heavy CPU optimisation here:
@@ -152,6 +157,10 @@ export default function MagneticText({
      visually hidden, beside them. */
   return (
     <span className={className} style={{ display: "inline-block" }}>
+      {HAS_ARABIC.test(text) ? (
+        <span style={{ display: "inline-block" }}>{text}</span>
+      ) : (
+      <>
       <span className="sr-only">{text}</span>
       <span aria-hidden="true" style={{ display: "inline-block" }}>
         {text.split("").map((ch, i) => (
@@ -166,6 +175,8 @@ export default function MagneticText({
           />
         ))}
       </span>
+      </>
+      )}
     </span>
   );
 }

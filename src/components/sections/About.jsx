@@ -42,7 +42,7 @@ function StatLine({ label, value, i }) {
 
 /* ─── Section ─── */
 export default function About() {
-  const { profile, aboutCards, t, tr } = useContent();
+  const { profile, aboutCards, t, tr, rtl } = useContent();
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -52,16 +52,21 @@ export default function About() {
   const titleY = useTransform(scrollYProgress, [0, 1], [40, -40]);
 
   const stats = [
-    { label: "Role", value: profile.role },
-    { label: "Major", value: profile.education },
-    { label: "Year", value: profile.year },
-    { label: "University", value: profile.university },
-    { label: "Location", value: profile.location },
-    { label: "Status", value: profile.status },
+    { label: tr("Role"), value: profile.role },
+    { label: tr("Major"), value: profile.education },
+    { label: tr("Year"), value: profile.year },
+    { label: tr("University"), value: profile.university },
+    { label: tr("Location"), value: profile.location },
+    { label: tr("Status"), value: profile.status },
   ];
 
   return (
-    <section id="about" ref={ref} className="relative w-full py-32 md:py-44">
+    // overflow-x-clip: the two ambient orbs are 500px and 380px blurred
+    // circles pinned with negative offsets, and they stuck ~29px past the
+    // section edge. The page as a whole hid it (html has overflow-x: clip),
+    // but the section itself still scrolled, which reads as a horizontal
+    // jiggle on a phone. Clipping here is free — the orbs are decorative.
+    <section id="about" ref={ref} className="relative w-full overflow-x-clip py-32 md:py-44">
       {/* ambient orb */}
       <motion.div
         style={{ y: bgY }}
@@ -106,10 +111,26 @@ export default function About() {
               style={{ fontSize: "clamp(1.4rem, 2.6vw, 2.4rem)" }}
               dir="auto"
             >
-              I&apos;m <span className="font-semibold text-white">{profile.name}</span> — a{" "}
-              <span className="text-gradient italic font-medium">{tr("front-end developer")}</span> and{" "}
-              <span className="font-semibold text-white">{profile.year} CS &amp; AI</span> student
-              at {profile.university}, building the kind of websites I want to use.
+              {/* Composed as a WHOLE sentence per language, not as English
+                  scaffolding with translated words dropped into it. Arabic
+                  word order is not English word order, so the fragment
+                  approach produced "I'm Mohamed Negm — a مطوّر واجهات and
+                  السنة الثالثة student at جامعة…" — grammatical in neither. */}
+              {rtl ? (
+                <>
+                  أنا <span className="font-semibold text-white">محمد نجم</span> —{" "}
+                  <span className="text-gradient italic font-medium">مهندس برمجيات</span> وطالب في{" "}
+                  <span className="font-semibold text-white">{profile.year}</span> بكلية الحاسبات
+                  والمعلومات، ببني نوع المواقع اللي أنا نفسي حابب أستخدمه.
+                </>
+              ) : (
+                <>
+                  I&apos;m <span className="font-semibold text-white">{profile.name}</span> — a{" "}
+                  <span className="text-gradient italic font-medium">{tr("front-end developer")}</span> and{" "}
+                  <span className="font-semibold text-white">{profile.year} CS &amp; AI</span>{" "}
+                  student at {profile.university}, building the kind of websites I want to use.
+                </>
+              )}
             </motion.p>
 
             <motion.p
@@ -120,11 +141,24 @@ export default function About() {
               className="mt-8 max-w-2xl text-base leading-[1.85] text-white/55 md:text-lg"
               dir="auto"
             >
-              I specialise in fast, immersive interfaces with{" "}
-              <span className="font-medium text-white/85">React</span>,{" "}
-              <span className="font-medium text-white/85">Three.js</span> and{" "}
-              <span className="font-medium text-white/85">Framer Motion</span>. From accounting ERPs
-              to 3D web experiences — every pixel, every easing curve, every detail matters.
+              {rtl ? (
+                <>
+                  متخصص في واجهات سريعة وغامرة باستخدام{" "}
+                  <span className="font-medium text-white/85">React</span> و{" "}
+                  <span className="font-medium text-white/85">Three.js</span> و{" "}
+                  <span className="font-medium text-white/85">Framer Motion</span>. من أنظمة
+                  الحسابات لتجارب الويب ثلاثية الأبعاد — كل بكسل، وكل منحنى حركة، وكل تفصيلة بتفرق.
+                </>
+              ) : (
+                <>
+                  I specialise in fast, immersive interfaces with{" "}
+                  <span className="font-medium text-white/85">React</span>,{" "}
+                  <span className="font-medium text-white/85">Three.js</span> and{" "}
+                  <span className="font-medium text-white/85">Framer Motion</span>. From accounting
+                  ERPs to 3D web experiences — every pixel, every easing curve, every detail
+                  matters.
+                </>
+              )}
             </motion.p>
 
             <motion.p
