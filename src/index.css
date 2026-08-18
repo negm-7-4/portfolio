@@ -322,6 +322,23 @@ h6 {
   font-feature-settings: "kern", "liga", "calt";
 }
 
+/* SPLIT HEADINGS GET A SOLID ACCENT, NOT A CLIPPED GRADIENT.
+   `.text-gradient` paints by making the text transparent and showing a
+   background through it. That works on a plain element, but a split heading
+   animates each unit with its own transform, and a transformed element gets
+   its own compositing context — the clipped background repeatedly failed to
+   paint into it, leaving the accent word invisible. It went wrong three times
+   in three different places, in both languages.
+
+   The trade is deliberate: a heading that always reads beats one that carries
+   a subtle sheen and sometimes vanishes. At display size the difference
+   between this and the gradient's light end is barely perceptible. */
+.text-accent-solid {
+  color: #cfd8e4;
+  -webkit-text-fill-color: #cfd8e4;
+  background: none;
+}
+
 /* Gradient text helper. Seven-stop gradient gives the highlight more
    "movement"; the slow loop reads as a living sheen rather than a strobe. */
 .text-gradient {

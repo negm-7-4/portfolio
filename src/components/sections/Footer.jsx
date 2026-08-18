@@ -75,7 +75,7 @@ export default function Footer() {
             </span>
             <motion.span
               style={{ clipPath: clip, fontSize: "clamp(3rem, 11vw, 11rem)" }}
-              className="block italic font-light text-gradient"
+              className="block italic font-light text-accent-solid"
             >
               {tr("something great.")}
             </motion.span>

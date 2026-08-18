@@ -106,7 +106,7 @@ export default function SectionHeading({ eyebrow, title, accent, num }) {
              which is why the SECOND word of a heading was missing while the
              first was fine, in both languages. */
           <span className="italic font-light">
-            <SplitText text={accent} perChar delay={0.12} leafClassName="text-gradient" />
+            <SplitText text={accent} perChar delay={0.12} leafClassName="text-accent-solid" />
           </span>
         )}
       </h2>
