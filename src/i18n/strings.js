@@ -112,8 +112,8 @@ export const AR_STRINGS = {
   "All projects live on": "كل المشاريع على",
 
   // ── Socials ──
-  "Tap any platform — let's build something together. I reply to every message.":
-    "اضغط على أي منصة — خلّينا نبني حاجة سوا. برد على كل رسالة.",
+  "Tap any platform — let's build something together. I reply fast.":
+    "اضغط على أي منصة — خلّينا نبني حاجة سوا. وبرد بسرعة.",
 
   // ── Contact ──
   "Have a project, an idea, or just want to say hi?":

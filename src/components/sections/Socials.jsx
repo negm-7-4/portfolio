@@ -203,7 +203,7 @@ function SocialOrb({ s, i }) {
 
 /* ───────────────── Section ───────────────── */
 export default function Socials() {
-  const { profile, t } = useContent();
+  const { profile, t, tr } = useContent();
   return (
     <section id="socials" className="relative w-full py-28 md:py-40 overflow-hidden">
       {/* Ambient orbs that float behind */}
@@ -235,7 +235,7 @@ export default function Socials() {
           transition={{ duration: 0.6 }}
           className="mx-auto mb-20 max-w-xl text-center text-base text-white/55"
         >
-          Tap any platform — let&apos;s build something together. I reply fast.
+          {tr("Tap any platform — let's build something together. I reply fast.")}
         </motion.p>
 
         {/* Orbs row */}
