@@ -97,8 +97,16 @@ export default function SectionHeading({ eyebrow, title, accent, num }) {
       >
         <SplitText text={title} perChar />{" "}
         {accent && (
-          <span className="text-gradient italic font-light">
-            <SplitText text={accent} perChar delay={0.12} />
+          /* The gradient goes on the ANIMATED LEAVES, not on this wrapper.
+             `background-clip: text` paints into the element that carries it;
+             each split unit is a transformed motion.span, and a transform
+             creates its own compositing context that an ancestor's clipped
+             background never reaches. With `-webkit-text-fill-color:
+             transparent` on the ancestor, the accent word simply vanished —
+             which is why the SECOND word of a heading was missing while the
+             first was fine, in both languages. */
+          <span className="italic font-light">
+            <SplitText text={accent} perChar delay={0.12} leafClassName="text-gradient" />
           </span>
         )}
       </h2>

@@ -12,7 +12,10 @@ export default function Footer() {
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end end"] });
 
   // Mask reveal for the giant word — bottom edge wipes up as you scroll into the footer
-  const clip = useTransform(scrollYProgress, [0.0, 0.6], ["inset(0 0 100% 0)", "inset(0 0 0% 0)"]);
+  // Completes by 0.28, not 0.6. The footer is the last thing on the page, so
+  // its own scroll progress tops out well before 0.6 — the reveal never
+  // finished and the second line stayed clipped out of sight.
+  const clip = useTransform(scrollYProgress, [0.0, 0.28], ["inset(0 0 100% 0)", "inset(0 0 0% 0)"]);
   const titleY = useTransform(scrollYProgress, [0, 1], [120, -40]);
 
   const goTop = () => goToSection("hero");

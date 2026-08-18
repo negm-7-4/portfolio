@@ -30,6 +30,7 @@ export default function SplitText({
   stagger = 0.045,
   blur = true,
   perChar = false,
+  leafClassName = "",
   as: Tag = "span",
 }) {
   const words = text.split(" ");
@@ -48,7 +49,7 @@ export default function SplitText({
     >
       <motion.span
         variants={child}
-        className="inline-block"
+        className={`inline-block ${leafClassName}`}
         style={{ transformOrigin: "50% 100%" }}
       >
         {children}
@@ -82,7 +83,7 @@ export default function SplitText({
                   <span key={ci} className="inline-block overflow-hidden pb-[0.14em]">
                     <motion.span
                       variants={child}
-                      className="inline-block"
+                      className={`inline-block ${leafClassName}`}
                       style={{ transformOrigin: "50% 100%" }}
                     >
                       {ch}
