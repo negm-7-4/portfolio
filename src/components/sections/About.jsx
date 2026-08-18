@@ -126,7 +126,7 @@ export default function About() {
               ) : (
                 <>
                   I&apos;m <span className="font-semibold text-white">{profile.name}</span> — a{" "}
-                  <span className="text-gradient italic font-medium">{tr("front-end developer")}</span> and{" "}
+                  <span className="text-gradient italic font-medium">front-end developer</span> and{" "}
                   <span className="font-semibold text-white">{profile.year} CS &amp; AI</span>{" "}
                   student at {profile.university}, building the kind of websites I want to use.
                 </>

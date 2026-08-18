@@ -56,15 +56,6 @@ export const AR_STRINGS = {
   "Pulse the field": "حرّك المجال",
 
   // ── About ──
-  "front-end developer": "مطوّر واجهات أمامية",
-  and: "و",
-  "student at": "طالب في",
-  ", building the kind of websites I want to use.":
-    "، ببني نوع المواقع اللي أنا نفسي حابب أستخدمه.",
-  "I specialise in fast, immersive interfaces with":
-    "متخصص في واجهات سريعة وغامرة باستخدام",
-  ". From accounting ERPs to 3D web experiences — every pixel considered.":
-    ". من أنظمة الحسابات لتجارب الويب ثلاثية الأبعاد — كل بكسل محسوب.",
   "Always learning. Always building.": "بتعلّم دايماً. وببني دايماً.",
   "◆ Profile": "◆ الملف",
   "Open to opportunities": "متاح لفرص جديدة",
@@ -82,19 +73,10 @@ export const AR_STRINGS = {
   "Critical path": "المسار الحرج",
 
   // ── Manifesto ──
+  // The statement itself lives in Manifesto.jsx as whole Arabic lines: it is
+  // animated word-by-word, so translating individual words could not fix the
+  // reversed word ORDER that dir=rtl produced.
   Manifesto: "البيان",
-  Motion: "الحركة",
-  not: "مش",
-  "decoration.": "زينة.",
-  how: "إزاي",
-  story: "الحكاية",
-  "breathes.": "بتتنفّس.",
-  build: "ببني",
-  the: "الـ",
-  web: "ويب",
-  that: "اللي",
-  moves: "بيحرّك",
-  "you.": "فيك حاجة.",
   "Every frame earns its place": "كل إطار بيستاهل مكانه",
 
   // ── Skills ──

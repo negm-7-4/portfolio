@@ -23,8 +23,20 @@ const LINES = [
   { text: "I build the web that moves you.", cls: "text-white" },
 ];
 
+/* The statement is animated one WORD per element. Under dir="rtl" those
+   elements lay out right-to-left, so an English sentence came out with its
+   words in reverse order — "Motion is not decoration." rendered as
+   ".decoration not is Motion". Translating the individual words could not fix
+   that; the order itself was wrong. Arabic gets its own complete lines, whose
+   words are then correct read right-to-left. */
+const LINES_AR = [
+  { text: "الحركة مش زينة.", cls: "text-white" },
+  { text: "دي إزاي الحكاية بتتنفّس.", cls: "text-gradient italic font-light" },
+  { text: "ببني ويب بيحرّك فيك حاجة.", cls: "text-white" },
+];
+
 export default function Manifesto() {
-  const { tr } = useContent();
+  const { tr, rtl } = useContent();
   const wrapRef = useRef(null);
   const { tier, reducedMotion } = useDeviceProfile();
   const still = reducedMotion || tier === "low";
@@ -121,13 +133,13 @@ export default function Manifesto() {
             className="font-display font-bold leading-[1.06] tracking-tight"
             style={{ fontSize: "clamp(2.2rem, 5.6vw, 5.2rem)" }}
           >
-            {LINES.map((line, li) => (
+            {(rtl ? LINES_AR : LINES).map((line, li) => (
               <span key={li} className={`block ${line.cls}`}>
                 {line.text.split(" ").map((word, wi) => (
                   <span
                     key={wi}
                     className="mf-word inline-block"
-                    style={{ marginRight: "0.26em", willChange: "transform, filter" }}
+                    style={{ marginInlineEnd: "0.26em", willChange: "transform, filter" }}
                   >
                     {word}
                   </span>

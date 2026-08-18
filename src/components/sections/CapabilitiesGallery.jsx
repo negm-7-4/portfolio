@@ -94,9 +94,16 @@ export default function CapabilitiesGallery() {
           </div>
         </div>
 
-        {/* horizontal track */}
+        {/* horizontal track.
+            dir="ltr" is load-bearing. The sweep is driven by translating this
+            row to x: -distance, which assumes the first card starts at the
+            LEFT edge. Under dir="rtl" the flex row starts at the right instead,
+            so the same negative translate pushed the cards straight off-screen
+            and the track appeared to scroll the wrong way with the cards gone.
+            The mechanics stay LTR; each card sets its own text direction. */}
         <motion.div
           ref={trackRef}
+          dir="ltr"
           style={{ x, willChange: "transform" }}
           className="flex gap-6 px-[6vw] md:gap-8"
         >
@@ -105,6 +112,9 @@ export default function CapabilitiesGallery() {
             return (
               <article
                 key={s.num}
+                // The track is pinned LTR for its transform maths; each card
+                // still resolves its own text direction from its content.
+                dir="auto"
                 className="gradient-border group relative flex h-[64vh] w-[84vw] shrink-0 flex-col justify-end overflow-hidden rounded-3xl border border-white/10 bg-white/[0.02] p-8 sm:w-[60vw] md:p-11 lg:w-[44vw]"
               >
                 {/* accent glow */}
