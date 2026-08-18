@@ -394,12 +394,49 @@ export default function CinematicWorld({ quality = "high" }) {
 
   useEffect(() => setLive(quality), [quality]);
 
-  // Publish quality into the store + freeze the render loop on a hidden tab.
+  // Publish quality into the store + decide when the loop may sleep.
+  //
+  // Freezing only on a hidden TAB was leaving the whole journey rendering at
+  // 60fps even where nothing of it can be seen. Two provable cases:
+  //
+  //   1. The cover screen (#intro) is fully opaque by design — its own comment
+  //      says "Opaque cover so the fixed 3D world stays hidden on this first
+  //      screen". While it fills the viewport the canvas contributes nothing.
+  //   2. A hidden tab, as before.
+  //
+  // Both are cases where the output is provably invisible, so pausing cannot
+  // change a single pixel. Lighthouse measured 109s of total blocking time on
+  // mobile precisely because this loop never yielded.
   useEffect(() => {
     experience.getState().setQuality(live);
-    const onVis = () => setFrameloop(document.hidden ? "never" : "always");
+
+    let covered = false;
+    const apply = () => setFrameloop(document.hidden || covered ? "never" : "always");
+
+    const onVis = () => apply();
     document.addEventListener("visibilitychange", onVis);
-    return () => document.removeEventListener("visibilitychange", onVis);
+
+    // Watch the opaque cover. `threshold` near 1 means "still filling the
+    // screen"; the moment it starts sliding away the loop wakes up, which is
+    // before any of the world could actually be revealed.
+    let io;
+    const intro = document.getElementById("intro");
+    if (intro && typeof IntersectionObserver !== "undefined") {
+      io = new IntersectionObserver(
+        ([e]) => {
+          covered = e.intersectionRatio > 0.985;
+          apply();
+        },
+        { threshold: [0.97, 0.985, 0.99, 1] }
+      );
+      io.observe(intro);
+    }
+
+    apply();
+    return () => {
+      document.removeEventListener("visibilitychange", onVis);
+      io?.disconnect();
+    };
   }, [live]);
 
   const dprMax = live === "high" ? 1.8 : 1.3;
