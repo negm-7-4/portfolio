@@ -11,11 +11,14 @@ export default function Footer() {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end end"] });
 
-  // Mask reveal for the giant word — bottom edge wipes up as you scroll into the footer
-  // Completes by 0.28, not 0.6. The footer is the last thing on the page, so
-  // its own scroll progress tops out well before 0.6 — the reveal never
-  // finished and the second line stayed clipped out of sight.
-  const clip = useTransform(scrollYProgress, [0.0, 0.28], ["inset(0 0 100% 0)", "inset(0 0 0% 0)"]);
+  // The scroll-driven clip-path wipe that used to reveal this line is gone.
+  // It depended on the footer's own scrollYProgress climbing past a threshold,
+  // and as the LAST element on a Lenis-smoothed page that progress never got
+  // there — so the site's closing statement stayed permanently clipped, with
+  // only the tops of its letters showing. Retuning the threshold did not fix
+  // it. It now uses the plain in-view reveal every other section uses, which
+  // is driven by intersection rather than by a progress ratio and therefore
+  // cannot strand the text out of sight.
   const titleY = useTransform(scrollYProgress, [0, 1], [120, -40]);
 
   const goTop = () => goToSection("hero");
@@ -62,7 +65,7 @@ export default function Footer() {
             </span>
           </motion.div>
 
-          {/* Two-line headline with clip-path reveal driven by scroll */}
+          {/* Two-line headline — both lines revealed on entering view */}
           <motion.h2
             style={{ y: titleY }}
             className="font-display font-bold leading-[0.88] tracking-[-0.02em] text-white"
@@ -74,7 +77,11 @@ export default function Footer() {
               {tr("Let's build")}
             </span>
             <motion.span
-              style={{ clipPath: clip, fontSize: "clamp(3rem, 11vw, 11rem)" }}
+              initial={{ opacity: 0, y: 28 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-8%" }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+              style={{ fontSize: "clamp(3rem, 11vw, 11rem)" }}
               className="block italic font-light text-accent-solid"
             >
               {tr("something great.")}
