@@ -561,6 +561,21 @@ h6 {
    Each rule below fixes one real class of breakage rather than blanket-
    flipping everything, which would un-mirror the parts already correct. */
 
+/* ARABIC NEEDS VERTICAL ROOM.
+   Display headings on this site run as tight as leading-[0.88], which is a
+   Latin choice — it works because Latin caps have almost no descender. Arabic
+   letterforms carry deep descenders and tall ascenders, so at that leading the
+   glyphs are clipped by their own line box. In the footer that combined with a
+   scroll-driven clip-path reveal, so the Arabic headline never fully appeared.
+   The attribute selector outranks Tailwind's single-class utility, so no
+   !important is needed. */
+[lang="ar"] h1,
+[lang="ar"] h2,
+[lang="ar"] h3 {
+  line-height: 1.18;
+  padding-bottom: 0.08em;
+}
+
 /* Arabic sets noticeably smaller on the same font-size than Latin, and the
    display face's tight tracking is a Latin-typography choice that reads as
    cramped in Arabic — letters there are joined, not spaced. */

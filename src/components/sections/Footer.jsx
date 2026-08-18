@@ -65,7 +65,10 @@ export default function Footer() {
             className="font-display font-bold leading-[0.88] tracking-[-0.02em] text-white"
           >
             <span className="block" style={{ fontSize: "clamp(3rem, 11vw, 11rem)" }}>
-              Let&apos;s build
+              {/* Written as &apos; in the source, which is why the automated
+                  wiring pass matched every other string here but skipped this
+                  one — the headline ended up half translated. */}
+              {tr("Let's build")}
             </span>
             <motion.span
               style={{ clipPath: clip, fontSize: "clamp(3rem, 11vw, 11rem)" }}
