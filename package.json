@@ -45,7 +45,7 @@
     "react-dom": "^19.0.0",
     "resend": "^6.19.0",
     "three": "^0.185.0",
-    "zustand": "^5.0.14"
+    "zustand": "^5.0.15"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
